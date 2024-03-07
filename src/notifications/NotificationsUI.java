@@ -32,7 +32,8 @@ public class NotificationsUI extends JFrame {
   }
 
   private void initializeUI() {
-    // Reuse the header and navigation panel creation methods from the InstagramProfileUI class
+    // Reuse the header and navigation panel creation methods from the
+    // InstagramProfileUI class
     JPanel headerPanel = createHeaderPanel();
     JPanel navigationPanel = createNavigationPanel();
 
@@ -41,19 +42,15 @@ public class NotificationsUI extends JFrame {
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
     JScrollPane scrollPane = new JScrollPane(contentPanel);
     scrollPane.setHorizontalScrollBarPolicy(
-      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-    );
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     scrollPane.setVerticalScrollBarPolicy(
-      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-    );
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
     // Read the current username from users.txt
     String currentUsername = "";
     try (
-      BufferedReader reader = Files.newBufferedReader(
-        Paths.get("quackstagram/Quackstagram_Code/resources/data", "users.txt")
-      )
-    ) {
+        BufferedReader reader = Files.newBufferedReader(
+            Paths.get(AppPaths.USERS))) {
       String line = reader.readLine();
       if (line != null) {
         currentUsername = line.split(":")[0].trim();
@@ -63,13 +60,10 @@ public class NotificationsUI extends JFrame {
     }
 
     try (
-      BufferedReader reader = Files.newBufferedReader(
-        Paths.get(
-          "quackstagram/Quackstagram_Code/resources/data",
-          "notifications.txt"
-        )
-      )
-    ) {
+        BufferedReader reader = Files.newBufferedReader(
+            Paths.get(
+                "quackstagram/Quackstagram_Code/resources/data",
+                "notifications.txt"))) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(";");
@@ -78,17 +72,15 @@ public class NotificationsUI extends JFrame {
           String userWhoLiked = parts[1].trim();
           String imageId = parts[2].trim();
           String timestamp = parts[3].trim();
-          String notificationMessage =
-            userWhoLiked +
-            " liked your picture - " +
-            getElapsedTime(timestamp) +
-            " ago";
+          String notificationMessage = userWhoLiked +
+              " liked your picture - " +
+              getElapsedTime(timestamp) +
+              " ago";
 
           // Add the notification to the panel
           JPanel notificationPanel = new JPanel(new BorderLayout());
           notificationPanel.setBorder(
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
-          );
+              BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
           JLabel notificationLabel = new JLabel(notificationMessage);
           notificationPanel.add(notificationLabel, BorderLayout.CENTER);
@@ -110,33 +102,30 @@ public class NotificationsUI extends JFrame {
 
   private String getElapsedTime(String timestamp) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-      "yyyy-MM-dd HH:mm:ss"
-    );
+        "yyyy-MM-dd HH:mm:ss");
     LocalDateTime timeOfNotification = LocalDateTime.parse(
-      timestamp,
-      formatter
-    );
+        timestamp,
+        formatter);
     LocalDateTime currentTime = LocalDateTime.now();
 
     long daysBetween = ChronoUnit.DAYS.between(timeOfNotification, currentTime);
-    long minutesBetween =
-      ChronoUnit.MINUTES.between(timeOfNotification, currentTime) % 60;
+    long minutesBetween = ChronoUnit.MINUTES.between(timeOfNotification, currentTime) % 60;
 
     StringBuilder timeElapsed = new StringBuilder();
     if (daysBetween > 0) {
       timeElapsed
-        .append(daysBetween)
-        .append(" day")
-        .append(daysBetween > 1 ? "s" : "");
+          .append(daysBetween)
+          .append(" day")
+          .append(daysBetween > 1 ? "s" : "");
     }
     if (minutesBetween > 0) {
       if (daysBetween > 0) {
         timeElapsed.append(" and ");
       }
       timeElapsed
-        .append(minutesBetween)
-        .append(" minute")
-        .append(minutesBetween > 1 ? "s" : "");
+          .append(minutesBetween)
+          .append(" minute")
+          .append(minutesBetween > 1 ? "s" : "");
     }
     return timeElapsed.toString();
   }
@@ -164,11 +153,9 @@ public class NotificationsUI extends JFrame {
 
     for (int i = 0; i < UiUtils.iconPaths.length; i++) {
       navigationPanel.add(
-        createIconButton(
-          UiUtils.iconPaths[i],
-          UiUtils.buttonTypes[i]
-        )
-      );
+          createIconButton(
+              UiUtils.iconPaths[i],
+              UiUtils.buttonTypes[i]));
       navigationPanel.add(Box.createHorizontalGlue());
     }
 
@@ -178,8 +165,8 @@ public class NotificationsUI extends JFrame {
   private JButton createIconButton(String iconPath, String buttonType) {
     ImageIcon iconOriginal = new ImageIcon(iconPath);
     Image iconScaled = iconOriginal
-      .getImage()
-      .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
+        .getImage()
+        .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
     JButton button = new JButton(new ImageIcon(iconScaled));
     button.setBorder(BorderFactory.createEmptyBorder());
     button.setContentAreaFilled(false);
@@ -219,10 +206,8 @@ public class NotificationsUI extends JFrame {
 
     // Read the logged-in user's username from users.txt
     try (
-      BufferedReader reader = Files.newBufferedReader(
-        Paths.get("quackstagram/Quackstagram_Code/resources/data", "users.txt")
-      )
-    ) {
+        BufferedReader reader = Files.newBufferedReader(
+            Paths.get(AppPaths.USERS))) {
       String line = reader.readLine();
       if (line != null) {
         loggedInUsername = line.split(":")[0].trim();

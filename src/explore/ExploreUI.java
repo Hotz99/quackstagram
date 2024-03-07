@@ -314,7 +314,7 @@ public class ExploreUI extends JFrame {
     // Read the logged-in user's username from users.txt
     try (
         BufferedReader reader = Files.newBufferedReader(
-            Paths.get("quackstagram/Quackstagram_Code/resources/data", "users.txt"))) {
+            Paths.get(AppPaths.USERS))) {
       String line = reader.readLine();
       if (line != null) {
         loggedInUsername = line.split(":")[0].trim();

@@ -204,7 +204,7 @@ public class QuakstagramHomeUI extends JFrame {
     // Retrieve the current user from users.txt
     try (
         BufferedReader userReader = Files.newBufferedReader(
-            Paths.get("quackstagram/Quackstagram_Code/resources/data", "users.txt"))) {
+            Paths.get(AppPaths.USERS))) {
       String line = userReader.readLine();
       if (line != null) {
         currentUser = line.split(":")[0].trim();
@@ -253,8 +253,8 @@ public class QuakstagramHomeUI extends JFrame {
       try (
           BufferedWriter notificationWriter = Files.newBufferedWriter(
               Paths.get(
-                  "quackstagram/Quackstagram_Code/resources/data",
-                  "notifications.txt"),
+                  AppPaths.DATA +
+                      "notifications.txt"),
               StandardOpenOption.CREATE,
               StandardOpenOption.APPEND)) {
         notificationWriter.write(notification);
@@ -268,7 +268,7 @@ public class QuakstagramHomeUI extends JFrame {
     String currentUser = "";
     try (
         BufferedReader reader = Files.newBufferedReader(
-            Paths.get("quackstagram/Quackstagram_Code/resources/data", "users.txt"))) {
+            Paths.get(AppPaths.USERS))) {
       String line = reader.readLine();
       if (line != null) {
         currentUser = line.split(":")[0].trim();
@@ -452,7 +452,7 @@ public class QuakstagramHomeUI extends JFrame {
     // Read the logged-in user's username from users.txt
     try (
         BufferedReader reader = Files.newBufferedReader(
-            Paths.get("quackstagram/Quackstagram_Code/resources/data", "users.txt"))) {
+            Paths.get(AppPaths.USERS))) {
       String line = reader.readLine();
       if (line != null) {
         loggedInUsername = line.split(":")[0].trim();
