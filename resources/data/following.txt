@@ -1,0 +1,6 @@
+Xylo: Lorin
+Zara: Lorin
+Mystar: Lorin; Zara
+Lorin: Mystar; Zara
+Xylo - Fierce warrior, not solo: Xylo
+test5 - Bio: test5

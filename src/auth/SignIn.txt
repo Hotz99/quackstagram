@@ -1,0 +1,73 @@
+package auth;
+
+import java.awt.event.*;
+import javax.swing.*;
+import utils.Database;
+
+public class SignIn {
+
+  public static void main(String[] args) {
+    signInGUI();
+  }
+
+  static String username;
+  static String password;
+
+  public static Database users = new Database(username, password);
+
+  // public static Database1 users1 = new Database1();
+
+  public static boolean checkUser(String username, String password) {
+    if (users.containsKey(username) && users.get(username).equals(password)) {
+      return true;
+    }
+    return false;
+  }
+
+  // public static boolean checkUser1(String username, String password){
+  // if (users1.containsKey(username) && users1.get(username).equals(password)){
+  // return true;
+  // }
+  // return false;
+  // }
+
+  public static void signInGUI() {
+    JFrame frame = new JFrame("Sign In");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(500, 350);
+    frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+
+    JPanel usernamePanel = new JPanel();
+    JLabel usernameLabel = new JLabel("Username: ");
+    JTextField usernameField = new JTextField(20);
+    usernamePanel.add(usernameLabel);
+    usernamePanel.add(usernameField);
+
+    JPanel passwordPanel = new JPanel();
+    JLabel passwordLabel = new JLabel("Password: ");
+    JPasswordField passwordField = new JPasswordField(20);
+    passwordPanel.add(passwordLabel);
+    passwordPanel.add(passwordField);
+
+    JButton signInButton = new JButton("Sign In");
+    signInButton.addActionListener(
+        new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+            if (checkUser(username, password)) {
+              JOptionPane.showMessageDialog(frame, "Welcome, " + username + "!");
+            } else {
+              JOptionPane.showMessageDialog(
+                  frame,
+                  "Invalid username or password.");
+            }
+          }
+        });
+
+    frame.add(usernamePanel);
+    frame.add(passwordPanel);
+    frame.add(signInButton);
+    frame.setVisible(true);
+  }
+}
