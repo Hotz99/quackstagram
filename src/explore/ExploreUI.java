@@ -88,9 +88,8 @@ public class ExploreUI extends JFrame {
     if (imageDir.exists() && imageDir.isDirectory()) {
         File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));
         if (imageFiles != null) {
-            Arrays.stream(imageFiles).forEach(imageFile -> {
-                ImageIcon imageIcon = new ImageIcon(
-                    new ImageIcon(imageFile.getPath()).getImage().getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
+            for(File imageFile : imageFiles){
+                ImageIcon imageIcon = new ImageIcon(new ImageIcon(imageFile.getPath()).getImage().getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
                 JLabel imageLabel = new JLabel(imageIcon);
                 imageLabel.addMouseListener(new MouseAdapter() {
                     @Override
@@ -99,7 +98,7 @@ public class ExploreUI extends JFrame {
                     }
                 });
                 imageGridPanel.add(imageLabel);
-            });
+             };
         }
     }
     return imageGridPanel;
