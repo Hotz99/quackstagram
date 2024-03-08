@@ -60,54 +60,49 @@ public class ExploreUI extends JFrame {
   }
 
   private JPanel createMainContentPanel() {
-    // Create the main content panel with search and image grid
-    // Search bar at the top
-    JPanel searchPanel = new JPanel(new BorderLayout());
-    JTextField searchField = new JTextField(" Search Users");
-    searchPanel.add(searchField, BorderLayout.CENTER);
-    searchPanel.setMaximumSize(
-        new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height)); // Limit the height
-
-    // Image Grid
-    JPanel imageGridPanel = new JPanel(new GridLayout(0, 3, 2, 2)); // 3 columns, auto rows
-
-    // Load images from the uploaded folder
-    File imageDir = new File(AppPaths.UPLOADED);
-
-    if (imageDir.exists() && imageDir.isDirectory()) {
-      File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));
-      if (imageFiles != null) {
-        for (File imageFile : imageFiles) {
-          ImageIcon imageIcon = new ImageIcon(
-              new ImageIcon(imageFile.getPath())
-                  .getImage()
-                  .getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
-          JLabel imageLabel = new JLabel(imageIcon);
-          imageLabel.addMouseListener(
-              new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                  displayImage(imageFile.getPath()); // Call method to display the clicked image
-                }
-              });
-          imageGridPanel.add(imageLabel);
-        }
-      }
-    }
-
+    JPanel searchPanel = createSearchPanel();
+    JPanel imageGridPanel = createImageGridPanel();
     JScrollPane scrollPane = new JScrollPane(imageGridPanel);
-    scrollPane.setHorizontalScrollBarPolicy(
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.setVerticalScrollBarPolicy(
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-    // Main content panel that holds both the search bar and the image grid
     JPanel mainContentPanel = new JPanel();
-    mainContentPanel.setLayout(
-        new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
+    mainContentPanel.setLayout(new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
     mainContentPanel.add(searchPanel);
     mainContentPanel.add(scrollPane); // This will stretch to take up remaining space
     return mainContentPanel;
+  }
+
+  private JPanel createSearchPanel() {
+    JPanel searchPanel = new JPanel(new BorderLayout());
+    JTextField searchField = new JTextField(" Search Users");
+    searchPanel.add(searchField, BorderLayout.CENTER);
+    searchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
+    return searchPanel;
+  }
+
+  private JPanel createImageGridPanel() {
+    JPanel imageGridPanel = new JPanel(new GridLayout(0, 3, 2, 2)); // 3 columns, auto rows
+    File imageDir = new File(AppPaths.UPLOADED);
+
+    if (imageDir.exists() && imageDir.isDirectory()) {
+        File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));
+        if (imageFiles != null) {
+            Arrays.stream(imageFiles).forEach(imageFile -> {
+                ImageIcon imageIcon = new ImageIcon(
+                    new ImageIcon(imageFile.getPath()).getImage().getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
+                JLabel imageLabel = new JLabel(imageIcon);
+                imageLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        displayImage(imageFile.getPath()); // Call method to display the clicked image
+                    }
+                });
+                imageGridPanel.add(imageLabel);
+            });
+        }
+    }
+    return imageGridPanel;
   }
 
   private JPanel createHeaderPanel() {
