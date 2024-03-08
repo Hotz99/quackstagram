@@ -71,7 +71,7 @@ public class UiUtils {
     return navigationPanel;
   }
 
-  private static JButton createIconButton(JFrame currentFrame, String iconPath, String buttonType) {
+  public static JButton createIconButton(JFrame currentFrame, String iconPath, String buttonType) {
     ImageIcon iconOriginal = new ImageIcon(iconPath);
 
     Image iconScaled = iconOriginal
@@ -113,7 +113,7 @@ public class UiUtils {
   }
 
   // Open InstagramProfileUI frame
-  private static void openProfileUI() {
+  public static void openProfileUI() {
     String loggedInUsername = "";
 
     // Read the logged-in user's username from users.txt
@@ -134,19 +134,19 @@ public class UiUtils {
   }
 
   // Open InstagramProfileUI frame
-  private static void notificationsUI() {
+  public static void notificationsUI() {
     NotificationsUI notificationsUI = new NotificationsUI();
     notificationsUI.setVisible(true);
   }
 
   // Open InstagramProfileUI frame
-  private static void openHomeUI() {
+  public static void openHomeUI() {
     QuakstagramHomeUI homeUI = new QuakstagramHomeUI();
     homeUI.setVisible(true);
   }
 
   // Open InstagramProfileUI frame
-  private static void exploreUI() {
+  public static void exploreUI() {
     ExploreUI explore = new ExploreUI();
     explore.setVisible(true);
   }

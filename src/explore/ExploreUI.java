@@ -103,6 +103,7 @@ public class ExploreUI extends JFrame {
     }
     return imageGridPanel;
   }
+  
 
   private JPanel createHeaderPanel() {
     // Header Panel (reuse from InstagramProfileUI or customize for home page)
@@ -143,8 +144,6 @@ public class ExploreUI extends JFrame {
     // Add the header and navigation panels back
     add(createHeaderPanel(), BorderLayout.NORTH);
     add(createNavigationPanel(), BorderLayout.SOUTH);
-
-    JPanel imageViewerPanel = new JPanel(new BorderLayout());
 
     // Extract image ID from the imagePath
     String imageId = new File(imagePath).getName().split("\\.")[0];
@@ -275,16 +274,16 @@ public class ExploreUI extends JFrame {
     // Define actions based on button type
     switch (buttonType) {
       case "home":
-        button.addActionListener(e -> openHomeUI());
+        button.addActionListener(e -> UiUtils.openHomeUI());
         break;
       case "profile":
-        button.addActionListener(e -> openProfileUI());
+        button.addActionListener(e -> UiUtils.openProfileUI());
         break;
       case "notification":
-        button.addActionListener(e -> notificationsUI());
+        button.addActionListener(e -> UiUtils.notificationsUI());
         break;
       case "explore":
-        button.addActionListener(e -> exploreUI());
+        button.addActionListener(e -> UiUtils.exploreUI());
         break;
       case "add":
         button.addActionListener(e -> ImageUploadUI());
@@ -300,45 +299,5 @@ public class ExploreUI extends JFrame {
     upload.setVisible(true);
   }
 
-  private void openProfileUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    String loggedInUsername = "";
-
-    // Read the logged-in user's username from users.txt
-    try (
-        BufferedReader reader = Files.newBufferedReader(
-            Paths.get(AppPaths.USERS))) {
-      String line = reader.readLine();
-      if (line != null) {
-        loggedInUsername = line.split(":")[0].trim();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    User user = new User(loggedInUsername);
-    InstagramProfileUI profileUI = new InstagramProfileUI(user);
-    profileUI.setVisible(true);
-  }
-
-  private void notificationsUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    NotificationsUI notificationsUI = new NotificationsUI();
-    notificationsUI.setVisible(true);
-  }
-
-  private void openHomeUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    QuakstagramHomeUI homeUI = new QuakstagramHomeUI();
-    homeUI.setVisible(true);
-  }
-
-  private void exploreUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    ExploreUI explore = new ExploreUI();
-    explore.setVisible(true);
-  }
+  
 }
