@@ -18,6 +18,7 @@ public class ImageUploadUI extends JFrame {
 
   private static final int WIDTH = 300;
   private static final int HEIGHT = 500;
+  private static final int HEIGHT_HEADERPANEL = 40; 
   private static final int NAV_ICON_SIZE = 20; // Size for navigation icons
   private JLabel imagePreviewLabel;
   private JTextArea bioTextArea;
@@ -35,7 +36,7 @@ public class ImageUploadUI extends JFrame {
   }
 
   private void initializeUI() {
-    JPanel headerPanel = UiUtils.createHeaderPanel(" Upload Image 🐥", WIDTH); // Reuse the createHeaderPanel method
+    JPanel headerPanel = UiUtils.createHeaderPanel(" Upload Image 🐥", WIDTH, HEIGHT_HEADERPANEL); // Reuse the createHeaderPanel method
     JPanel navigationPanel = UiUtils.createNavigationPanel(this); // Reuse the createNavigationPanel method
 
     // Main content panel

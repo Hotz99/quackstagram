@@ -13,23 +13,26 @@ import javax.xml.crypto.Data;
 import user.InstagramProfileUI;
 import user.User;
 import utils.AppPaths;
+import utils.UiUtils;
 
 public class SignInUI extends JFrame {
 
+
   private static final int WIDTH = 300;
   private static final int HEIGHT = 500;
-  private static final Color HEADER_BACKGROUND_COLOR = new Color(51, 51, 51);
-  private static final Color TEXT_COLOR_WHITE = Color.WHITE;
+  private static final int HEIGHT_HEADERPANEL = 40; 
+  private static final Color COLOR_WHITE = Color.WHITE;
   private static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
   private static final Color BUTTON_TEXT_COLOR = Color.BLACK;
-  private static final Color TEXT_COLOR_GRAY = Color.GRAY;
   private static final String FONT_NAME = "Arial";
-  private static final int FONT_SIZE = 16;
+  private static final String LABEL = "Quackstagram 🐥";
+  private static final String SIGNIN_LABEL = "Sign-In";
+  
 
   private JTextField txtUsername;
   private JTextField txtPassword;
-  private JButton btnSignIn, btnRegisterNow;
-  private JLabel labelPhoto;
+  private JButton button, btnRegisterNow;
+  private JLabel lblPhoto;
   private User newUser;
 
   public SignInUI() {
@@ -42,65 +45,24 @@ public class SignInUI extends JFrame {
   }
 
   private void initializeUI() {
-    JPanel headerPanel = getHeader();
-    JPanel photoPanel = getPhotoPanel();
-    JPanel fieldsPanel = getTextFieldsPanel();
-    addStruct(photoPanel, fieldsPanel);
-    JPanel registerPanel = getRegisterPanel();
+    JPanel headerPanel = UiUtils.createHeaderPanel(LABEL, WIDTH, HEIGHT_HEADERPANEL);
+    JPanel photoPanel = UiUtils.getPhotoPanel(lblPhoto);
+    JPanel fieldsPanel = UiUtils.getFieldsPanel(photoPanel, false);
+    JPanel registerPanel = UiUtils.getRegisterPanel(
+      SIGNIN_LABEL, 
+      BUTTON_BACKGROUND_COLOR, 
+      BUTTON_TEXT_COLOR, 
+      FONT_NAME, 
+      14, 
+      this::onSignInClicked 
+  );
+
     addPanel(headerPanel, fieldsPanel, registerPanel);
     navBtnSignUp();
     JPanel buttonPanel = getButtonPanel();
     add(buttonPanel, BorderLayout.SOUTH);
   }
 
-  private JPanel getHeader() {
-    JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    headerPanel.setBackground(HEADER_BACKGROUND_COLOR);
-    JLabel labelRegister = new JLabel("Quackstagram 🐥");
-    labelRegister.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
-    labelRegister.setForeground(TEXT_COLOR_WHITE);
-    headerPanel.add(labelRegister);
-    headerPanel.setPreferredSize(new Dimension(WIDTH, 40));
-    return headerPanel;
-  }
-
-  private JPanel getPhotoPanel() {
-    labelPhoto = new JLabel();
-    labelPhoto.setPreferredSize(new Dimension(80, 80));
-    labelPhoto.setHorizontalAlignment(JLabel.CENTER);
-    labelPhoto.setVerticalAlignment(JLabel.CENTER);
-    labelPhoto.setIcon(
-        new ImageIcon(
-            new ImageIcon(AppPaths.DACS_LOGO)
-                .getImage()
-                .getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
-    JPanel photoPanel = new JPanel();
-    photoPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-    photoPanel.add(labelPhoto);
-    return photoPanel;
-  }
-
-  private JPanel getTextFieldsPanel() {
-    JPanel fieldsPanel = new JPanel();
-    fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
-    fieldsPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20));
-
-    txtUsername = new JTextField("Username");
-    txtPassword = new JTextField("Password");
-    txtUsername.setForeground(TEXT_COLOR_GRAY);
-    txtPassword.setForeground(TEXT_COLOR_GRAY);
-    return fieldsPanel;
-  }
-
-  private void addStruct(JPanel photoPanel, JPanel fieldsPanel) {
-    fieldsPanel.add(Box.createVerticalStrut(10));
-    fieldsPanel.add(photoPanel);
-    fieldsPanel.add(Box.createVerticalStrut(10));
-    fieldsPanel.add(txtUsername);
-    fieldsPanel.add(Box.createVerticalStrut(10));
-    fieldsPanel.add(txtPassword);
-    fieldsPanel.add(Box.createVerticalStrut(10));
-  }
 
   private void addPanel(JPanel headerPanel, JPanel fieldsPanel, JPanel registerPanel) {
     add(headerPanel, BorderLayout.NORTH);
@@ -108,38 +70,25 @@ public class SignInUI extends JFrame {
     add(registerPanel, BorderLayout.SOUTH);
   }
 
+
   private JPanel getButtonPanel() {
     JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-    buttonPanel.setBackground(TEXT_COLOR_WHITE);
-    buttonPanel.add(btnSignIn);
+    buttonPanel.setBackground(COLOR_WHITE);
+    buttonPanel.add(button);
     buttonPanel.add(btnRegisterNow);
     return buttonPanel;
   }
+  
 
   private void navBtnSignUp() {
     btnRegisterNow = new JButton("No Account? Register Now");
     btnRegisterNow.addActionListener(this::onRegisterNowClicked);
-    btnRegisterNow.setBackground(TEXT_COLOR_WHITE);
+    btnRegisterNow.setBackground(COLOR_WHITE);
     btnRegisterNow.setForeground(BUTTON_TEXT_COLOR);
     btnRegisterNow.setFocusPainted(false);
     btnRegisterNow.setBorderPainted(false);
   }
 
-  private JPanel getRegisterPanel() {
-    btnSignIn = new JButton("Sign-In");
-    btnSignIn.addActionListener(this::onSignInClicked);
-    btnSignIn.setBackground(BUTTON_BACKGROUND_COLOR);
-    btnSignIn.setForeground(BUTTON_TEXT_COLOR);
-    btnSignIn.setFocusPainted(false);
-    btnSignIn.setBorderPainted(false);
-    btnSignIn.setFont(new Font(FONT_NAME, Font.BOLD, 14));
-
-    JPanel registerPanel = new JPanel();
-    registerPanel.setBackground(TEXT_COLOR_WHITE);
-    registerPanel.add(btnSignIn);
-
-    return registerPanel;
-  }
 
   private void onSignInClicked(ActionEvent event) {
     String enteredUsername = txtUsername.getText();
@@ -166,6 +115,7 @@ public class SignInUI extends JFrame {
     });
   }
 
+  
   private boolean verifyCredentials(String username, String password) {
     try (
         BufferedReader reader = new BufferedReader(
@@ -188,6 +138,7 @@ public class SignInUI extends JFrame {
     }
     return false;
   }
+
 
   private void saveUserInformation(User user) {
     System.out.println("Saving user information: " + user);

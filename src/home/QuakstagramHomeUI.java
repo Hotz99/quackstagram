@@ -1,7 +1,5 @@
 package home;
 
-import explore.ExploreUI;
-import image.ImageUploadUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,22 +18,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import notifications.NotificationsUI;
-import user.InstagramProfileUI;
-import user.User;
 
 import utils.AppPaths;
+import utils.UiUtils;
 
 public class QuakstagramHomeUI extends JFrame {
 
   private static final int WIDTH = 300;
   private static final int HEIGHT = 500;
-  private static final int NAV_ICON_SIZE = 20; // Corrected static size for bottom icons
   private static final int IMAGE_WIDTH = WIDTH - 100; // Width for the image posts
   private static final int IMAGE_HEIGHT = 150; // Height for the image posts
   private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
-
-  private static final String NAVBAR_ICONS = AppPaths.ICONS;
 
   private CardLayout cardLayout;
   private JPanel cardPanel;
@@ -48,72 +41,44 @@ public class QuakstagramHomeUI extends JFrame {
     setMinimumSize(new Dimension(WIDTH, HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
-    cardLayout = new CardLayout();
-    cardPanel = new JPanel(cardLayout);
-
-    homePanel = new JPanel(new BorderLayout());
-    imageViewPanel = new JPanel(new BorderLayout());
 
     initializeUI();
-
-    cardPanel.add(homePanel, "Home");
-    cardPanel.add(imageViewPanel, "ImageView");
-
-    add(cardPanel, BorderLayout.CENTER);
-    cardLayout.show(cardPanel, "Home"); // Start with the home view
-
-    // Header Panel (reuse from InstagramProfileUI or customize for home page)
-    // Header with the Register label
-    JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
-    JLabel lblRegister = new JLabel("🐥 Quackstagram 🐥");
-    lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
-    lblRegister.setForeground(Color.WHITE); // Set the text color to white
-    headerPanel.add(lblRegister);
-    headerPanel.setPreferredSize(new Dimension(WIDTH, 40)); // Give the header a fixed height
-
-    add(headerPanel, BorderLayout.NORTH);
-
-    // Navigation Bar
-    JPanel navigationPanel = new JPanel();
-    navigationPanel.setBackground(new Color(249, 249, 249));
-    navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.X_AXIS));
-    navigationPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    navigationPanel.add(
-        createIconButton(NAVBAR_ICONS + "home.png", "home"));
-    navigationPanel.add(Box.createHorizontalGlue());
-    navigationPanel.add(
-        createIconButton(NAVBAR_ICONS + "search.png", "explore"));
-    navigationPanel.add(Box.createHorizontalGlue());
-    navigationPanel.add(
-        createIconButton(NAVBAR_ICONS + "add.png", "add"));
-    navigationPanel.add(Box.createHorizontalGlue());
-    navigationPanel.add(
-        createIconButton(NAVBAR_ICONS + "heart.png", "notification"));
-    navigationPanel.add(Box.createHorizontalGlue());
-    navigationPanel.add(
-        createIconButton(NAVBAR_ICONS + "profile.png", "profile"));
-
-    add(navigationPanel, BorderLayout.SOUTH);
   }
 
   private void initializeUI() {
+    add(UiUtils.createHeaderPanel("🐥 Quackstagram 🐥", WIDTH, HEIGHT), BorderLayout.NORTH);
+
     // Content Scroll Panel
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Vertical box layout
+
     JScrollPane scrollPane = new JScrollPane(contentPanel);
     scrollPane.setHorizontalScrollBarPolicy(
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); // Never allow horizontal scrolling
+
     String[][] sampleData = createSampleData();
     populateContentPanel(contentPanel, sampleData);
     add(scrollPane, BorderLayout.CENTER);
 
+
     // Set up the home panel
-
-    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-
+    homePanel = new JPanel(new BorderLayout());
     homePanel.add(scrollPane, BorderLayout.CENTER);
+
+    imageViewPanel = new JPanel(new BorderLayout());
+
+    cardPanel = new JPanel(new CardLayout());
+    cardPanel.add(homePanel, "Home");
+    cardPanel.add(imageViewPanel, "ImageView");
+
+    add(cardPanel, BorderLayout.CENTER);
+
+    cardLayout.show(cardPanel, "Home"); // Start with the home view
+
+
+    // Navigation Bar
+    JPanel navigationPanel = UiUtils.createNavigationPanel(this);
+    add(navigationPanel, BorderLayout.SOUTH);
   }
 
   private void populateContentPanel(JPanel panel, String[][] sampleData) {
@@ -235,9 +200,11 @@ public class QuakstagramHomeUI extends JFrame {
       e.printStackTrace();
     }
 
+    if (!updated)
+      return;
+
     // Write updated likes back to image_details.txt
-    if (updated) {
-      try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
+    try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
         writer.write(newContent.toString());
       } catch (IOException e) {
         e.printStackTrace();
@@ -261,7 +228,6 @@ public class QuakstagramHomeUI extends JFrame {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }
   }
 
   private String[][] createSampleData() {
@@ -324,17 +290,6 @@ public class QuakstagramHomeUI extends JFrame {
 
     return sampleData;
   }
-
-  // private JButton createIconButton(String iconPath) {
-  // ImageIcon iconOriginal = new ImageIcon(iconPath);
-  // Image iconScaled = iconOriginal
-  // .getImage()
-  // .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
-  // JButton button = new JButton(new ImageIcon(iconScaled));
-  // button.setBorder(BorderFactory.createEmptyBorder());
-  // button.setContentAreaFilled(false);
-  // return button;
-  // }
 
   private void displayImage(String[] postData) {
     imageViewPanel.removeAll(); // Clear previous content
@@ -418,78 +373,5 @@ public class QuakstagramHomeUI extends JFrame {
 
     // Call displayImage with updated postData
     displayImage(postData);
-  }
-
-  private JButton createIconButton(String iconPath, String buttonType) {
-    ImageIcon iconOriginal = new ImageIcon(iconPath);
-    Image iconScaled = iconOriginal
-        .getImage()
-        .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
-    JButton button = new JButton(new ImageIcon(iconScaled));
-    button.setBorder(BorderFactory.createEmptyBorder());
-    button.setContentAreaFilled(false);
-
-    // Define actions based on button type
-    if ("home".equals(buttonType)) {
-      button.addActionListener(e -> openHomeUI());
-    } else if ("profile".equals(buttonType)) {
-      button.addActionListener(e -> openProfileUI());
-    } else if ("notification".equals(buttonType)) {
-      button.addActionListener(e -> notificationsUI());
-    } else if ("explore".equals(buttonType)) {
-      button.addActionListener(e -> exploreUI());
-    } else if ("add".equals(buttonType)) {
-      button.addActionListener(e -> ImageUploadUI());
-    }
-    return button;
-  }
-
-  private void openProfileUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    String loggedInUsername = "";
-
-    // Read the logged-in user's username from users.txt
-    try (
-        BufferedReader reader = Files.newBufferedReader(
-            Paths.get(AppPaths.USERS))) {
-      String line = reader.readLine();
-      if (line != null) {
-        loggedInUsername = line.split(":")[0].trim();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    User user = new User(loggedInUsername);
-    InstagramProfileUI profileUI = new InstagramProfileUI(user);
-    profileUI.setVisible(true);
-  }
-
-  private void notificationsUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    NotificationsUI notificationsUI = new NotificationsUI();
-    notificationsUI.setVisible(true);
-  }
-
-  private void ImageUploadUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    ImageUploadUI upload = new ImageUploadUI();
-    upload.setVisible(true);
-  }
-
-  private void openHomeUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    QuakstagramHomeUI homeUI = new QuakstagramHomeUI();
-    homeUI.setVisible(true);
-  }
-
-  private void exploreUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    ExploreUI explore = new ExploreUI();
-    explore.setVisible(true);
   }
 }

@@ -30,6 +30,7 @@ public class ExploreUI extends JFrame {
 
   private static final int WIDTH = 300;
   private static final int HEIGHT = 500;
+  private static final int HEIGHT_HEADERPANEL = 40; 
   private static final int NAV_ICON_SIZE = 20; // Size for navigation icons
   private static final int IMAGE_SIZE = WIDTH / 3; // Size for each image in the grid
 
@@ -46,7 +47,7 @@ public class ExploreUI extends JFrame {
     getContentPane().removeAll(); // Clear existing components
     setLayout(new BorderLayout()); // Reset the layout manager
 
-    JPanel headerPanel = UiUtils.createHeaderPanel("Explore 🐥", WIDTH);
+    JPanel headerPanel = UiUtils.createHeaderPanel("Explore 🐥", WIDTH, HEIGHT_HEADERPANEL);
     JPanel navigationPanel = UiUtils.createNavigationPanel(this); // Pass `this` as the current JFrame
     JPanel mainContentPanel = createMainContentPanel();
 

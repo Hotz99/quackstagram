@@ -15,7 +15,7 @@ import javax.swing.*;
 import user.InstagramProfileUI;
 import user.User;
 import utils.UiUtils;
-
+import utils.AppPaths;
 public class NotificationsUI extends JFrame {
 
   private static final int WIDTH = 300;
