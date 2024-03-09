@@ -38,6 +38,15 @@ public class User {
     this.following = new HashSet<>();
   }
 
+  public User(String username, String password) {
+    this.username = username;
+    this.password = password; // Hash password here in a real application
+    this.pictures = new ArrayList<>();
+    this.followers = new HashSet<>();
+    this.following = new HashSet<>();
+  }
+
+
   /**
    * Constructs a new User object with the specified username.
    *

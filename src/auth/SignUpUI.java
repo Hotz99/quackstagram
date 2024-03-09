@@ -3,18 +3,18 @@ package auth;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import utils.AppPaths;
 import utils.BaseFrame;
 
 public class SignUpUI extends BaseFrame { 
+  private userManager userManager;
 
-  public SignUpUI() {
+  public SignUpUI(userManager userManager) {
+    this.userManager = userManager;
+
     setTitle("Quackstagram - Register");
     setSize(APP_WIDTH, APP_HEIGHT);
     setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
@@ -81,42 +81,22 @@ public class SignUpUI extends BaseFrame {
   }
 
   private void onRegisterClicked(ActionEvent event) {
-    String username = txtUsername.getText();
-    String password = txtPassword.getText();
-    String bio = txtBio.getText();
+    String username = getTxtUsername().getText();
+    String password = getTxtPassword().getText();
+    String bio = getTxtBio().getText();
 
-    if (doesUsernameExist(username)) {
+    if (userManager.doesUsernameExist(username)) {
       JOptionPane.showMessageDialog(
           this,
           "Username already exists. Please choose a different username.",
           "Error",
           JOptionPane.ERROR_MESSAGE);
     } else {
-      saveCredentials(username, password, bio);
+      userManager.saveCredentials(username, password, bio);
       handleProfilePictureUpload();
       dispose();
-
-      SwingUtilities.invokeLater(() -> {
-        SignInUI signInFrame = new SignInUI();
-        signInFrame.setVisible(true);
-      });
+      showSignInUI();
     }
-  }
-
-  private boolean doesUsernameExist(String username) {
-    try (
-        BufferedReader reader = new BufferedReader(
-            new FileReader(AppPaths.CREDENTIALS))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith(username + ":")) {
-          return true;
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return false;
   }
 
   private void handleProfilePictureUpload() {
@@ -127,39 +107,18 @@ public class SignUpUI extends BaseFrame {
     fileChooser.setFileFilter(filter);
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       File selectedFile = fileChooser.getSelectedFile();
-      saveProfilePicture(selectedFile, txtUsername.getText());
-    }
-  }
-
-
-  private void saveProfilePicture(File file, String username) {
-    try {
-      BufferedImage image = ImageIO.read(file);
-      File outputFile = new File(AppPaths.PROFILE_IMAGES_STORAGE + username + ".png");
-      ImageIO.write(image, "png", outputFile);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void saveCredentials(String username, String password, String bio) {
-    try (
-        BufferedWriter writer = new BufferedWriter(
-            new FileWriter(
-                AppPaths.CREDENTIALS,
-                true))) {
-      writer.write(username + ":" + password + ":" + bio);
-      writer.newLine();
-    } catch (IOException e) {
-      e.printStackTrace();
+      userManager.saveProfilePicture(selectedFile, txtUsername.getText());
     }
   }
 
   private void openSignInUI() {    
     dispose();
+    showSignInUI();
+  }
 
+  private void showSignInUI() {
     SwingUtilities.invokeLater(() -> {
-      SignInUI signInFrame = new SignInUI();
+      SignInUI signInFrame = new SignInUI(userManager);
       signInFrame.setVisible(true);
     });
   }

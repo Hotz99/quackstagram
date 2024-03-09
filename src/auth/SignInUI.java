@@ -7,6 +7,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.swing.*;
 
 import user.InstagramProfileUI;
@@ -15,11 +18,10 @@ import utils.AppPaths;
 import utils.BaseFrame;
 
 public class SignInUI extends BaseFrame {
+  private userManager userManager;
 
-  
-
-
-  public SignInUI() {
+  public SignInUI(auth.userManager userManager) {
+    this.userManager = userManager;
     setTitle("Quackstagram - Register");
     setSize(APP_WIDTH, APP_HEIGHT);
     setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -31,9 +33,6 @@ public class SignInUI extends BaseFrame {
   private void initializeUI() {
     JPanel headerPanel = createHeaderPanel(LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
-
-
-    
     JPanel fieldsPanel = getFieldsPanel();
     getUsername();
     getPassword();
@@ -43,8 +42,6 @@ public class SignInUI extends BaseFrame {
     addComponents(headerPanel, fieldsPanel, registerPanel);
     getNavSignUpBtn();
     getButtonPanel2();
-
-
   }
 
   private void getButtonPanel2() {
@@ -52,7 +49,6 @@ public class SignInUI extends BaseFrame {
     buttonPanel.setBackground(Color.white);
     buttonPanel.add(button);
     buttonPanel.add(btnRegisterNow);
-
     add(buttonPanel, BorderLayout.SOUTH);
   }
 
@@ -85,79 +81,106 @@ public class SignInUI extends BaseFrame {
   }
 
   
-
-
-
-
-
   private void onSignInClicked(ActionEvent event) {
-    String enteredUsername = txtUsername.getText();
-    String enteredPassword = txtPassword.getText();
+    String enteredUsername = getTxtUsername().getText();
+    String enteredPassword = getTxtPassword().getText();
     System.out.println(enteredUsername + " <-> " + enteredPassword);
     
+    createInstagramProfile(enteredUsername, enteredPassword);
+  }
+
+
+
+  // private void createInstagramProfile(String enteredUsername, String enteredPassword) {
+  //   try {
+  //     if (userManager.verifyCredentials(enteredUsername, enteredPassword)) {
+  //       System.out.println("It worked" + newUser);
+  //       openProfileUser(); 
+  //     } else {
+  //       System.out.println("It Didn't");
+  //       JOptionPane.showMessageDialog(null, "Did not work, dumb fuck", "Alert", JOptionPane.WARNING_MESSAGE);
+  //     }
+  //   }
+  //   catch (Exception e) {
+  //     System.out.println("Error - You need to enter a username and password.");
+  //     e.printStackTrace();
+  //     JOptionPane.showMessageDialog(null, "You need to enter a username and password.", "Alert", JOptionPane.WARNING_MESSAGE);
+  //   }
+  // }
+
+  private void createInstagramProfile(String enteredUsername, String enteredPassword) {
     try {
-      if (verifyCredentials(enteredUsername, enteredPassword)) {
-        System.out.println("It worked" + newUser);
-        dispose();
-        SwingUtilities.invokeLater(() -> {
-          InstagramProfileUI profileUI = new InstagramProfileUI(newUser);
-          profileUI.setVisible(true);
-        }); 
-      } else {
-        System.out.println("It Didn't");
-      }
+        User user = userManager.verifyCredentials(enteredUsername, enteredPassword);
+        if (user != null) {
+            newUser = user;
+            System.out.println("It worked" + newUser);
+            openProfileUser(); 
+        } else {
+            System.out.println("It Didn't");
+            JOptionPane.showMessageDialog(null, "Did not work, dumb fuck", "Alert", JOptionPane.WARNING_MESSAGE);
+        }
     }
     catch (Exception e) {
-      System.out.println("Error - You need to enter a username and password.");
-      e.printStackTrace();
+        System.out.println("Error - You need to enter a username and password.");
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "You need to enter a username and password.", "Alert", JOptionPane.WARNING_MESSAGE);
     }
+}
+
+
+  private void openProfileUser() {
+    dispose();
+    SwingUtilities.invokeLater(() -> {
+      InstagramProfileUI profileUI = new InstagramProfileUI(newUser);
+      profileUI.setVisible(true);
+    });
   }
 
   private void onRegisterNowClicked(ActionEvent event) {
     dispose();
 
     SwingUtilities.invokeLater(() -> {
-      SignUpUI signUpFrame = new SignUpUI();
+      SignUpUI signUpFrame = new SignUpUI(userManager);
       signUpFrame.setVisible(true);
     });
   }
 
   
-  private boolean verifyCredentials(String username, String password) {
-    try (
-        BufferedReader reader = new BufferedReader(
-            new FileReader(
-                AppPaths.CREDENTIALS))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        String[] credentials = line.split(":");
-        if (credentials[0].equals(username) && credentials[1].equals(password)) {
-          String bio = credentials[2];
-          newUser = new User(username, bio, password);
-          System.out.println("New User: " + newUser.getUsername());
-          saveUserInformation(newUser);
+  // private boolean verifyCredentials(String username, String password) {
+  //   try (
+  //       BufferedReader reader = new BufferedReader(
+  //           new FileReader(
+  //               AppPaths.CREDENTIALS))) {
+  //     String line;
+  //     while ((line = reader.readLine()) != null) {
+  //       String[] credentials = line.split(":");
+  //       if (credentials[0].equals(username) && credentials[1].equals(password)) {
+  //         String bio = credentials[2];
+  //         newUser = new User(username, bio, password);
+  //         System.out.println("New User: " + newUser.getUsername());
+  //         saveUserInformation(newUser);
 
-          return true;
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return false;
-  }
+  //         return true;
+  //       }
+  //     }
+  //   } catch (IOException e) {
+  //     e.printStackTrace();
+  //   }
+  //   return false;
+  // }
 
 
-  private void saveUserInformation(User user) {
-    System.out.println("Saving user information: " + user);
+  // private void saveUserInformation(User user) {
+  //   System.out.println("Saving user information: " + user);
 
-    try (
-        BufferedWriter writer = new BufferedWriter(
-            new FileWriter(
-                AppPaths.USERS,
-                false))) {
-      writer.write(user.toString());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
+  //   try (
+  //       BufferedWriter writer = new BufferedWriter(
+  //           new FileWriter(
+  //               AppPaths.USERS,
+  //               false))) {
+  //     writer.write(user.toString());
+  //   } catch (IOException e) {
+  //     e.printStackTrace();
+  //   }
+  // }
 }

@@ -37,9 +37,81 @@ public class BaseFrame extends JFrame {
   public JButton btnUploadPhoto;
   public JButton button, btnRegisterNow;
   public User newUser;
-  //fucked
-  public JPanel bioPanel;
 
+
+
+
+  public JTextField getTxtUsername() {
+    return txtUsername;
+  }
+
+  public void setTxtUsername(JTextField txtUsername) {
+    this.txtUsername = txtUsername;
+  }
+
+  public JTextField getTxtPassword() {
+    return txtPassword;
+  }
+
+  public void setTxtPassword(JTextField txtPassword) {
+    this.txtPassword = txtPassword;
+  }
+
+  public JTextField getTxtBio() {
+    return txtBio;
+  }
+
+  public void setTxtBio(JTextField txtBio) {
+    this.txtBio = txtBio;
+  }
+
+  public JButton getBtnRegister() {
+    return btnRegister;
+  }
+
+  public void setBtnRegister(JButton btnRegister) {
+    this.btnRegister = btnRegister;
+  }
+
+  public JLabel getLblPhoto() {
+    return lblPhoto;
+  }
+
+  public void setLblPhoto(JLabel lblPhoto) {
+    this.lblPhoto = lblPhoto;
+  }
+
+  public JButton getBtnUploadPhoto() {
+    return btnUploadPhoto;
+  }
+
+  public void setBtnUploadPhoto(JButton btnUploadPhoto) {
+    this.btnUploadPhoto = btnUploadPhoto;
+  }
+
+  public JButton getButton() {
+    return button;
+  }
+
+  public void setButton(JButton button) {
+    this.button = button;
+  }
+
+  public JButton getBtnRegisterNow() {
+    return btnRegisterNow;
+  }
+
+  public void setBtnRegisterNow(JButton btnRegisterNow) {
+    this.btnRegisterNow = btnRegisterNow;
+  }
+
+  public User getNewUser() {
+    return newUser;
+  }
+
+  public void setNewUser(User newUser) {
+    this.newUser = newUser;
+  }
 
 
   public final String[] iconPaths = {
@@ -235,13 +307,6 @@ public class BaseFrame extends JFrame {
     add(registerPanel, BorderLayout.SOUTH);
   }
   
-
-  // public JPanel registerPanel() {
-  //   JPanel registerPanel = new JPanel(new BorderLayout()); 
-  //   registerPanel.setBackground(Color.WHITE);
-  //   registerPanel.add(button, BorderLayout.CENTER);
-  //   return registerPanel;
-  // }
 
   public void photoUploadPanel(JPanel fieldsPanel) {
     JPanel photoUploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
