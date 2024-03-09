@@ -58,35 +58,6 @@ public class userManager {
   }
 
 
-
-
-
-
-
-  
-//   public boolean verifyCredentials(String username, String password) {
-//     try (
-//         BufferedReader reader = new BufferedReader(
-//             new FileReader(
-//                 AppPaths.CREDENTIALS))) {
-//       String line;
-//       while ((line = reader.readLine()) != null) {
-//         String[] credentials = line.split(":");
-//         if (credentials[0].equals(username) && credentials[1].equals(password)) {
-//           String bio = credentials[2];
-//           newUser = new User(username, bio, password);
-//           System.out.println("New User: " + newUser.getUsername());
-//           saveUserInformation(newUser);
-
-//           return true;
-//         }
-//       }
-//     } catch (IOException e) {
-//       e.printStackTrace();
-//     }
-//     return false;
-//   }
-
 public User verifyCredentials(String enteredUsername, String enteredPassword) {
     try (
         BufferedReader reader = new BufferedReader(
