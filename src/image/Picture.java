@@ -25,6 +25,7 @@ public class Picture {
 
   // Increment likes count
   public void like() {
+    System.out.println("Liked the picture!");
     likesCount++;
   }
 
