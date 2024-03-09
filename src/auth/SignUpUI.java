@@ -33,7 +33,7 @@ public class SignUpUI extends BaseFrame {
     addStruct(photoPanel, fieldsPanel, true);
     btnUploadImage();
     photoUploadPanel(fieldsPanel);
-    btnRegister(REGISTER_LABEL);
+    setupBtnRegister(REGISTER_LABEL);
     JPanel registerPanel = registerPanel();
     addComponents(headerPanel, fieldsPanel, registerPanel);
     signInButton(registerPanel);
@@ -59,7 +59,7 @@ public class SignUpUI extends BaseFrame {
     return registerPanel;
   }
 
-  private void btnRegister(String label) {
+  private void setupBtnRegister(String label) {
     btnRegister = new JButton(label);
     btnRegister.addActionListener(this::onRegisterClicked);
     btnRegister.setBackground(new Color(255, 90, 95));

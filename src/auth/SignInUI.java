@@ -37,10 +37,10 @@ public class SignInUI extends BaseFrame {
     getUsername();
     getPassword();
     addStruct(photoPanel, fieldsPanel, false);
-    getButton(SIGNIN_LABEL);
+    setupButton(SIGNIN_LABEL);
     JPanel registerPanel = getRegisterPanel();
     addComponents(headerPanel, fieldsPanel, registerPanel);
-    getNavSignUpBtn();
+    setupNavSignUpBtn();
     getButtonPanel2();
   }
 
@@ -52,7 +52,7 @@ public class SignInUI extends BaseFrame {
     add(buttonPanel, BorderLayout.SOUTH);
   }
 
-  private void getNavSignUpBtn() {
+  private void setupNavSignUpBtn() {
     btnRegisterNow = new JButton("No Account? Register Now");
     btnRegisterNow.addActionListener(this::onRegisterNowClicked);
     btnRegisterNow.setBackground(Color.WHITE); 
@@ -61,9 +61,7 @@ public class SignInUI extends BaseFrame {
     btnRegisterNow.setBorderPainted(false);
   }
 
- 
-
-  private void getButton(String label) {
+  private void setupButton(String label) {
     button = new JButton(label);
     button.addActionListener(this::onSignInClicked);
     button.setBackground(new Color(255, 90, 95)); 
