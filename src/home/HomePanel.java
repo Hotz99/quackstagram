@@ -1,5 +1,6 @@
 package home;
 
+import app.App;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,12 +19,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
-import app.App;
 import utils.AppPaths;
 import utils.BasePanel;
 
 public class HomePanel extends BasePanel {
+
   private static final int IMAGE_WIDTH = App.WIDTH - 100; // Width for the image posts
   private static final int IMAGE_HEIGHT = 150; // Height for the image posts
   private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
@@ -34,7 +34,6 @@ public class HomePanel extends BasePanel {
   private JPanel imageViewPanel;
 
   public HomePanel() {
-
     add(createHeaderPanel("Quackstagram Home"), BorderLayout.NORTH);
 
     // Content Scroll Panel
@@ -43,7 +42,8 @@ public class HomePanel extends BasePanel {
 
     JScrollPane scrollPane = new JScrollPane(contentPanel);
     scrollPane.setHorizontalScrollBarPolicy(
-        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); // Never allow horizontal scrolling
+      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+    ); // Never allow horizontal scrolling
 
     String[][] sampleData = createSampleData();
     populateContentPanel(contentPanel, sampleData);
@@ -85,10 +85,11 @@ public class HomePanel extends BasePanel {
       try {
         BufferedImage originalImage = ImageIO.read(new File(postData[3]));
         BufferedImage croppedImage = originalImage.getSubimage(
-            0,
-            0,
-            Math.min(originalImage.getWidth(), IMAGE_WIDTH),
-            Math.min(originalImage.getHeight(), IMAGE_HEIGHT));
+          0,
+          0,
+          Math.min(originalImage.getWidth(), IMAGE_WIDTH),
+          Math.min(originalImage.getHeight(), IMAGE_HEIGHT)
+        );
         ImageIcon imageIcon = new ImageIcon(croppedImage);
         imageLabel.setIcon(imageIcon);
       } catch (IOException ex) {
@@ -108,12 +109,13 @@ public class HomePanel extends BasePanel {
       likeButton.setOpaque(true);
       likeButton.setBorderPainted(false); // Remove border
       likeButton.addActionListener(
-          new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              handleLikeAction(imageId, likesLabel);
-            }
-          });
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            handleLikeAction(imageId, likesLabel);
+          }
+        }
+      );
 
       itemPanel.add(nameLabel);
       itemPanel.add(imageLabel);
@@ -125,12 +127,13 @@ public class HomePanel extends BasePanel {
 
       // Make the image clickable
       imageLabel.addMouseListener(
-          new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-              displayImage(postData); // Call a method to switch to the image view
-            }
-          });
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            displayImage(postData); // Call a method to switch to the image view
+          }
+        }
+      );
 
       // Grey spacing panel
       JPanel spacingPanel = new JPanel();
@@ -141,20 +144,21 @@ public class HomePanel extends BasePanel {
   }
 
   private void handleLikeAction(String imageId, JLabel likesLabel) {
-    Path detailsPath = Paths.get(
-        AppPaths.IMAGE_DETAILS);
+    Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
     StringBuilder newContent = new StringBuilder();
     boolean updated = false;
     String currentUser = "";
     String imageOwner = "";
     String timestamp = LocalDateTime
-        .now()
-        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+      .now()
+      .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
     // Retrieve the current user from users.txt
     try (
-        BufferedReader userReader = Files.newBufferedReader(
-            Paths.get(AppPaths.USERS))) {
+      BufferedReader userReader = Files.newBufferedReader(
+        Paths.get(AppPaths.USERS)
+      )
+    ) {
       String line = userReader.readLine();
       if (line != null) {
         currentUser = line.split(":")[0].trim();
@@ -185,8 +189,7 @@ public class HomePanel extends BasePanel {
       e.printStackTrace();
     }
 
-    if (!updated)
-      return;
+    if (!updated) return;
 
     // Write updated likes back to image_details.txt
     try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
@@ -197,17 +200,19 @@ public class HomePanel extends BasePanel {
 
     // Record the like in notifications.txt
     String notification = String.format(
-        "%s; %s; %s; %s\n",
-        imageOwner,
-        currentUser,
-        imageId,
-        timestamp);
+      "%s; %s; %s; %s\n",
+      imageOwner,
+      currentUser,
+      imageId,
+      timestamp
+    );
     try (
-        BufferedWriter notificationWriter = Files.newBufferedWriter(
-            Paths.get(
-                AppPaths.NOTIFICATIONS),
-            StandardOpenOption.CREATE,
-            StandardOpenOption.APPEND)) {
+      BufferedWriter notificationWriter = Files.newBufferedWriter(
+        Paths.get(AppPaths.NOTIFICATIONS),
+        StandardOpenOption.CREATE,
+        StandardOpenOption.APPEND
+      )
+    ) {
       notificationWriter.write(notification);
     } catch (IOException e) {
       e.printStackTrace();
@@ -217,8 +222,8 @@ public class HomePanel extends BasePanel {
   private String[][] createSampleData() {
     String currentUser = "";
     try (
-        BufferedReader reader = Files.newBufferedReader(
-            Paths.get(AppPaths.USERS))) {
+      BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.USERS))
+    ) {
       String line = reader.readLine();
       if (line != null) {
         currentUser = line.split(":")[0].trim();
@@ -229,8 +234,10 @@ public class HomePanel extends BasePanel {
 
     String followedUsers = "";
     try (
-        BufferedReader reader = Files.newBufferedReader(
-            Paths.get(AppPaths.FOLLOWING))) {
+      BufferedReader reader = Files.newBufferedReader(
+        Paths.get(AppPaths.FOLLOWING)
+      )
+    ) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.startsWith(currentUser + ":")) {
@@ -247,9 +254,10 @@ public class HomePanel extends BasePanel {
     int count = 0;
 
     try (
-        BufferedReader reader = Files.newBufferedReader(
-            Paths.get(
-                AppPaths.IMAGE_DETAILS))) {
+      BufferedReader reader = Files.newBufferedReader(
+        Paths.get(AppPaths.IMAGE_DETAILS)
+      )
+    ) {
       String line;
       while ((line = reader.readLine()) != null && count < tempData.length) {
         String[] details = line.split(", ");
@@ -259,13 +267,13 @@ public class HomePanel extends BasePanel {
           imagePoster = splitDetails[1];
         }
         if (followedUsers.contains(imagePoster)) {
-          String imagePath = AppPaths.UPLOADED +
-              details[0].split(": ")[1] +
-              ".png"; // Assuming PNG format
+          String imagePath =
+            AppPaths.UPLOADED + details[0].split(": ")[1] + ".png"; // Assuming PNG format
           String description = details[2].split(": ")[1];
           String likes = "Likes: " + details[4].split(": ")[1];
 
-          tempData[count++] = new String[] { imagePoster, description, likes, imagePath };
+          tempData[count++] =
+            new String[] { imagePoster, description, likes, imagePath };
         }
       }
     } catch (IOException e) {
@@ -292,10 +300,11 @@ public class HomePanel extends BasePanel {
     try {
       BufferedImage originalImage = ImageIO.read(new File(postData[3]));
       BufferedImage croppedImage = originalImage.getSubimage(
-          0,
-          0,
-          Math.min(originalImage.getWidth(), App.WIDTH - 20),
-          Math.min(originalImage.getHeight(), App.HEIGHT - 40));
+        0,
+        0,
+        Math.min(originalImage.getWidth(), App.WIDTH - 20),
+        Math.min(originalImage.getHeight(), App.HEIGHT - 40)
+      );
       ImageIcon imageIcon = new ImageIcon(croppedImage);
       fullSizeImageLabel.setIcon(imageIcon);
     } catch (IOException ex) {
@@ -316,13 +325,14 @@ public class HomePanel extends BasePanel {
     likeButton.setOpaque(true);
     likeButton.setBorderPainted(false); // Remove border
     likeButton.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            handleLikeAction(imageId, likesLabel); // Update this line
-            refreshDisplayImage(postData, imageId); // Refresh the view
-          }
-        });
+      new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          handleLikeAction(imageId, likesLabel); // Update this line
+          refreshDisplayImage(postData, imageId); // Refresh the view
+        }
+      }
+    );
 
     // Information panel at the bottom
     JPanel infoPanel = new JPanel();
@@ -344,9 +354,10 @@ public class HomePanel extends BasePanel {
   private void refreshDisplayImage(String[] postData, String imageId) {
     // Read updated likes count from image_details.txt
     try (
-        BufferedReader reader = Files.newBufferedReader(
-            Paths.get(
-                AppPaths.IMAGE_DETAILS))) {
+      BufferedReader reader = Files.newBufferedReader(
+        Paths.get(AppPaths.IMAGE_DETAILS)
+      )
+    ) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.contains("ImageID: " + imageId)) {
