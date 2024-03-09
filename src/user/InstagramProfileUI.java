@@ -14,9 +14,9 @@ import java.util.stream.Stream;
 import javax.swing.*;
 import notifications.NotificationsUI;
 import utils.AppPaths;
-import utils.UiUtils;
+import utils.BaseFrame;
 
-public class InstagramProfileUI extends JFrame {
+public class InstagramProfileUI extends BaseFrame {
 
   private static final int WIDTH = 300;
   private static final int HEIGHT = 500;
@@ -352,24 +352,6 @@ public class InstagramProfileUI extends JFrame {
     }
   }
 
-  private JPanel createNavigationPanel() {
-    // Navigation Bar
-    JPanel navigationPanel = new JPanel();
-    navigationPanel.setBackground(new Color(249, 249, 249));
-    navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.X_AXIS));
-    navigationPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    for (int i = 0; i < UiUtils.iconPaths.length; i++) {
-      navigationPanel.add(
-          createIconButton(
-              UiUtils.iconPaths[i],
-              UiUtils.buttonTypes[i]));
-      navigationPanel.add(Box.createHorizontalGlue());
-    }
-
-    return navigationPanel;
-  }
-
   private void initializeImageGrid() {
     contentPanel.removeAll(); // Clear existing content
     contentPanel.setLayout(new GridLayout(0, 3, 5, 5)); // Grid layout for image grid
@@ -446,72 +428,5 @@ public class InstagramProfileUI extends JFrame {
     label.setFont(new Font("Arial", Font.BOLD, 12));
     label.setForeground(Color.BLACK);
     return label;
-  }
-
-  private JButton createIconButton(String iconPath, String buttonType) {
-    System.out.println("Creating icon button: " + buttonType); // Debug statement
-
-    ImageIcon iconOriginal = new ImageIcon(iconPath);
-    if (iconOriginal.getIconWidth() == -1) {
-      System.out.println("Failed to load icon: " + iconPath); // Debug statement
-    }
-
-    Image iconScaled = iconOriginal
-        .getImage()
-        .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
-    JButton button = new JButton(new ImageIcon(iconScaled));
-    button.setBorder(BorderFactory.createEmptyBorder());
-    button.setContentAreaFilled(false);
-
-    // Define actions based on button type
-    if ("home".equals(buttonType)) {
-      button.addActionListener(e -> openHomeUI());
-    } else if ("profile".equals(buttonType)) {
-      //
-    } else if ("notification".equals(buttonType)) {
-      button.addActionListener(e -> notificationsUI());
-    } else if ("explore".equals(buttonType)) {
-      button.addActionListener(e -> exploreUI());
-    } else if ("add".equals(buttonType)) {
-      button.addActionListener(e -> ImageUploadUI());
-    }
-
-    System.out.println("Created icon button: " + buttonType); // Debug statement
-    return button;
-  }
-
-  private void ImageUploadUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    ImageUploadUI upload = new ImageUploadUI();
-    upload.setVisible(true);
-  }
-
-  private void openProfileUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    InstagramProfileUI profileUI = new InstagramProfileUI();
-    profileUI.setVisible(true);
-  }
-
-  private void notificationsUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    NotificationsUI notificationsUI = new NotificationsUI();
-    notificationsUI.setVisible(true);
-  }
-
-  private void openHomeUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    QuakstagramHomeUI homeUI = new QuakstagramHomeUI();
-    homeUI.setVisible(true);
-  }
-
-  private void exploreUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    ExploreUI explore = new ExploreUI();
-    explore.setVisible(true);
   }
 }

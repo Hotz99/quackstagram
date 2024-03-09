@@ -8,7 +8,7 @@ import utils.AppPaths;
 
 public class ImageLikesManager {
 
-  private final String likesFilePath = AppPaths.DATA + "likes.txt";
+  private final String likesFilePath = AppPaths.LIKES;
 
   // Method to like an image
   public void likeImage(String username, String imageID) throws IOException {

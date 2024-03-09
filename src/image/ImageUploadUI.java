@@ -12,19 +12,13 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.AppPaths;
-import utils.UiUtils;
+import utils.BaseFrame;
 
-public class ImageUploadUI extends JFrame {
-
-  private static final int WIDTH = 300;
-  private static final int HEIGHT = 500;
-  private static final int HEIGHT_HEADERPANEL = 40; 
-  private static final int NAV_ICON_SIZE = 20; // Size for navigation icons
+public class ImageUploadUI extends BaseFrame {
   private JLabel imagePreviewLabel;
   private JTextArea bioTextArea;
   private JButton uploadButton;
   private JButton saveButton;
-  private boolean imageUploaded = false;
 
   public ImageUploadUI() {
     setTitle("Upload Image");
@@ -36,8 +30,8 @@ public class ImageUploadUI extends JFrame {
   }
 
   private void initializeUI() {
-    JPanel headerPanel = UiUtils.createHeaderPanel(" Upload Image 🐥", WIDTH, HEIGHT_HEADERPANEL); // Reuse the createHeaderPanel method
-    JPanel navigationPanel = UiUtils.createNavigationPanel(this); // Reuse the createNavigationPanel method
+    JPanel headerPanel = createHeaderPanel(" Upload Image 🐥"); // Reuse the createHeaderPanel method
+    JPanel navigationPanel = createNavigationPanel(); // Reuse the createNavigationPanel method
 
     // Main content panel
     JPanel contentPanel = new JPanel();
@@ -65,19 +59,6 @@ public class ImageUploadUI extends JFrame {
     add(headerPanel, BorderLayout.NORTH);
     add(contentPanel, BorderLayout.CENTER);
     add(navigationPanel, BorderLayout.SOUTH);
-  }
-
-  private JPanel createHeaderPanel() {
-    // Header Panel (reuse from InstagramProfileUI or customize for home page)
-    // Header with the Register label
-    JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
-    JLabel lblRegister = new JLabel(" Upload Image 🐥");
-    lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
-    lblRegister.setForeground(Color.WHITE); // Set the text color to white
-    headerPanel.add(lblRegister);
-    headerPanel.setPreferredSize(new Dimension(WIDTH, 40)); // Give the header a fixed height
-    return headerPanel;
   }
 
   private JLabel createImagePreviewLabel() {
@@ -158,9 +139,6 @@ public class ImageUploadUI extends JFrame {
         imageIcon.setImage(getScaledImage(imageIcon.getImage(), imagePreviewLabel));
 
         imagePreviewLabel.setIcon(imageIcon);
-
-        // Update the flag to indicate that an image has been uploaded
-        imageUploaded = true;
 
         // Change the text of the upload button
         uploadButton.setText("Upload Another Image");

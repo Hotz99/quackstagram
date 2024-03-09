@@ -10,89 +10,74 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import utils.AppPaths;
-import utils.UiUtils;
+import utils.BaseFrame;
 
-public class SignUpUI extends JFrame {
-
-  private static final int WIDTH = 300;
-  private static final int HEIGHT = 500;
-  private static final int HEIGHT_HEADERPANEL = 40; 
-  private static final Color BUTTON_TEXT_COLOR = Color.BLACK;
-  private static final Color COLOR_WHITE = Color.WHITE;
-  private static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
-  private static final int SIZE = 16; 
-  private static final String FONT_NAME = "Arial";
-  private static final String LABEL = "Quackstagram 🐥";
-  private static final String REGISTER_LABEL = "Register";
-
-  private JTextField txtUsername;
-  private JTextField txtPassword;
-  private JTextField txtBio;
-  private JButton btnRegister;
-  private JLabel lblPhoto;
-  private JButton btnUploadPhoto;
-
-  private JButton button;
+public class SignUpUI extends BaseFrame { 
 
   public SignUpUI() {
     setTitle("Quackstagram - Register");
-    setSize(WIDTH, HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setSize(APP_WIDTH, APP_HEIGHT);
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout(10, 10));
     initializeUI();
   }
 
   private void initializeUI() {
-    JPanel headerPanel = UiUtils.createHeaderPanel(LABEL, WIDTH, HEIGHT_HEADERPANEL);
-    JPanel photoPanel = UiUtils.getPhotoPanel(lblPhoto);
-    JPanel fieldsPanel = UiUtils.getFieldsPanel(photoPanel, true);
-    getPhotoUploadButton(btnUploadPhoto ,fieldsPanel);
-    JPanel registerPanel = UiUtils.getRegisterPanel(
-      REGISTER_LABEL, 
-      BUTTON_BACKGROUND_COLOR, 
-      BUTTON_TEXT_COLOR, 
-      FONT_NAME, 
-      14, 
-      this::onRegisterClicked 
-  );
+    JPanel headerPanel = createHeaderPanel(LABEL);
+    JPanel photoPanel = getPhotoPanel(lblPhoto);
+    JPanel fieldsPanel = getFieldsPanel();
+    getUsername();
+    getPassword();
+    getBio();
+    addStruct(photoPanel, fieldsPanel, true);
+    btnUploadImage();
+    photoUploadPanel(fieldsPanel);
+    btnRegister(REGISTER_LABEL);
+    JPanel registerPanel = registerPanel();
+    addComponents(headerPanel, fieldsPanel, registerPanel);
+    signInButton(registerPanel);
+  }
 
-
-
-    add(headerPanel, BorderLayout.NORTH);
-    add(fieldsPanel, BorderLayout.CENTER);
-    add(registerPanel, BorderLayout.SOUTH);
-
-
+  private void signInButton(JPanel registerPanel) {
     button = new JButton("Already have an account? Sign In");
-    button.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
+    button.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             openSignInUI();
-          }
-        });
+        }
+    });
     registerPanel.add(button, BorderLayout.SOUTH);
   }
 
 
 
+  private JPanel registerPanel() {
+    JPanel registerPanel = new JPanel(new BorderLayout());
+    registerPanel.setBackground(Color.WHITE); 
+    registerPanel.add(btnRegister, BorderLayout.CENTER);
+    return registerPanel;
+  }
+
+  private void btnRegister(String label) {
+    btnRegister = new JButton(label);
+    btnRegister.addActionListener(this::onRegisterClicked);
+    btnRegister.setBackground(new Color(255, 90, 95));
+    btnRegister.setForeground(Color.BLACK); 
+    btnRegister.setFocusPainted(false);
+    btnRegister.setBorderPainted(false);
+    btnRegister.setFont(new Font("Arial", Font.BOLD, 14));
+  }
 
 
-
-  private void getPhotoUploadButton(JButton btnUploadPhoto, JPanel fieldsPanel) {
+  private void btnUploadImage() {
     btnUploadPhoto = new JButton("Upload Photo");
-
-    btnUploadPhoto.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
+    btnUploadPhoto.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             handleProfilePictureUpload();
-          }
-        });
-    JPanel photoUploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    photoUploadPanel.add(btnUploadPhoto);
-    fieldsPanel.add(photoUploadPanel);
+        }
+    });
   }
 
   private void onRegisterClicked(ActionEvent event) {

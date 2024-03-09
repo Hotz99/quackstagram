@@ -20,12 +20,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import utils.AppPaths;
-import utils.UiUtils;
+import utils.BaseFrame;
 
-public class QuakstagramHomeUI extends JFrame {
-
-  private static final int WIDTH = 300;
-  private static final int HEIGHT = 500;
+public class QuakstagramHomeUI extends BaseFrame {
   private static final int IMAGE_WIDTH = WIDTH - 100; // Width for the image posts
   private static final int IMAGE_HEIGHT = 150; // Height for the image posts
   private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
@@ -46,7 +43,7 @@ public class QuakstagramHomeUI extends JFrame {
   }
 
   private void initializeUI() {
-    add(UiUtils.createHeaderPanel("🐥 Quackstagram 🐥", WIDTH, HEIGHT), BorderLayout.NORTH);
+    add(createHeaderPanel("🐥 Quackstagram 🐥"), BorderLayout.NORTH);
 
     // Content Scroll Panel
     JPanel contentPanel = new JPanel();
@@ -77,7 +74,7 @@ public class QuakstagramHomeUI extends JFrame {
 
 
     // Navigation Bar
-    JPanel navigationPanel = UiUtils.createNavigationPanel(this);
+    JPanel navigationPanel = createNavigationPanel();
     add(navigationPanel, BorderLayout.SOUTH);
   }
 
@@ -220,8 +217,7 @@ public class QuakstagramHomeUI extends JFrame {
       try (
           BufferedWriter notificationWriter = Files.newBufferedWriter(
               Paths.get(
-                  AppPaths.DATA +
-                      "notifications.txt"),
+                  AppPaths.NOTIFICATIONS),
               StandardOpenOption.CREATE,
               StandardOpenOption.APPEND)) {
         notificationWriter.write(notification);

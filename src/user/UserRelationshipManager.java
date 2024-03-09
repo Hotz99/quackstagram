@@ -4,14 +4,15 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import utils.AppPaths;
+
 /**
  * Manages relationships between users, including followers and following.
  * Loads and saves user relationships from a file.
  */
 public class UserRelationshipManager {
 
-  private static final String FOLLOWERS_FILE_PATH =
-    "quackstagram/Quackstagram_Code/resources/data/followers.txt";
+  private static final String FOLLOWERS_FILE_PATH = AppPaths.FOLLOWERS;
   private Map<String, User> users = new HashMap<>();
 
   /**

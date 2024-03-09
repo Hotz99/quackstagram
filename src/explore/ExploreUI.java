@@ -24,15 +24,10 @@ import notifications.NotificationsUI;
 import user.InstagramProfileUI;
 import user.User;
 import utils.AppPaths;
-import utils.UiUtils;
+import utils.BaseFrame;
 
-public class ExploreUI extends JFrame {
-
-  private static final int WIDTH = 300;
-  private static final int HEIGHT = 500;
-  private static final int HEIGHT_HEADERPANEL = 40; 
-  private static final int NAV_ICON_SIZE = 20; // Size for navigation icons
-  private static final int IMAGE_SIZE = WIDTH / 3; // Size for each image in the grid
+public class ExploreUI extends BaseFrame {
+  private final int IMAGE_SIZE = this.APP_WIDTH / 3; // Size for each image in the grid
 
   public ExploreUI() {
     setTitle("Explore");
@@ -47,8 +42,8 @@ public class ExploreUI extends JFrame {
     getContentPane().removeAll(); // Clear existing components
     setLayout(new BorderLayout()); // Reset the layout manager
 
-    JPanel headerPanel = UiUtils.createHeaderPanel("Explore 🐥", WIDTH, HEIGHT_HEADERPANEL);
-    JPanel navigationPanel = UiUtils.createNavigationPanel(this); // Pass `this` as the current JFrame
+    JPanel headerPanel = createHeaderPanel("Explore 🐥");
+    JPanel navigationPanel = createNavigationPanel(); // Pass `this` as the current JFrame
     JPanel mainContentPanel = createMainContentPanel();
 
     // Add panels to the frame
@@ -104,46 +99,14 @@ public class ExploreUI extends JFrame {
     }
     return imageGridPanel;
   }
-  
 
-  private JPanel createHeaderPanel() {
-    // Header Panel (reuse from InstagramProfileUI or customize for home page)
-    // Header with the Register label
-    JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
-    JLabel lblRegister = new JLabel(" Explore 🐥");
-    lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
-    lblRegister.setForeground(Color.WHITE); // Set the text color to white
-    headerPanel.add(lblRegister);
-    headerPanel.setPreferredSize(new Dimension(WIDTH, 40)); // Give the header a fixed height
-    return headerPanel;
-  }
-
-  private JPanel createNavigationPanel() {
-    // Create and return the navigation panel
-    // Navigation Bar
-    JPanel navigationPanel = new JPanel();
-    navigationPanel.setBackground(new Color(249, 249, 249));
-    navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.X_AXIS));
-    navigationPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    for (int i = 0; i < UiUtils.iconPaths.length; i++) {
-      navigationPanel.add(
-          createIconButton(
-              UiUtils.iconPaths[i],
-              UiUtils.buttonTypes[i]));
-      navigationPanel.add(Box.createHorizontalGlue());
-    }
-
-    return navigationPanel;
-  }
 
   private void displayImage(String imagePath) {
     getContentPane().removeAll();
     setLayout(new BorderLayout());
 
     // Add the header and navigation panels back
-    add(createHeaderPanel(), BorderLayout.NORTH);
+    add(createHeaderPanel("Explore 🐥"), BorderLayout.NORTH);
     add(createNavigationPanel(), BorderLayout.SOUTH);
 
     // Extract image ID from the imagePath
@@ -218,7 +181,7 @@ public class ExploreUI extends JFrame {
     add(bottomPanel, BorderLayout.SOUTH);
 
     // Re-add the header and navigation panels
-    add(createHeaderPanel(), BorderLayout.NORTH);
+    add(createHeaderPanel("Explore 🐥"), BorderLayout.NORTH);
     add(createNavigationPanel(), BorderLayout.SOUTH);
 
     // Panel for the back button
@@ -233,7 +196,7 @@ public class ExploreUI extends JFrame {
 
     backButton.addActionListener(e -> {
       getContentPane().removeAll();
-      add(createHeaderPanel(), BorderLayout.NORTH);
+      add(createHeaderPanel("Explore 🐥"), BorderLayout.NORTH);
       add(createMainContentPanel(), BorderLayout.CENTER);
       add(createNavigationPanel(), BorderLayout.SOUTH);
       revalidate();
@@ -262,43 +225,4 @@ public class ExploreUI extends JFrame {
     revalidate();
     repaint();
   }
-
-  private JButton createIconButton(String iconPath, String buttonType) {
-    ImageIcon iconOriginal = new ImageIcon(iconPath);
-    Image iconScaled = iconOriginal
-        .getImage()
-        .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
-    JButton button = new JButton(new ImageIcon(iconScaled));
-    button.setBorder(BorderFactory.createEmptyBorder());
-    button.setContentAreaFilled(false);
-
-    // Define actions based on button type
-    switch (buttonType) {
-      case "home":
-        button.addActionListener(e -> UiUtils.openHomeUI());
-        break;
-      case "profile":
-        button.addActionListener(e -> UiUtils.openProfileUI());
-        break;
-      case "notification":
-        button.addActionListener(e -> UiUtils.notificationsUI());
-        break;
-      case "explore":
-        button.addActionListener(e -> UiUtils.exploreUI());
-        break;
-      case "add":
-        button.addActionListener(e -> ImageUploadUI());
-        break;
-    }
-    return button;
-  }
-
-  private void ImageUploadUI() {
-    // Open InstagramProfileUI frame
-    this.dispose();
-    ImageUploadUI upload = new ImageUploadUI();
-    upload.setVisible(true);
-  }
-
-  
 }

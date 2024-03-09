@@ -8,36 +8,20 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.*;
-import javax.xml.crypto.Data;
 
 import user.InstagramProfileUI;
 import user.User;
 import utils.AppPaths;
-import utils.UiUtils;
+import utils.BaseFrame;
 
-public class SignInUI extends JFrame {
+public class SignInUI extends BaseFrame {
 
-
-  private static final int WIDTH = 300;
-  private static final int HEIGHT = 500;
-  private static final int HEIGHT_HEADERPANEL = 40; 
-  private static final Color COLOR_WHITE = Color.WHITE;
-  private static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
-  private static final Color BUTTON_TEXT_COLOR = Color.BLACK;
-  private static final String FONT_NAME = "Arial";
-  private static final String LABEL = "Quackstagram 🐥";
-  private static final String SIGNIN_LABEL = "Sign-In";
   
 
-  private JTextField txtUsername;
-  private JTextField txtPassword;
-  private JButton button, btnRegisterNow;
-  private JLabel lblPhoto;
-  private User newUser;
 
   public SignInUI() {
     setTitle("Quackstagram - Register");
-    setSize(WIDTH, HEIGHT);
+    setSize(APP_WIDTH, APP_HEIGHT);
     setMinimumSize(new Dimension(WIDTH, HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout(10, 10));
@@ -45,64 +29,87 @@ public class SignInUI extends JFrame {
   }
 
   private void initializeUI() {
-    JPanel headerPanel = UiUtils.createHeaderPanel(LABEL, WIDTH, HEIGHT_HEADERPANEL);
-    JPanel photoPanel = UiUtils.getPhotoPanel(lblPhoto);
-    JPanel fieldsPanel = UiUtils.getFieldsPanel(photoPanel, false);
-    JPanel registerPanel = UiUtils.getRegisterPanel(
-      SIGNIN_LABEL, 
-      BUTTON_BACKGROUND_COLOR, 
-      BUTTON_TEXT_COLOR, 
-      FONT_NAME, 
-      14, 
-      this::onSignInClicked 
-  );
+    JPanel headerPanel = createHeaderPanel(LABEL);
+    JPanel photoPanel = getPhotoPanel(lblPhoto);
 
-    addPanel(headerPanel, fieldsPanel, registerPanel);
-    navBtnSignUp();
-    JPanel buttonPanel = getButtonPanel();
+
+    
+    JPanel fieldsPanel = getFieldsPanel();
+    getUsername();
+    getPassword();
+    addStruct(photoPanel, fieldsPanel, false);
+    getButton(SIGNIN_LABEL);
+    JPanel registerPanel = getRegisterPanel();
+    addComponents(headerPanel, fieldsPanel, registerPanel);
+    getNavSignUpBtn();
+    getButtonPanel2();
+
+
+  }
+
+  private void getButtonPanel2() {
+    JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10)); 
+    buttonPanel.setBackground(Color.white);
+    buttonPanel.add(button);
+    buttonPanel.add(btnRegisterNow);
+
     add(buttonPanel, BorderLayout.SOUTH);
   }
 
-
-  private void addPanel(JPanel headerPanel, JPanel fieldsPanel, JPanel registerPanel) {
-    add(headerPanel, BorderLayout.NORTH);
-    add(fieldsPanel, BorderLayout.CENTER);
-    add(registerPanel, BorderLayout.SOUTH);
-  }
-
-
-  private JPanel getButtonPanel() {
-    JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-    buttonPanel.setBackground(COLOR_WHITE);
-    buttonPanel.add(button);
-    buttonPanel.add(btnRegisterNow);
-    return buttonPanel;
-  }
-  
-
-  private void navBtnSignUp() {
+  private void getNavSignUpBtn() {
     btnRegisterNow = new JButton("No Account? Register Now");
     btnRegisterNow.addActionListener(this::onRegisterNowClicked);
-    btnRegisterNow.setBackground(COLOR_WHITE);
-    btnRegisterNow.setForeground(BUTTON_TEXT_COLOR);
+    btnRegisterNow.setBackground(Color.WHITE); 
+    btnRegisterNow.setForeground(Color.BLACK);
     btnRegisterNow.setFocusPainted(false);
     btnRegisterNow.setBorderPainted(false);
   }
+
+ 
+
+  private void getButton(String label) {
+    button = new JButton(label);
+    button.addActionListener(this::onSignInClicked);
+    button.setBackground(new Color(255, 90, 95)); 
+    button.setForeground(Color.BLACK); 
+    button.setFocusPainted(false);
+    button.setBorderPainted(false);
+    button.setFont(new Font("Arial", Font.BOLD, 14));
+  }
+
+  private JPanel getRegisterPanel() {
+    JPanel registerPanel = new JPanel(new BorderLayout()); 
+    registerPanel.setBackground(Color.WHITE);
+    registerPanel.add(button, BorderLayout.CENTER);
+    return registerPanel;
+  }
+
+  
+
+
+
 
 
   private void onSignInClicked(ActionEvent event) {
     String enteredUsername = txtUsername.getText();
     String enteredPassword = txtPassword.getText();
     System.out.println(enteredUsername + " <-> " + enteredPassword);
-    if (verifyCredentials(enteredUsername, enteredPassword)) {
-      System.out.println("It worked" + newUser);
-      dispose();
-      SwingUtilities.invokeLater(() -> {
-        InstagramProfileUI profileUI = new InstagramProfileUI(newUser);
-        profileUI.setVisible(true);
-      });
-    } else {
-      System.out.println("It Didn't");
+    
+    try {
+      if (verifyCredentials(enteredUsername, enteredPassword)) {
+        System.out.println("It worked" + newUser);
+        dispose();
+        SwingUtilities.invokeLater(() -> {
+          InstagramProfileUI profileUI = new InstagramProfileUI(newUser);
+          profileUI.setVisible(true);
+        }); 
+      } else {
+        System.out.println("It Didn't");
+      }
+    }
+    catch (Exception e) {
+      System.out.println("Error - You need to enter a username and password.");
+      e.printStackTrace();
     }
   }
 

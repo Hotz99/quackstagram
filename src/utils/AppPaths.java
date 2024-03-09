@@ -1,20 +1,14 @@
 package utils;
 
 public class AppPaths {
-    // public static final String DATA = "../resources/data/";
-    // public static final String DATA_CREDENTIALS = AppPaths.DATA +
-    // "credentials.txt";
-    // public static final String USER_DATA = AppPaths.DATA + "users.txt";
-    // public static final String ICONS = "../resources/img/icons/";
-    // public static final String UPLOADED = "../resources/img/uploaded/";
-    // public static final String LOGOS = "../resources/img/logos/";
-    // public static final String DEFAULT_PROFILE = AppPaths.ICONS +
-    // "default_profile.png";
 
     public static final String DATA = "resources/data/";
     public static final String CREDENTIALS = AppPaths.DATA + "credentials.txt";
     public static final String FOLLOWING = AppPaths.DATA + "following.txt";
+    public static final String FOLLOWERS = AppPaths.DATA + "followers.txt";
     public static final String USERS = AppPaths.DATA + "users.txt";
+    public static final String LIKES = AppPaths.DATA + "likes.txt";
+    public static final String NOTIFICATIONS = AppPaths.DATA + "notifications.txt";
 
     public static final String IMG = "resources/img/";
     public static final String UPLOADED = AppPaths.IMG + "uploaded/";

@@ -5,28 +5,44 @@ import java.io.BufferedReader;
 import explore.ExploreUI;
 import home.QuakstagramHomeUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.*;
 import javax.swing.*;
 
-import auth.SignUpUI;
 import notifications.NotificationsUI;
 import user.InstagramProfileUI;
 import user.User;
+import utils.BaseFrame;
 
-public class UiUtils {
 
-  // private final int WIDTH = 300;
-  // private final int HEIGHT = 500;
-  private static final int NAV_ICON_SIZE = 20; // Corrected static size for bottom icons
-  // private final int IMAGE_WIDTH = WIDTH - 100; // Width for the image posts
-  // private final int IMAGE_HEIGHT = 150; // Height for the image posts
-  // private final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for
-  // the like button
+public class BaseFrame extends JFrame {
 
-  public static final String[] iconPaths = {
+  public final int APP_WIDTH = 300;
+  public final int APP_HEIGHT = 500;
+  private final int NAV_ICON_SIZE = 20; // Corrected size for bottom icons
+  private static final int HEADER_HEIGHT = 40; // Corrected static size for bottom icons
+  public static final Color COLOR_WHITE = Color.WHITE;
+  public static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
+  public static final Color BUTTON_TEXT_COLOR = Color.BLACK;
+  public static final String FONT_NAME = "Arial";
+  public static final String LABEL = "Quackstagram 🐥";
+  public static final String SIGNIN_LABEL = "Sign-In";
+  public static final String REGISTER_LABEL = "Register";
+
+  public JTextField txtUsername;
+  public JTextField txtPassword;
+  public JTextField txtBio;
+  public JButton btnRegister;
+  public JLabel lblPhoto;
+  public JButton btnUploadPhoto;
+  public JButton button, btnRegisterNow;
+  public User newUser;
+  //fucked
+  public JPanel bioPanel;
+
+
+
+  public final String[] iconPaths = {
       AppPaths.ICONS + "home.png",
       AppPaths.ICONS + "search.png",
       AppPaths.ICONS + "add.png",
@@ -34,7 +50,7 @@ public class UiUtils {
       AppPaths.ICONS + "profile.png",
   };
 
-  public static final String[] buttonTypes = {
+  public final String[] buttonTypes = {
       "home",
       "explore",
       "add",
@@ -42,18 +58,18 @@ public class UiUtils {
       "profile",
   };
 
-  public static JPanel createHeaderPanel(String label, int width, int height) {
+  public JPanel createHeaderPanel(String label) {
     JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
     JLabel lblRegister = new JLabel(label);
     lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
     lblRegister.setForeground(Color.WHITE); // Set the text color to white
     headerPanel.add(lblRegister);
-    headerPanel.setPreferredSize(new Dimension(width, height)); // Give the header a fixed height
+    headerPanel.setPreferredSize(new Dimension(APP_WIDTH, HEADER_HEIGHT)); // Give the header a fixed height
     return headerPanel;
   }
 
-  public static JPanel createNavigationPanel(JFrame currentFrame) {
+  public JPanel createNavigationPanel() {
     // Create and return the navigation panel
     // Navigation Bar
     JPanel navigationPanel = new JPanel();
@@ -64,7 +80,7 @@ public class UiUtils {
     for (int i = 0; i < iconPaths.length; i++) {
       navigationPanel.add(
           createIconButton(
-              currentFrame,
+              this,
               iconPaths[i],
               buttonTypes[i]));
       navigationPanel.add(Box.createHorizontalGlue());
@@ -73,7 +89,7 @@ public class UiUtils {
     return navigationPanel;
   }
 
-  public static JButton createIconButton(JFrame currentFrame, String iconPath, String buttonType) {
+  public JButton createIconButton(JFrame currentFrame, String iconPath, String buttonType) {
     ImageIcon iconOriginal = new ImageIcon(iconPath);
 
     Image iconScaled = iconOriginal
@@ -115,7 +131,7 @@ public class UiUtils {
   }
 
   // Open InstagramProfileUI frame
-  public static void openProfileUI() {
+  public void openProfileUI() {
     String loggedInUsername = "";
 
     // Read the logged-in user's username from users.txt
@@ -136,25 +152,24 @@ public class UiUtils {
   }
 
   // Open InstagramProfileUI frame
-  public static void notificationsUI() {
+  public void notificationsUI() {
     NotificationsUI notificationsUI = new NotificationsUI();
     notificationsUI.setVisible(true);
   }
 
   // Open InstagramProfileUI frame
-  public static void openHomeUI() {
+  public void openHomeUI() {
     QuakstagramHomeUI homeUI = new QuakstagramHomeUI();
     homeUI.setVisible(true);
   }
 
   // Open InstagramProfileUI frame
-  public static void exploreUI() {
+  public void exploreUI() {
     ExploreUI explore = new ExploreUI();
     explore.setVisible(true);
   }
 
-   public static JPanel getPhotoPanel(JLabel lblPhoto) {
-    // Profile picture placeholder without border
+   public JPanel getPhotoPanel(JLabel lblPhoto) {    
     lblPhoto = new JLabel();
     lblPhoto.setPreferredSize(new Dimension(80, 80));
     lblPhoto.setHorizontalAlignment(JLabel.CENTER);
@@ -171,49 +186,68 @@ public class UiUtils {
   }
 
 
-    public static JPanel getFieldsPanel(JPanel photoPanel, boolean includeBio) {
-        JPanel fieldsPanel = new JPanel();
-        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
-        fieldsPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20));
 
-        JTextField txtUsername = new JTextField("Username");
-        JTextField txtPassword = new JTextField("Password");
-        txtUsername.setForeground(Color.GRAY);
-        txtPassword.setForeground(Color.GRAY);
 
-        fieldsPanel.add(Box.createVerticalStrut(10));
-        fieldsPanel.add(txtUsername);
-        fieldsPanel.add(Box.createVerticalStrut(10));
-        fieldsPanel.add(txtPassword);
-        fieldsPanel.add(Box.createVerticalStrut(10));
-        fieldsPanel.add(photoPanel);
+  
 
-        if (includeBio) {
-            JTextField txtBio = new JTextField("Bio");
-            txtBio.setForeground(Color.GRAY);
-            fieldsPanel.add(Box.createVerticalStrut(10));
-            fieldsPanel.add(txtBio);
-        }
+  public void addStruct(JPanel photoPanel, JPanel fieldsPanel, boolean isSignUp) {
+    fieldsPanel.add(Box.createVerticalStrut(10));
+    fieldsPanel.add(photoPanel);
+    fieldsPanel.add(Box.createVerticalStrut(10));
+    fieldsPanel.add(txtUsername);
+    fieldsPanel.add(Box.createVerticalStrut(10));
+    fieldsPanel.add(txtPassword);
+    fieldsPanel.add(Box.createVerticalStrut(10));
 
-        return fieldsPanel;
+    if (isSignUp) {
+      fieldsPanel.add(txtBio);
+      fieldsPanel.add(Box.createVerticalStrut(10));
     }
+  }
 
-    
-      public static JPanel getRegisterPanel(String label, Color backgroundColor, Color textColor, String fontName, int fontSize, ActionListener actionListener) {
-          JButton button = new JButton(label);
-          button.addActionListener(actionListener);
-          button.setBackground(backgroundColor);
-          button.setForeground(textColor);
-          button.setFocusPainted(false);
-          button.setBorderPainted(false);
-          button.setFont(new Font(fontName, Font.BOLD, fontSize));
+  public void getPassword() {
+    txtPassword = new JTextField("Password");
+    txtPassword.setForeground(Color.GRAY);
+  }
+
+  public void getUsername() {
+    txtUsername = new JTextField("Username");
+    txtUsername.setForeground(Color.GRAY);
+  }
+
+  public void getBio() {
+    txtBio = new JTextField("Bio");
+    txtBio.setForeground(Color.GRAY);
+  }
+
+
+  public JPanel getFieldsPanel() {
+    JPanel fieldsPanel = new JPanel();
+    fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
+    fieldsPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20));
+    return fieldsPanel;
+  }
+
+
+  public void addComponents(JPanel headerPanel, JPanel fieldsPanel, JPanel registerPanel) {
+    add(headerPanel, BorderLayout.NORTH);
+    add(fieldsPanel, BorderLayout.CENTER);
+    add(registerPanel, BorderLayout.SOUTH);
+  }
   
-          JPanel registerPanel = new JPanel(new BorderLayout());
-          registerPanel.setBackground(Color.WHITE);
-          registerPanel.add(button, BorderLayout.CENTER);
+
+  // public JPanel registerPanel() {
+  //   JPanel registerPanel = new JPanel(new BorderLayout()); 
+  //   registerPanel.setBackground(Color.WHITE);
+  //   registerPanel.add(button, BorderLayout.CENTER);
+  //   return registerPanel;
+  // }
+
+  public void photoUploadPanel(JPanel fieldsPanel) {
+    JPanel photoUploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    photoUploadPanel.add(btnUploadPhoto);
+    fieldsPanel.add(photoUploadPanel);
+  }
+
   
-          return registerPanel;
-      }
-    
-    
 }
