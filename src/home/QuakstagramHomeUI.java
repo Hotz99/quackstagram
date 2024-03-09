@@ -42,6 +42,7 @@ public class QuakstagramHomeUI extends BaseFrame {
     initializeUI();
   }
 
+  @SuppressWarnings("deprecation")
   private void initializeUI() {
     add(createHeaderPanel("🐥 Quackstagram 🐥"), BorderLayout.NORTH);
 
@@ -64,13 +65,15 @@ public class QuakstagramHomeUI extends BaseFrame {
 
     imageViewPanel = new JPanel(new BorderLayout());
 
+    
     cardPanel = new JPanel(new CardLayout());
     cardPanel.add(homePanel, "Home");
     cardPanel.add(imageViewPanel, "ImageView");
 
     add(cardPanel, BorderLayout.CENTER);
 
-    cardLayout.show(cardPanel, "Home"); // Start with the home view
+
+    cardPanel.show(); // Start with the home view
 
 
     // Navigation Bar
@@ -265,7 +268,11 @@ public class QuakstagramHomeUI extends BaseFrame {
       String line;
       while ((line = reader.readLine()) != null && count < tempData.length) {
         String[] details = line.split(", ");
-        String imagePoster = details[1].split(": ")[1];
+        String imagePoster = "";
+        String[]splitDetails = details[1].split(": ");
+        if (splitDetails.length > 1) {
+          imagePoster = splitDetails[1];
+        }
         if (followedUsers.contains(imagePoster)) {
           String imagePath = AppPaths.UPLOADED +
               details[0].split(": ")[1] +
@@ -331,6 +338,7 @@ public class QuakstagramHomeUI extends BaseFrame {
             refreshDisplayImage(postData, imageId); // Refresh the view
           }
         });
+
 
     // Information panel at the bottom
     JPanel infoPanel = new JPanel();

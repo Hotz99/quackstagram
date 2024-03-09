@@ -101,7 +101,9 @@ public class InstagramProfileUI extends BaseFrame {
     System.out.println("Bio for " + currentUser.getUsername() + ": " + bio);
     currentUser.setBio(bio);
 
+//Is the first issue, after that line 194  comes up, if we dont deal with the getPostsCOunt method
     System.out.println(currentUser.getPostsCount());
+  
 
     // this is all stupidly redundant
     setTitle("DACS Profile");

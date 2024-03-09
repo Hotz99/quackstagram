@@ -31,7 +31,7 @@ public class ExploreUI extends BaseFrame {
 
   public ExploreUI() {
     setTitle("Explore");
-    setSize(WIDTH, HEIGHT);
+    setSize(APP_WIDTH, APP_HEIGHT);
     setMinimumSize(new Dimension(WIDTH, HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
