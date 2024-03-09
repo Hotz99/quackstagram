@@ -21,13 +21,21 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import user.ProfilePanel;
 import user.User;
-import utils.AppPaths;
-import utils.BasePanel;
+import utils.*;
 
+/**
+ * The ExplorePanel class represents a panel that displays the explore functionality of the application.
+ * It extends the BasePanel class and provides methods to create the main content panel, search panel, image grid panel,
+ * and other UI components related to exploring and displaying images.
+ */
 public class ExplorePanel extends BasePanel {
 
   private final int IMAGE_SIZE = App.WIDTH / 3; // Size for each image in the grid
 
+  /**
+   * The ExplorePanel class represents a panel that displays the explore functionality in the application.
+   * It contains a header panel and a main content panel.
+   */
   public ExplorePanel() {
     removeAll(); // Clear existing components
     setLayout(new BorderLayout()); // Reset the layout manager
@@ -43,6 +51,13 @@ public class ExplorePanel extends BasePanel {
     repaint();
   }
 
+  /**
+   * Creates and returns a JPanel that serves as the main content panel.
+   * The main content panel contains a search panel and an image grid panel
+   * wrapped in a scroll pane.
+   *
+   * @return The main content panel.
+   */
   private JPanel createMainContentPanel() {
     JPanel searchPanel = createSearchPanel();
     JPanel imageGridPanel = createImageGridPanel();
@@ -63,6 +78,11 @@ public class ExplorePanel extends BasePanel {
     return mainContentPanel;
   }
 
+  /**
+   * Creates a JPanel for the search functionality.
+   *
+   * @return The created JPanel.
+   */
   private JPanel createSearchPanel() {
     JPanel searchPanel = new JPanel(new BorderLayout());
     JTextField searchField = new JTextField(" Search Users");
@@ -73,6 +93,10 @@ public class ExplorePanel extends BasePanel {
     return searchPanel;
   }
 
+  /**
+   * A JPanel is a container that holds and organizes other components.
+   * It is used to group and layout other components within a graphical user interface.
+   */
   private JPanel createImageGridPanel() {
     JPanel imageGridPanel = new JPanel(new GridLayout(0, 3, 2, 2)); // 3 columns, auto rows
     File imageDir = new File(AppPaths.UPLOADED);
@@ -104,6 +128,11 @@ public class ExplorePanel extends BasePanel {
     return imageGridPanel;
   }
 
+  /**
+   * Displays the image with the given image path.
+   *
+   * @param imagePath the path of the image to be displayed
+   */
   public void displayImage(String imagePath) {
     String imageId = extractImageId(imagePath);
     ImageDetails imageDetails = readImageDetails(imageId);
@@ -162,10 +191,19 @@ public class ExplorePanel extends BasePanel {
     repaint();
   }
 
+  /**
+   * Extracts the image ID from the given image path.
+   *
+   * @param imagePath the path of the image
+   * @return the image ID extracted from the image path
+   */
   private String extractImageId(String imagePath) {
     return new File(imagePath).getName().split("\\.")[0];
   }
 
+  /**
+   * Represents the details of an image.
+   */
   private ImageDetails readImageDetails(String imageId) {
     Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
     try (Stream<String> lines = Files.lines(detailsPath)) {
@@ -185,6 +223,12 @@ public class ExplorePanel extends BasePanel {
     }
   }
 
+  /**
+   * Calculates the time since a post was made based on the given timestamp.
+   *
+   * @param timestampString the timestamp of the post in the format "yyyy-MM-dd HH:mm:ss"
+   * @return a string representing the time since the post was made, e.g. "2 days ago"
+   */
   private String calculateTimeSincePosting(String timestampString) {
     if (timestampString.isEmpty()) {
       return "Unknown";
@@ -198,6 +242,13 @@ public class ExplorePanel extends BasePanel {
     return days + " day" + (days != 1 ? "s" : "") + " ago";
   }
 
+  /**
+   * Creates a JPanel for the top panel of the ExplorePanel.
+   *
+   * @param username the username of the user
+   * @param timeSincePosting the time since the post was made
+   * @return the created JPanel
+   */
   private JPanel createTopPanel(String username, String timeSincePosting) {
     JPanel topPanel = new JPanel(new BorderLayout());
     JButton usernameLabel = new JButton(username);
@@ -215,6 +266,12 @@ public class ExplorePanel extends BasePanel {
     return topPanel;
   }
 
+  /**
+   * Creates and returns a JLabel with the specified image.
+   *
+   * @param imagePath the path to the image file
+   * @return a JLabel with the specified image, or a label with "Image not found" text if the image file is not found
+   */
   private JLabel prepareImageLabel(String imagePath) {
     JLabel imageLabel = new JLabel();
     imageLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -229,6 +286,13 @@ public class ExplorePanel extends BasePanel {
     return imageLabel;
   }
 
+  /**
+   * Creates a JPanel with a bio text area and a likes label.
+   *
+   * @param bio   the bio text to display in the text area
+   * @param likes the number of likes to display in the likes label
+   * @return the created JPanel
+   */
   private JPanel createBottomPanel(String bio, int likes) {
     JPanel bottomPanel = new JPanel(new BorderLayout());
     JTextArea bioTextArea = new JTextArea(bio);
@@ -240,6 +304,11 @@ public class ExplorePanel extends BasePanel {
     return bottomPanel;
   }
 
+  /**
+   * Creates a JPanel for the back button.
+   *
+   * @return the JPanel containing the back button
+   */
   private JPanel createBackButtonPanel() {
     JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     JButton backButton = new JButton("Back");
@@ -268,6 +337,13 @@ public class ExplorePanel extends BasePanel {
     private String timestampString;
     private int likes;
 
+    /**
+     * Constructs an ImageDetails object with the provided details.
+     *
+     * @param details the string containing the image details in the format:
+     *                "id: [imageId], username: [username], bio: [bio], timestamp: [timestamp], likes: [likes]"
+     * @throws IllegalArgumentException if the provided details string does not have the correct format
+     */
     public ImageDetails(String details) {
       String[] parts = details.split(", (?![^\\[]*\\])");
       if (parts.length != 5) {
@@ -299,6 +375,14 @@ public class ExplorePanel extends BasePanel {
       return likes;
     }
 
+    /**
+     * Toggles the like status of an image for a given user.
+     * If the user has already liked the image, it removes the like.
+     * If the user has not liked the image, it adds the like.
+     *
+     * @param imageId The ID of the image to toggle the like for.
+     * @param username The username of the user toggling the like.
+     */
     public void toggleLike(String imageId, String username) {
       System.out.println("Liked the picture!");
       // Update the details file with the new likes count
