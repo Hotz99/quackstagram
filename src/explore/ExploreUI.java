@@ -32,7 +32,7 @@ public class ExploreUI extends BaseFrame {
   public ExploreUI() {
     setTitle("Explore");
     setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     initializeUI();
@@ -43,7 +43,7 @@ public class ExploreUI extends BaseFrame {
     setLayout(new BorderLayout()); // Reset the layout manager
 
     JPanel headerPanel = createHeaderPanel("Explore 🐥");
-    JPanel navigationPanel = createNavigationPanel(); // Pass `this` as the current JFrame
+    JPanel navigationPanel = createNavigationPanel();
     JPanel mainContentPanel = createMainContentPanel();
 
     // Add panels to the frame
@@ -82,24 +82,25 @@ public class ExploreUI extends BaseFrame {
     File imageDir = new File(AppPaths.UPLOADED);
 
     if (imageDir.exists() && imageDir.isDirectory()) {
-        File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));
-        if (imageFiles != null) {
-            for(File imageFile : imageFiles){
-                ImageIcon imageIcon = new ImageIcon(new ImageIcon(imageFile.getPath()).getImage().getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
-                JLabel imageLabel = new JLabel(imageIcon);
-                imageLabel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        displayImage(imageFile.getPath()); // Call method to display the clicked image
-                    }
-                });
-                imageGridPanel.add(imageLabel);
-             };
+      File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));
+      if (imageFiles != null) {
+        for (File imageFile : imageFiles) {
+          ImageIcon imageIcon = new ImageIcon(new ImageIcon(imageFile.getPath()).getImage()
+              .getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
+          JLabel imageLabel = new JLabel(imageIcon);
+          imageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              displayImage(imageFile.getPath()); // Call method to display the clicked image
+            }
+          });
+          imageGridPanel.add(imageLabel);
         }
+        ;
+      }
     }
     return imageGridPanel;
   }
-
 
   private void displayImage(String imagePath) {
     getContentPane().removeAll();
@@ -190,7 +191,7 @@ public class ExploreUI extends BaseFrame {
 
     // Make the button take up the full width
     backButton.setPreferredSize(
-        new Dimension(WIDTH - 20, backButton.getPreferredSize().height));
+        new Dimension(APP_WIDTH - 20, backButton.getPreferredSize().height));
 
     backButtonPanel.add(backButton);
 

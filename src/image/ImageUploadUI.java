@@ -22,8 +22,8 @@ public class ImageUploadUI extends BaseFrame {
 
   public ImageUploadUI() {
     setTitle("Upload Image");
-    setSize(WIDTH, HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setSize(APP_WIDTH, APP_HEIGHT);
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     initializeUI();
@@ -64,7 +64,7 @@ public class ImageUploadUI extends BaseFrame {
   private JLabel createImagePreviewLabel() {
     JLabel imagePreviewLabel = new JLabel();
     imagePreviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    imagePreviewLabel.setPreferredSize(new Dimension(WIDTH, HEIGHT / 3));
+    imagePreviewLabel.setPreferredSize(new Dimension(APP_WIDTH, APP_HEIGHT / 3));
     return imagePreviewLabel;
   }
 
@@ -74,7 +74,7 @@ public class ImageUploadUI extends BaseFrame {
     bioTextArea.setLineWrap(true);
     bioTextArea.setWrapStyleWord(true);
     JScrollPane bioScrollPane = new JScrollPane(bioTextArea);
-    bioScrollPane.setPreferredSize(new Dimension(WIDTH - 50, HEIGHT / 6));
+    bioScrollPane.setPreferredSize(new Dimension(APP_WIDTH - 50, APP_HEIGHT / 6));
     return bioScrollPane;
   }
 

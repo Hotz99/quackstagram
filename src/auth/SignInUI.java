@@ -12,19 +12,17 @@ import java.nio.file.Paths;
 
 import javax.swing.*;
 
+import app.App;
 import user.InstagramProfileUI;
 import user.User;
 import utils.AppPaths;
 import utils.BaseFrame;
 
 public class SignInUI extends BaseFrame {
-  private userManager userManager;
-
-  public SignInUI(auth.userManager userManager) {
-    this.userManager = userManager;
+  public SignInUI() {
     setTitle("Quackstagram - Register");
     setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout(10, 10));
     initializeUI();
@@ -45,7 +43,7 @@ public class SignInUI extends BaseFrame {
   }
 
   private void getButtonPanel2() {
-    JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10)); 
+    JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
     buttonPanel.setBackground(Color.white);
     buttonPanel.add(button);
     buttonPanel.add(btnRegisterNow);
@@ -55,7 +53,7 @@ public class SignInUI extends BaseFrame {
   private void setupNavSignUpBtn() {
     btnRegisterNow = new JButton("No Account? Register Now");
     btnRegisterNow.addActionListener(this::onRegisterNowClicked);
-    btnRegisterNow.setBackground(Color.WHITE); 
+    btnRegisterNow.setBackground(Color.WHITE);
     btnRegisterNow.setForeground(Color.BLACK);
     btnRegisterNow.setFocusPainted(false);
     btnRegisterNow.setBorderPainted(false);
@@ -64,48 +62,47 @@ public class SignInUI extends BaseFrame {
   private void setupButton(String label) {
     button = new JButton(label);
     button.addActionListener(this::onSignInClicked);
-    button.setBackground(new Color(255, 90, 95)); 
-    button.setForeground(Color.BLACK); 
+    button.setBackground(new Color(255, 90, 95));
+    button.setForeground(Color.BLACK);
     button.setFocusPainted(false);
     button.setBorderPainted(false);
     button.setFont(new Font("Arial", Font.BOLD, 14));
   }
 
   private JPanel getRegisterPanel() {
-    JPanel registerPanel = new JPanel(new BorderLayout()); 
+    JPanel registerPanel = new JPanel(new BorderLayout());
     registerPanel.setBackground(Color.WHITE);
     registerPanel.add(button, BorderLayout.CENTER);
     return registerPanel;
   }
 
-  
   private void onSignInClicked(ActionEvent event) {
     String enteredUsername = getTxtUsername().getText();
     String enteredPassword = getTxtPassword().getText();
     System.out.println(enteredUsername + " <-> " + enteredPassword);
-    
+
     createInstagramProfile(enteredUsername, enteredPassword);
   }
 
   private void createInstagramProfile(String enteredUsername, String enteredPassword) {
     try {
-        User user = userManager.verifyCredentials(enteredUsername, enteredPassword);
-        if (user != null) {
-            newUser = user;
-            System.out.println("It worked" + newUser);
-            openProfileUser(); 
-        } else {
-            System.out.println("It Didn't");
-            JOptionPane.showMessageDialog(null, "Did not work, dumb fuck", "Alert", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-    catch (Exception e) {
-        System.out.println("Error - You need to enter a username and password.");
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "You need to enter a username and password.", "Alert", JOptionPane.WARNING_MESSAGE);
-    }
-}
+      User user = App.userManager.verifyCredentials(enteredUsername, enteredPassword);
 
+      if (user != null) {
+        newUser = user;
+        System.out.println("It worked" + newUser);
+        openProfileUser();
+      } else {
+        System.out.println("It Didn't");
+        JOptionPane.showMessageDialog(null, "Did not work, dumb fuck", "Alert", JOptionPane.WARNING_MESSAGE);
+      }
+    } catch (Exception e) {
+      System.out.println("Error - You need to enter a username and password.");
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, "You need to enter a username and password.", "Alert",
+          JOptionPane.WARNING_MESSAGE);
+    }
+  }
 
   private void openProfileUser() {
     dispose();
@@ -119,7 +116,7 @@ public class SignInUI extends BaseFrame {
     dispose();
 
     SwingUtilities.invokeLater(() -> {
-      SignUpUI signUpFrame = new SignUpUI(userManager);
+      SignUpUI signUpFrame = new SignUpUI();
       signUpFrame.setVisible(true);
     });
   }

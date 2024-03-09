@@ -4,117 +4,115 @@ import java.io.BufferedReader;
 
 import explore.ExploreUI;
 import home.QuakstagramHomeUI;
+import image.ImageUploadUI;
+
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.*;
 import javax.swing.*;
 
+import app.App;
 import notifications.NotificationsUI;
 import user.InstagramProfileUI;
 import user.User;
 import utils.BaseFrame;
 
-
 public class BaseFrame extends JFrame {
 
-  public final int APP_WIDTH = 300;
-  public final int APP_HEIGHT = 500;
+  protected static final int APP_WIDTH = App.WIDTH;
+  protected static final int APP_HEIGHT = App.HEIGHT;
   private final int NAV_ICON_SIZE = 20; // Corrected size for bottom icons
   private static final int HEADER_HEIGHT = 40; // Corrected static size for bottom icons
-  public static final Color COLOR_WHITE = Color.WHITE;
-  public static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
-  public static final Color BUTTON_TEXT_COLOR = Color.BLACK;
-  public static final String FONT_NAME = "Arial";
-  public static final String LABEL = "Quackstagram 🐥";
-  public static final String SIGNIN_LABEL = "Sign-In";
-  public static final String REGISTER_LABEL = "Register";
+  protected static final Color COLOR_WHITE = Color.WHITE;
+  protected static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
+  protected static final Color BUTTON_TEXT_COLOR = Color.BLACK;
+  protected static final String FONT_NAME = "Arial";
+  protected static final String LABEL = "Quackstagram 🐥";
+  protected static final String SIGNIN_LABEL = "Sign-In";
+  protected static final String REGISTER_LABEL = "Register";
 
-  public JTextField txtUsername;
-  public JTextField txtPassword;
-  public JTextField txtBio;
-  public JButton btnRegister;
-  public JLabel lblPhoto;
-  public JButton btnUploadPhoto;
-  public JButton button, btnRegisterNow;
-  public User newUser;
+  protected JTextField txtUsername;
+  protected JTextField txtPassword;
+  protected JTextField txtBio;
+  protected JButton btnRegister;
+  protected JLabel lblPhoto;
+  protected JButton btnUploadPhoto;
+  protected JButton button, btnRegisterNow;
+  protected User newUser;
 
-
-
-
-  public JTextField getTxtUsername() {
+  protected JTextField getTxtUsername() {
     return txtUsername;
   }
 
-  public void setTxtUsername(JTextField txtUsername) {
+  protected void setTxtUsername(JTextField txtUsername) {
     this.txtUsername = txtUsername;
   }
 
-  public JTextField getTxtPassword() {
+  protected JTextField getTxtPassword() {
     return txtPassword;
   }
 
-  public void setTxtPassword(JTextField txtPassword) {
+  protected void setTxtPassword(JTextField txtPassword) {
     this.txtPassword = txtPassword;
   }
 
-  public JTextField getTxtBio() {
+  protected JTextField getTxtBio() {
     return txtBio;
   }
 
-  public void setTxtBio(JTextField txtBio) {
+  protected void setTxtBio(JTextField txtBio) {
     this.txtBio = txtBio;
   }
 
-  public JButton getBtnRegister() {
+  protected JButton getBtnRegister() {
     return btnRegister;
   }
 
-  public void setBtnRegister(JButton btnRegister) {
+  protected void setBtnRegister(JButton btnRegister) {
     this.btnRegister = btnRegister;
   }
 
-  public JLabel getLblPhoto() {
+  protected JLabel getLblPhoto() {
     return lblPhoto;
   }
 
-  public void setLblPhoto(JLabel lblPhoto) {
+  protected void setLblPhoto(JLabel lblPhoto) {
     this.lblPhoto = lblPhoto;
   }
 
-  public JButton getBtnUploadPhoto() {
+  protected JButton getBtnUploadPhoto() {
     return btnUploadPhoto;
   }
 
-  public void setBtnUploadPhoto(JButton btnUploadPhoto) {
+  protected void setBtnUploadPhoto(JButton btnUploadPhoto) {
     this.btnUploadPhoto = btnUploadPhoto;
   }
 
-  public JButton getButton() {
+  protected JButton getButton() {
     return button;
   }
 
-  public void setButton(JButton button) {
+  protected void setButton(JButton button) {
     this.button = button;
   }
 
-  public JButton getBtnRegisterNow() {
+  protected JButton getBtnRegisterNow() {
     return btnRegisterNow;
   }
 
-  public void setBtnRegisterNow(JButton btnRegisterNow) {
+  protected void setBtnRegisterNow(JButton btnRegisterNow) {
     this.btnRegisterNow = btnRegisterNow;
   }
 
-  public User getNewUser() {
+  protected User getNewUser() {
     return newUser;
   }
 
-  public void setNewUser(User newUser) {
+  protected void setNewUser(User newUser) {
     this.newUser = newUser;
   }
 
-
-  public final String[] iconPaths = {
+  private final String[] iconPaths = {
       AppPaths.ICONS + "home.png",
       AppPaths.ICONS + "search.png",
       AppPaths.ICONS + "add.png",
@@ -122,7 +120,7 @@ public class BaseFrame extends JFrame {
       AppPaths.ICONS + "profile.png",
   };
 
-  public final String[] buttonTypes = {
+  private final String[] buttonTypes = {
       "home",
       "explore",
       "add",
@@ -130,7 +128,7 @@ public class BaseFrame extends JFrame {
       "profile",
   };
 
-  public JPanel createHeaderPanel(String label) {
+  protected JPanel createHeaderPanel(String label) {
     JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
     JLabel lblRegister = new JLabel(label);
@@ -141,7 +139,7 @@ public class BaseFrame extends JFrame {
     return headerPanel;
   }
 
-  public JPanel createNavigationPanel() {
+  protected JPanel createNavigationPanel() {
     // Create and return the navigation panel
     // Navigation Bar
     JPanel navigationPanel = new JPanel();
@@ -152,7 +150,6 @@ public class BaseFrame extends JFrame {
     for (int i = 0; i < iconPaths.length; i++) {
       navigationPanel.add(
           createIconButton(
-              this,
               iconPaths[i],
               buttonTypes[i]));
       navigationPanel.add(Box.createHorizontalGlue());
@@ -161,7 +158,7 @@ public class BaseFrame extends JFrame {
     return navigationPanel;
   }
 
-  public JButton createIconButton(JFrame currentFrame, String iconPath, String buttonType) {
+  protected JButton createIconButton(String iconPath, String buttonType) {
     ImageIcon iconOriginal = new ImageIcon(iconPath);
 
     Image iconScaled = iconOriginal
@@ -175,26 +172,32 @@ public class BaseFrame extends JFrame {
     switch (buttonType) {
       case "home":
         button.addActionListener(e -> {
-          currentFrame.dispose();
+          this.dispose();
           openHomeUI();
-        });
-        break;
-      case "profile":
-        button.addActionListener(e -> {
-          currentFrame.dispose();
-          openProfileUI();
-        });
-        break;
-      case "notification":
-        button.addActionListener(e -> {
-          currentFrame.dispose();
-          notificationsUI();
         });
         break;
       case "explore":
         button.addActionListener(e -> {
-          currentFrame.dispose();
-          exploreUI();
+          this.dispose();
+          openExploreUI();
+        });
+        break;
+      case "add":
+        button.addActionListener(e -> {
+          this.dispose();
+          openImageUploadUI();
+        });
+        break;
+      case "notification":
+        button.addActionListener(e -> {
+          this.dispose();
+          openNotificationsUI();
+        });
+        break;
+      case "profile":
+        button.addActionListener(e -> {
+          this.dispose();
+          openProfileUI();
         });
         break;
     }
@@ -202,8 +205,32 @@ public class BaseFrame extends JFrame {
     return button;
   }
 
+  // Open QuackstagramHomeUI frame
+  private void openHomeUI() {
+    QuakstagramHomeUI homeUI = new QuakstagramHomeUI();
+    homeUI.setVisible(true);
+  }
+
+  // Open ExploreUI frame
+  private void openExploreUI() {
+    ExploreUI explore = new ExploreUI();
+    explore.setVisible(true);
+  }
+
+  // Open ImageUploadUI frame
+  private void openImageUploadUI() {
+    ImageUploadUI imageUploadUI = new ImageUploadUI();
+    imageUploadUI.setVisible(true);
+  }
+
+  // Open NotificationsUI frame
+  private void openNotificationsUI() {
+    NotificationsUI notificationsUI = new NotificationsUI();
+    notificationsUI.setVisible(true);
+  }
+
   // Open InstagramProfileUI frame
-  public void openProfileUI() {
+  private void openProfileUI() {
     String loggedInUsername = "";
 
     // Read the logged-in user's username from users.txt
@@ -223,25 +250,7 @@ public class BaseFrame extends JFrame {
     profileUI.setVisible(true);
   }
 
-  // Open InstagramProfileUI frame
-  public void notificationsUI() {
-    NotificationsUI notificationsUI = new NotificationsUI();
-    notificationsUI.setVisible(true);
-  }
-
-  // Open InstagramProfileUI frame
-  public void openHomeUI() {
-    QuakstagramHomeUI homeUI = new QuakstagramHomeUI();
-    homeUI.setVisible(true);
-  }
-
-  // Open InstagramProfileUI frame
-  public void exploreUI() {
-    ExploreUI explore = new ExploreUI();
-    explore.setVisible(true);
-  }
-
-   public JPanel getPhotoPanel(JLabel lblPhoto) {    
+  protected JPanel getPhotoPanel(JLabel lblPhoto) {
     lblPhoto = new JLabel();
     lblPhoto.setPreferredSize(new Dimension(80, 80));
     lblPhoto.setHorizontalAlignment(JLabel.CENTER);
@@ -251,18 +260,13 @@ public class BaseFrame extends JFrame {
             new ImageIcon(AppPaths.DACS_LOGO)
                 .getImage()
                 .getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
-    JPanel photoPanel = new JPanel(); 
+    JPanel photoPanel = new JPanel();
     photoPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
     photoPanel.add(lblPhoto);
     return photoPanel;
   }
 
-
-
-
-  
-
-  public void addStruct(JPanel photoPanel, JPanel fieldsPanel, boolean isSignUp) {
+  protected void addStruct(JPanel photoPanel, JPanel fieldsPanel, boolean isSignUp) {
     fieldsPanel.add(Box.createVerticalStrut(10));
     fieldsPanel.add(photoPanel);
     fieldsPanel.add(Box.createVerticalStrut(10));
@@ -277,42 +281,38 @@ public class BaseFrame extends JFrame {
     }
   }
 
-  public void getPassword() {
+  protected void getPassword() {
     txtPassword = new JTextField("Password");
     txtPassword.setForeground(Color.GRAY);
   }
 
-  public void getUsername() {
+  protected void getUsername() {
     txtUsername = new JTextField("Username");
     txtUsername.setForeground(Color.GRAY);
   }
 
-  public void getBio() {
+  protected void getBio() {
     txtBio = new JTextField("Bio");
     txtBio.setForeground(Color.GRAY);
   }
 
-
-  public JPanel getFieldsPanel() {
+  protected JPanel getFieldsPanel() {
     JPanel fieldsPanel = new JPanel();
     fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
     fieldsPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20));
     return fieldsPanel;
   }
 
-
-  public void addComponents(JPanel headerPanel, JPanel fieldsPanel, JPanel registerPanel) {
+  protected void addComponents(JPanel headerPanel, JPanel fieldsPanel, JPanel registerPanel) {
     add(headerPanel, BorderLayout.NORTH);
     add(fieldsPanel, BorderLayout.CENTER);
     add(registerPanel, BorderLayout.SOUTH);
   }
-  
 
-  public void photoUploadPanel(JPanel fieldsPanel) {
+  protected void photoUploadPanel(JPanel fieldsPanel) {
     JPanel photoUploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     photoUploadPanel.add(btnUploadPhoto);
     fieldsPanel.add(photoUploadPanel);
   }
 
-  
 }

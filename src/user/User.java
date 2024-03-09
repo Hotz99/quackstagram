@@ -1,6 +1,13 @@
 package user;
 
 import image.Picture;
+import utils.AppPaths;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +27,10 @@ public class User {
   private Set<User> followers;
   private Set<User> following;
   private List<Picture> pictures;
+
+  private int postsCount;
+  private int followersCount;
+  private int followingCount;
 
   /**
    * Constructs a new User with the specified username, bio, and password.
@@ -45,7 +56,6 @@ public class User {
     this.followers = new HashSet<>();
     this.following = new HashSet<>();
   }
-
 
   /**
    * Constructs a new User object with the specified username.
@@ -80,15 +90,72 @@ public class User {
   }
 
   public int getPostsCount() {
-    return pictures.size();
+    return postsCount;
+  }
+
+  public void loadPostsCount() {
+    int postsCount = 0;
+
+    Path imageDetailsFilePath = Paths.get(
+        AppPaths.IMAGE_DETAILS);
+    try (
+        BufferedReader imageDetailsReader = Files.newBufferedReader(
+            imageDetailsFilePath)) {
+      String line;
+      while ((line = imageDetailsReader.readLine()) != null) {
+        if (line.contains("Username: " + this.getUsername())) {
+          postsCount++;
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    this.postsCount = postsCount;
+  }
+
+  public void loadFollowsCount() {
+    int followersCount = 0;
+    int followingCount = 0;
+
+    Path followingFilePath = Paths.get(
+        AppPaths.FOLLOWING);
+    try (
+        BufferedReader followingReader = Files.newBufferedReader(
+            followingFilePath)) {
+      String line;
+      while ((line = followingReader.readLine()) != null) {
+        String[] parts = line.split(":");
+        if (parts.length == 2) {
+          String username = parts[0].trim();
+          String[] followingUsers = parts[1].split(";");
+          if (username.equals(this.getUsername())) {
+            followingCount = followingUsers.length;
+          } else {
+            for (String followingUser : followingUsers) {
+              if (followingUser.trim().equals(this.getUsername())) {
+                followersCount++;
+              }
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    this.followersCount = followersCount;
+    this.followingCount = followingCount;
   }
 
   public int getFollowersCount() {
-    return followers.size();
+    // return followers.size();
+    return followersCount;
   }
 
   public int getFollowingCount() {
-    return following.size();
+    // return following.size();
+    return followingCount;
   }
 
   public Set<User> getFollowers() {

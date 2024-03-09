@@ -7,14 +7,12 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import app.App;
 import utils.BaseFrame;
 
-public class SignUpUI extends BaseFrame { 
-  private userManager userManager;
-
-  public SignUpUI(userManager userManager) {
-    this.userManager = userManager;
-
+public class SignUpUI extends BaseFrame {
+  public SignUpUI() {
     setTitle("Quackstagram - Register");
     setSize(APP_WIDTH, APP_HEIGHT);
     setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
@@ -42,19 +40,17 @@ public class SignUpUI extends BaseFrame {
   private void signInButton(JPanel registerPanel) {
     button = new JButton("Already have an account? Sign In");
     button.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            openSignInUI();
-        }
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        openSignInUI();
+      }
     });
     registerPanel.add(button, BorderLayout.SOUTH);
   }
 
-
-
   private JPanel registerPanel() {
     JPanel registerPanel = new JPanel(new BorderLayout());
-    registerPanel.setBackground(Color.WHITE); 
+    registerPanel.setBackground(Color.WHITE);
     registerPanel.add(btnRegister, BorderLayout.CENTER);
     return registerPanel;
   }
@@ -63,20 +59,19 @@ public class SignUpUI extends BaseFrame {
     btnRegister = new JButton(label);
     btnRegister.addActionListener(this::onRegisterClicked);
     btnRegister.setBackground(new Color(255, 90, 95));
-    btnRegister.setForeground(Color.BLACK); 
+    btnRegister.setForeground(Color.BLACK);
     btnRegister.setFocusPainted(false);
     btnRegister.setBorderPainted(false);
     btnRegister.setFont(new Font("Arial", Font.BOLD, 14));
   }
 
-
   private void btnUploadImage() {
     btnUploadPhoto = new JButton("Upload Photo");
     btnUploadPhoto.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            handleProfilePictureUpload();
-        }
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleProfilePictureUpload();
+      }
     });
   }
 
@@ -85,14 +80,14 @@ public class SignUpUI extends BaseFrame {
     String password = getTxtPassword().getText();
     String bio = getTxtBio().getText();
 
-    if (userManager.doesUsernameExist(username)) {
+    if (App.userManager.doesUsernameExist(username)) {
       JOptionPane.showMessageDialog(
           this,
           "Username already exists. Please choose a different username.",
           "Error",
           JOptionPane.ERROR_MESSAGE);
     } else {
-      userManager.saveCredentials(username, password, bio);
+      App.userManager.saveCredentials(username, password, bio);
       handleProfilePictureUpload();
       dispose();
       showSignInUI();
@@ -107,18 +102,18 @@ public class SignUpUI extends BaseFrame {
     fileChooser.setFileFilter(filter);
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       File selectedFile = fileChooser.getSelectedFile();
-      userManager.saveProfilePicture(selectedFile, txtUsername.getText());
+      App.userManager.saveProfilePicture(selectedFile, txtUsername.getText());
     }
   }
 
-  private void openSignInUI() {    
+  private void openSignInUI() {
     dispose();
     showSignInUI();
   }
 
   private void showSignInUI() {
     SwingUtilities.invokeLater(() -> {
-      SignInUI signInFrame = new SignInUI(userManager);
+      SignInUI signInFrame = new SignInUI();
       signInFrame.setVisible(true);
     });
   }

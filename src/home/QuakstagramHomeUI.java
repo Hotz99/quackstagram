@@ -23,7 +23,7 @@ import utils.AppPaths;
 import utils.BaseFrame;
 
 public class QuakstagramHomeUI extends BaseFrame {
-  private static final int IMAGE_WIDTH = WIDTH - 100; // Width for the image posts
+  private static final int IMAGE_WIDTH = APP_WIDTH - 100; // Width for the image posts
   private static final int IMAGE_HEIGHT = 150; // Height for the image posts
   private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
 
@@ -34,8 +34,8 @@ public class QuakstagramHomeUI extends BaseFrame {
 
   public QuakstagramHomeUI() {
     setTitle("Quakstagram Home");
-    setSize(WIDTH, HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setSize(APP_WIDTH, APP_HEIGHT);
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
 
@@ -58,23 +58,19 @@ public class QuakstagramHomeUI extends BaseFrame {
     populateContentPanel(contentPanel, sampleData);
     add(scrollPane, BorderLayout.CENTER);
 
-
     // Set up the home panel
     homePanel = new JPanel(new BorderLayout());
     homePanel.add(scrollPane, BorderLayout.CENTER);
 
     imageViewPanel = new JPanel(new BorderLayout());
 
-    
     cardPanel = new JPanel(new CardLayout());
     cardPanel.add(homePanel, "Home");
     cardPanel.add(imageViewPanel, "ImageView");
 
     add(cardPanel, BorderLayout.CENTER);
 
-
     cardPanel.show(); // Start with the home view
-
 
     // Navigation Bar
     JPanel navigationPanel = createNavigationPanel();
@@ -149,7 +145,7 @@ public class QuakstagramHomeUI extends BaseFrame {
 
       // Grey spacing panel
       JPanel spacingPanel = new JPanel();
-      spacingPanel.setPreferredSize(new Dimension(WIDTH - 10, 5)); // Set the height for spacing
+      spacingPanel.setPreferredSize(new Dimension(APP_WIDTH - 10, 5)); // Set the height for spacing
       spacingPanel.setBackground(new Color(230, 230, 230)); // Grey color for spacing
       panel.add(spacingPanel);
     }
@@ -205,28 +201,28 @@ public class QuakstagramHomeUI extends BaseFrame {
 
     // Write updated likes back to image_details.txt
     try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
-        writer.write(newContent.toString());
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      writer.write(newContent.toString());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-      // Record the like in notifications.txt
-      String notification = String.format(
-          "%s; %s; %s; %s\n",
-          imageOwner,
-          currentUser,
-          imageId,
-          timestamp);
-      try (
-          BufferedWriter notificationWriter = Files.newBufferedWriter(
-              Paths.get(
-                  AppPaths.NOTIFICATIONS),
-              StandardOpenOption.CREATE,
-              StandardOpenOption.APPEND)) {
-        notificationWriter.write(notification);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    // Record the like in notifications.txt
+    String notification = String.format(
+        "%s; %s; %s; %s\n",
+        imageOwner,
+        currentUser,
+        imageId,
+        timestamp);
+    try (
+        BufferedWriter notificationWriter = Files.newBufferedWriter(
+            Paths.get(
+                AppPaths.NOTIFICATIONS),
+            StandardOpenOption.CREATE,
+            StandardOpenOption.APPEND)) {
+      notificationWriter.write(notification);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private String[][] createSampleData() {
@@ -269,7 +265,7 @@ public class QuakstagramHomeUI extends BaseFrame {
       while ((line = reader.readLine()) != null && count < tempData.length) {
         String[] details = line.split(", ");
         String imagePoster = "";
-        String[]splitDetails = details[1].split(": ");
+        String[] splitDetails = details[1].split(": ");
         if (splitDetails.length > 1) {
           imagePoster = splitDetails[1];
         }
@@ -309,8 +305,8 @@ public class QuakstagramHomeUI extends BaseFrame {
       BufferedImage croppedImage = originalImage.getSubimage(
           0,
           0,
-          Math.min(originalImage.getWidth(), WIDTH - 20),
-          Math.min(originalImage.getHeight(), HEIGHT - 40));
+          Math.min(originalImage.getWidth(), APP_WIDTH - 20),
+          Math.min(originalImage.getHeight(), APP_HEIGHT - 40));
       ImageIcon imageIcon = new ImageIcon(croppedImage);
       fullSizeImageLabel.setIcon(imageIcon);
     } catch (IOException ex) {
@@ -338,7 +334,6 @@ public class QuakstagramHomeUI extends BaseFrame {
             refreshDisplayImage(postData, imageId); // Refresh the view
           }
         });
-
 
     // Information panel at the bottom
     JPanel infoPanel = new JPanel();

@@ -7,17 +7,20 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
 import user.User;
 import utils.AppPaths;
 
-public class userManager {
+public class UserManager {
 
-    private User newUser;
-    
-     public boolean doesUsernameExist(String username) {
+  private User currentUser;
+
+  public boolean doesUsernameExist(String username) {
     try (
         BufferedReader reader = new BufferedReader(
             new FileReader(AppPaths.CREDENTIALS))) {
@@ -32,7 +35,6 @@ public class userManager {
     }
     return false;
   }
-
 
   public void saveProfilePicture(File file, String username) {
     try {
@@ -57,8 +59,7 @@ public class userManager {
     }
   }
 
-
-public User verifyCredentials(String enteredUsername, String enteredPassword) {
+  public User verifyCredentials(String enteredUsername, String enteredPassword) {
     try (
         BufferedReader reader = new BufferedReader(
             new FileReader(AppPaths.CREDENTIALS))) {
@@ -69,7 +70,7 @@ public User verifyCredentials(String enteredUsername, String enteredPassword) {
         String password = parts[1];
         if (username.equals(enteredUsername) && password.equals(enteredPassword)) {
           // If the credentials are valid, return the corresponding User object
-          return new User(username,password);
+          return new User(username, password);
         }
       }
     } catch (IOException e) {
@@ -77,8 +78,7 @@ public User verifyCredentials(String enteredUsername, String enteredPassword) {
     }
     // If the credentials are not valid, return null
     return null;
-}
-
+  }
 
   public void saveUserInformation(User NewUser) {
     System.out.println("Saving user information: " + NewUser);

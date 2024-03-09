@@ -16,7 +16,7 @@ public class AppPaths {
     public static final String DACS_LOGO = AppPaths.IMG + "logos/DACS.png";
     public static final String IMAGE_DETAILS = AppPaths.IMG + "image_details.txt";
 
-    public static final String PROFILE_IMAGES_STORAGE = "resources/data/image/storage/profile/";
+    public static final String PROFILE_IMAGES_STORAGE = "resources/img/storage/profile/";
     public static final String ICONS = AppPaths.IMG + "icons/";
     public static final String DEFAULT_PROFILE_ICON = AppPaths.ICONS + "default_profile.png";
 }

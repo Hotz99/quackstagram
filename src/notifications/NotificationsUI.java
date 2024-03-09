@@ -11,15 +11,16 @@ import java.time.temporal.ChronoUnit;
 import javax.swing.*;
 import utils.BaseFrame;
 import utils.AppPaths;
+
 public class NotificationsUI extends BaseFrame {
 
-  private static final int WIDTH = 300;
-  private static final int HEIGHT = 500;
+  private static final int APP_WIDTH = 300;
+  private static final int APP_HEIGHT = 500;
 
   public NotificationsUI() {
     setTitle("Notifications");
-    setSize(WIDTH, HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setSize(APP_WIDTH, APP_HEIGHT);
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     initializeUI();
@@ -48,7 +49,6 @@ public class NotificationsUI extends BaseFrame {
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-
     // Read the current username from users.txt
     String currentUsername = "";
 
@@ -70,9 +70,9 @@ public class NotificationsUI extends BaseFrame {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(";");
-        if (!parts[0].trim().equals(currentUsername)) 
+        if (!parts[0].trim().equals(currentUsername))
           continue;
-        
+
         // Format the notification message
         String userWhoLiked = parts[1].trim();
         String timestamp = parts[3].trim();
@@ -95,7 +95,7 @@ public class NotificationsUI extends BaseFrame {
       e.printStackTrace();
     }
 
-    return contentPanel; 
+    return contentPanel;
   }
 
   private String getElapsedTime(String timestamp) {

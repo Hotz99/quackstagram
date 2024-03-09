@@ -12,17 +12,18 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.stream.Stream;
 import javax.swing.*;
+
+import auth.UserManager;
 import notifications.NotificationsUI;
 import utils.AppPaths;
 import utils.BaseFrame;
 
 public class InstagramProfileUI extends BaseFrame {
 
-  private static final int WIDTH = 300;
-  private static final int HEIGHT = 500;
+  private static final int APP_WIDTH = 300;
+  private static final int APP_HEIGHT = 500;
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
-  private static final int GRID_IMAGE_SIZE = WIDTH / 3; // Static size for grid images
-  private static final int NAV_ICON_SIZE = 20; // Corrected static size for bottom icons
+  private static final int GRID_IMAGE_SIZE = APP_WIDTH / 3; // Static size for grid images
   private JPanel contentPanel; // Panel to display the image grid or the clicked image
   private JPanel headerPanel; // Panel for the header
   private JPanel navigationPanel; // Panel for the navigation
@@ -30,54 +31,13 @@ public class InstagramProfileUI extends BaseFrame {
 
   public InstagramProfileUI(User user) {
     currentUser = user;
-    // Initialize counts
-    int imageCount = 0;
-    int followersCount = 0;
-    int followingCount = 0;
 
     // Step 1: Read image_details.txt to count the number of images posted by the
     // user
-    Path imageDetailsFilePath = Paths.get(
-        AppPaths.IMAGE_DETAILS);
-    try (
-        BufferedReader imageDetailsReader = Files.newBufferedReader(
-            imageDetailsFilePath)) {
-      String line;
-      while ((line = imageDetailsReader.readLine()) != null) {
-        if (line.contains("Username: " + currentUser.getUsername())) {
-          imageCount++;
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    currentUser.loadPostsCount();
 
     // Step 2: Read following.txt to calculate followers and following
-    Path followingFilePath = Paths.get(
-        AppPaths.FOLLOWING);
-    try (
-        BufferedReader followingReader = Files.newBufferedReader(
-            followingFilePath)) {
-      String line;
-      while ((line = followingReader.readLine()) != null) {
-        String[] parts = line.split(":");
-        if (parts.length == 2) {
-          String username = parts[0].trim();
-          String[] followingUsers = parts[1].split(";");
-          if (username.equals(currentUser.getUsername())) {
-            followingCount = followingUsers.length;
-          } else {
-            for (String followingUser : followingUsers) {
-              if (followingUser.trim().equals(currentUser.getUsername())) {
-                followersCount++;
-              }
-            }
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    currentUser.loadFollowsCount();
 
     String bio = "";
 
@@ -101,14 +61,14 @@ public class InstagramProfileUI extends BaseFrame {
     System.out.println("Bio for " + currentUser.getUsername() + ": " + bio);
     currentUser.setBio(bio);
 
-//Is the first issue, after that line 194  comes up, if we dont deal with the getPostsCOunt method
+    // Is the first issue, after that line 194 comes up, if we dont deal with the
+    // getPostsCOunt method
     System.out.println(currentUser.getPostsCount());
-  
 
     // this is all stupidly redundant
     setTitle("DACS Profile");
-    setSize(WIDTH, HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setSize(APP_WIDTH, APP_HEIGHT);
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     contentPanel = new JPanel();
@@ -120,8 +80,8 @@ public class InstagramProfileUI extends BaseFrame {
 
   public InstagramProfileUI() {
     setTitle("DACS Profile");
-    setSize(WIDTH, HEIGHT);
-    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+    setSize(APP_WIDTH, APP_HEIGHT);
+    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     contentPanel = new JPanel();
@@ -178,15 +138,18 @@ public class InstagramProfileUI extends BaseFrame {
     JPanel topHeaderPanel = new JPanel(new BorderLayout(10, 0));
     topHeaderPanel.setBackground(new Color(249, 249, 249));
 
+    System.out.println("Username at profile: " + currentUser.getUsername());
+
     // Profile image
     ImageIcon profileIcon = new ImageIcon(
         new ImageIcon(
-            "resources/data/storage/profile/" + currentUser.getUsername() + ".png")
+            AppPaths.PROFILE_IMAGES_STORAGE + currentUser.getUsername() + ".png")
             .getImage()
             .getScaledInstance(
                 PROFILE_IMAGE_SIZE,
                 PROFILE_IMAGE_SIZE,
                 Image.SCALE_SMOOTH));
+
     JLabel profileImage = new JLabel(profileIcon);
     profileImage.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     topHeaderPanel.add(profileImage, BorderLayout.WEST);
