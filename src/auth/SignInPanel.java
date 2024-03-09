@@ -13,31 +13,26 @@ import java.nio.file.Paths;
 import javax.swing.*;
 
 import app.App;
-import user.InstagramProfileUI;
+import user.ProfilePanel;
 import user.User;
 import utils.AppPaths;
-import utils.BaseFrame;
+import utils.BasePanel;
 
-public class SignInUI extends BaseFrame {
-  public SignInUI() {
-    setTitle("Quackstagram - Register");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout(10, 10));
-    initializeUI();
-  }
-
-  private void initializeUI() {
-    JPanel headerPanel = createHeaderPanel(LABEL);
+public class SignInPanel extends BasePanel {
+  public SignInPanel() {
+    JPanel headerPanel = createHeaderPanel(SIGNIN_LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
     JPanel fieldsPanel = getFieldsPanel();
+
+    addStruct(photoPanel, fieldsPanel, false);
+
     getUsername();
     getPassword();
-    addStruct(photoPanel, fieldsPanel, false);
     setupButton(SIGNIN_LABEL);
+
     JPanel registerPanel = getRegisterPanel();
     addComponents(headerPanel, fieldsPanel, registerPanel);
+
     setupNavSignUpBtn();
     getButtonPanel2();
   }
@@ -105,18 +100,15 @@ public class SignInUI extends BaseFrame {
   }
 
   private void openProfileUser() {
-    dispose();
     SwingUtilities.invokeLater(() -> {
-      InstagramProfileUI profileUI = new InstagramProfileUI(newUser);
+      ProfilePanel profileUI = new ProfilePanel(newUser);
       profileUI.setVisible(true);
     });
   }
 
   private void onRegisterNowClicked(ActionEvent event) {
-    dispose();
-
     SwingUtilities.invokeLater(() -> {
-      SignUpUI signUpFrame = new SignUpUI();
+      SignUpPanel signUpFrame = new SignUpPanel();
       signUpFrame.setVisible(true);
     });
   }

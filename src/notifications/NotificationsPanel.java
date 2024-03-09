@@ -9,28 +9,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
-import utils.BaseFrame;
+import utils.BasePanel;
 import utils.AppPaths;
 
-public class NotificationsUI extends BaseFrame {
-
-  private static final int APP_WIDTH = 300;
-  private static final int APP_HEIGHT = 500;
-
-  public NotificationsUI() {
-    setTitle("Notifications");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
-    initializeUI();
-  }
-
-  private void initializeUI() {
-    // Reuse the header and navigation panel creation methods from the
-    // InstagramProfileUI class
+public class NotificationsPanel extends BasePanel {
+  public NotificationsPanel() {
     JPanel headerPanel = createHeaderPanel(" Notifications 🐥");
-    JPanel navigationPanel = createNavigationPanel();
 
     JScrollPane scrollPane = new JScrollPane(createContentPanel());
     scrollPane.setHorizontalScrollBarPolicy(
@@ -41,7 +25,6 @@ public class NotificationsUI extends BaseFrame {
     // Add panels to frame
     add(headerPanel, BorderLayout.NORTH);
     add(scrollPane, BorderLayout.CENTER);
-    add(navigationPanel, BorderLayout.SOUTH);
   }
 
   private JPanel createContentPanel() {

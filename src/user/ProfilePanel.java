@@ -1,8 +1,7 @@
 package user;
 
-import explore.ExploreUI;
-import home.QuakstagramHomeUI;
-import image.ImageUploadUI;
+import explore.ExplorePanel;
+import image.ImageUploadPanel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,89 +12,44 @@ import java.nio.file.*;
 import java.util.stream.Stream;
 import javax.swing.*;
 
+import app.App;
 import auth.UserManager;
-import notifications.NotificationsUI;
+import notifications.NotificationsPanel;
 import utils.AppPaths;
-import utils.BaseFrame;
+import utils.BasePanel;
 
-public class InstagramProfileUI extends BaseFrame {
+public class ProfilePanel extends BasePanel {
 
-  private static final int APP_WIDTH = 300;
-  private static final int APP_HEIGHT = 500;
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
-  private static final int GRID_IMAGE_SIZE = APP_WIDTH / 3; // Static size for grid images
+  private static final int GRID_IMAGE_SIZE = App.WIDTH / 3; // Static size for grid images
   private JPanel contentPanel; // Panel to display the image grid or the clicked image
   private JPanel headerPanel; // Panel for the header
-  private JPanel navigationPanel; // Panel for the navigation
   private User currentUser; // User object to store the current user's information
 
-  public InstagramProfileUI(User user) {
+  public ProfilePanel(User user) {
     currentUser = user;
 
-    // Step 1: Read image_details.txt to count the number of images posted by the
-    // user
     currentUser.loadPostsCount();
 
-    // Step 2: Read following.txt to calculate followers and following
     currentUser.loadFollowsCount();
 
-    String bio = "";
-
-    Path bioDetailsFilePath = Paths.get(
-        AppPaths.CREDENTIALS);
-    try (
-        BufferedReader bioDetailsReader = Files.newBufferedReader(
-            bioDetailsFilePath)) {
-      String line;
-      while ((line = bioDetailsReader.readLine()) != null) {
-        String[] parts = line.split(":");
-        if (parts[0].equals(currentUser.getUsername()) && parts.length >= 3) {
-          bio = parts[2];
-          break; // Exit the loop once the matching bio is found
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    System.out.println("Bio for " + currentUser.getUsername() + ": " + bio);
-    currentUser.setBio(bio);
+    currentUser.loadBio();
 
     // Is the first issue, after that line 194 comes up, if we dont deal with the
     // getPostsCOunt method
     System.out.println(currentUser.getPostsCount());
 
-    // this is all stupidly redundant
-    setTitle("DACS Profile");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
-    contentPanel = new JPanel();
-    headerPanel = createHeaderPanel(); // Initialize header panel
-    navigationPanel = createNavigationPanel(); // Initialize navigation panel
-
     initializeUI();
   }
 
-  public InstagramProfileUI() {
-    setTitle("DACS Profile");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
-    contentPanel = new JPanel();
-    headerPanel = createHeaderPanel(); // Initialize header panel
-    navigationPanel = createNavigationPanel(); // Initialize navigation panel
+  public ProfilePanel() {
     initializeUI();
   }
 
   private void initializeUI() {
-    getContentPane().removeAll(); // Clear existing components
+    removeAll(); // Clear existing components
 
-    // Re-add the header and navigation panels
-    add(headerPanel, BorderLayout.NORTH);
-    add(navigationPanel, BorderLayout.SOUTH);
+    createHeaderPanel();
 
     // Initialize the image grid
     initializeImageGrid();
@@ -104,7 +58,7 @@ public class InstagramProfileUI extends BaseFrame {
     repaint();
   }
 
-  private JPanel createHeaderPanel() {
+  private void createHeaderPanel() {
     boolean isCurrentUser = false;
     String loggedInUsername = "";
 
@@ -250,7 +204,7 @@ public class InstagramProfileUI extends BaseFrame {
 
     headerPanel.add(profileNameAndBioPanel);
 
-    return headerPanel;
+    this.headerPanel = headerPanel;
   }
 
   private void handleFollowAction(String usernameToFollow) {
@@ -373,7 +327,7 @@ public class InstagramProfileUI extends BaseFrame {
 
     JButton backButton = new JButton("Back");
     backButton.addActionListener(e -> {
-      getContentPane().removeAll(); // Remove all components from the frame
+      removeAll(); // Remove all components from the frame
       initializeUI(); // Re-initialize the UI
     });
     contentPanel.add(backButton, BorderLayout.SOUTH);

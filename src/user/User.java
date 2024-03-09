@@ -148,6 +148,30 @@ public class User {
     this.followingCount = followingCount;
   }
 
+  public void loadBio() {
+    String bio = "";
+
+    Path bioDetailsFilePath = Paths.get(
+        AppPaths.CREDENTIALS);
+    try (
+        BufferedReader bioDetailsReader = Files.newBufferedReader(
+            bioDetailsFilePath)) {
+      String line;
+      while ((line = bioDetailsReader.readLine()) != null) {
+        String[] parts = line.split(":");
+        if (parts[0].equals(this.getUsername()) && parts.length >= 3) {
+          bio = parts[2];
+          break; // Exit the loop once the matching bio is found
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Loaded bio for " + this.getUsername() + ": " + bio);
+    this.setBio(bio);
+  }
+
   public int getFollowersCount() {
     // return followers.size();
     return followersCount;

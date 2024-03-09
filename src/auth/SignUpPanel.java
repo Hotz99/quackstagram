@@ -9,19 +9,10 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import app.App;
-import utils.BaseFrame;
+import utils.BasePanel;
 
-public class SignUpUI extends BaseFrame {
-  public SignUpUI() {
-    setTitle("Quackstagram - Register");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout(10, 10));
-    initializeUI();
-  }
-
-  private void initializeUI() {
+public class SignUpPanel extends BasePanel {
+  public SignUpPanel() {
     JPanel headerPanel = createHeaderPanel(LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
     JPanel fieldsPanel = getFieldsPanel();
@@ -39,12 +30,7 @@ public class SignUpUI extends BaseFrame {
 
   private void signInButton(JPanel registerPanel) {
     button = new JButton("Already have an account? Sign In");
-    button.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        openSignInUI();
-      }
-    });
+    button.addActionListener(e -> App.showPanel("SignIn"));
     registerPanel.add(button, BorderLayout.SOUTH);
   }
 
@@ -89,8 +75,8 @@ public class SignUpUI extends BaseFrame {
     } else {
       App.userManager.saveCredentials(username, password, bio);
       handleProfilePictureUpload();
-      dispose();
-      showSignInUI();
+
+      App.showPanel("SignIn");
     }
   }
 
@@ -104,17 +90,5 @@ public class SignUpUI extends BaseFrame {
       File selectedFile = fileChooser.getSelectedFile();
       App.userManager.saveProfilePicture(selectedFile, txtUsername.getText());
     }
-  }
-
-  private void openSignInUI() {
-    dispose();
-    showSignInUI();
-  }
-
-  private void showSignInUI() {
-    SwingUtilities.invokeLater(() -> {
-      SignInUI signInFrame = new SignInUI();
-      signInFrame.setVisible(true);
-    });
   }
 }

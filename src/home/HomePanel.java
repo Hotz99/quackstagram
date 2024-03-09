@@ -19,11 +19,12 @@ import java.time.format.DateTimeFormatter;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import app.App;
 import utils.AppPaths;
-import utils.BaseFrame;
+import utils.BasePanel;
 
-public class QuakstagramHomeUI extends BaseFrame {
-  private static final int IMAGE_WIDTH = APP_WIDTH - 100; // Width for the image posts
+public class HomePanel extends BasePanel {
+  private static final int IMAGE_WIDTH = App.WIDTH - 100; // Width for the image posts
   private static final int IMAGE_HEIGHT = 150; // Height for the image posts
   private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
 
@@ -32,19 +33,9 @@ public class QuakstagramHomeUI extends BaseFrame {
   private JPanel homePanel;
   private JPanel imageViewPanel;
 
-  public QuakstagramHomeUI() {
-    setTitle("Quakstagram Home");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
+  public HomePanel() {
 
-    initializeUI();
-  }
-
-  @SuppressWarnings("deprecation")
-  private void initializeUI() {
-    add(createHeaderPanel("🐥 Quackstagram 🐥"), BorderLayout.NORTH);
+    add(createHeaderPanel("Quackstagram Home"), BorderLayout.NORTH);
 
     // Content Scroll Panel
     JPanel contentPanel = new JPanel();
@@ -69,8 +60,6 @@ public class QuakstagramHomeUI extends BaseFrame {
     cardPanel.add(imageViewPanel, "ImageView");
 
     add(cardPanel, BorderLayout.CENTER);
-
-    cardPanel.show(); // Start with the home view
 
     // Navigation Bar
     JPanel navigationPanel = createNavigationPanel();
@@ -145,7 +134,7 @@ public class QuakstagramHomeUI extends BaseFrame {
 
       // Grey spacing panel
       JPanel spacingPanel = new JPanel();
-      spacingPanel.setPreferredSize(new Dimension(APP_WIDTH - 10, 5)); // Set the height for spacing
+      spacingPanel.setPreferredSize(new Dimension(App.WIDTH - 10, 5)); // Set the height for spacing
       spacingPanel.setBackground(new Color(230, 230, 230)); // Grey color for spacing
       panel.add(spacingPanel);
     }
@@ -305,8 +294,8 @@ public class QuakstagramHomeUI extends BaseFrame {
       BufferedImage croppedImage = originalImage.getSubimage(
           0,
           0,
-          Math.min(originalImage.getWidth(), APP_WIDTH - 20),
-          Math.min(originalImage.getHeight(), APP_HEIGHT - 40));
+          Math.min(originalImage.getWidth(), App.WIDTH - 20),
+          Math.min(originalImage.getHeight(), App.HEIGHT - 40));
       ImageIcon imageIcon = new ImageIcon(croppedImage);
       fullSizeImageLabel.setIcon(imageIcon);
     } catch (IOException ex) {

@@ -1,7 +1,7 @@
 package explore;
 
-import home.QuakstagramHomeUI;
-import image.ImageUploadUI;
+import home.HomePanel;
+import image.ImageUploadPanel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,36 +20,27 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import notifications.NotificationsUI;
-import user.InstagramProfileUI;
+
+import app.App;
+import notifications.NotificationsPanel;
+import user.ProfilePanel;
 import user.User;
 import utils.AppPaths;
-import utils.BaseFrame;
+import utils.BasePanel;
 
-public class ExploreUI extends BaseFrame {
-  private final int IMAGE_SIZE = this.APP_WIDTH / 3; // Size for each image in the grid
+public class ExplorePanel extends BasePanel {
+  private final int IMAGE_SIZE = App.WIDTH / 3; // Size for each image in the grid
 
-  public ExploreUI() {
-    setTitle("Explore");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
-    initializeUI();
-  }
-
-  private void initializeUI() {
-    getContentPane().removeAll(); // Clear existing components
+  public ExplorePanel() {
+    removeAll(); // Clear existing components
     setLayout(new BorderLayout()); // Reset the layout manager
 
     JPanel headerPanel = createHeaderPanel("Explore 🐥");
-    JPanel navigationPanel = createNavigationPanel();
     JPanel mainContentPanel = createMainContentPanel();
 
     // Add panels to the frame
     add(headerPanel, BorderLayout.NORTH);
     add(mainContentPanel, BorderLayout.CENTER);
-    add(navigationPanel, BorderLayout.SOUTH);
 
     revalidate();
     repaint();
@@ -103,7 +94,7 @@ public class ExploreUI extends BaseFrame {
   }
 
   private void displayImage(String imagePath) {
-    getContentPane().removeAll();
+    removeAll();
     setLayout(new BorderLayout());
 
     // Add the header and navigation panels back
@@ -191,12 +182,12 @@ public class ExploreUI extends BaseFrame {
 
     // Make the button take up the full width
     backButton.setPreferredSize(
-        new Dimension(APP_WIDTH - 20, backButton.getPreferredSize().height));
+        new Dimension(App.WIDTH - 20, backButton.getPreferredSize().height));
 
     backButtonPanel.add(backButton);
 
     backButton.addActionListener(e -> {
-      getContentPane().removeAll();
+      removeAll();
       add(createHeaderPanel("Explore 🐥"), BorderLayout.NORTH);
       add(createMainContentPanel(), BorderLayout.CENTER);
       add(createNavigationPanel(), BorderLayout.SOUTH);
@@ -207,9 +198,10 @@ public class ExploreUI extends BaseFrame {
 
     usernameLabel.addActionListener(e -> {
       User user = new User(finalUsername); // Assuming User class has a constructor that takes a username
-      InstagramProfileUI profileUI = new InstagramProfileUI(user);
+
+      ProfilePanel profileUI = new ProfilePanel(user);
       profileUI.setVisible(true);
-      dispose(); // Close the current frame
+
     });
 
     // Container panel for image and details

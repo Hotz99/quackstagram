@@ -11,27 +11,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import utils.AppPaths;
-import utils.BaseFrame;
 
-public class ImageUploadUI extends BaseFrame {
+import app.App;
+import utils.AppPaths;
+import utils.BasePanel;
+
+public class ImageUploadPanel extends BasePanel {
   private JLabel imagePreviewLabel;
   private JTextArea bioTextArea;
   private JButton uploadButton;
   private JButton saveButton;
 
-  public ImageUploadUI() {
-    setTitle("Upload Image");
-    setSize(APP_WIDTH, APP_HEIGHT);
-    setMinimumSize(new Dimension(APP_WIDTH, APP_HEIGHT));
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
-    initializeUI();
-  }
-
-  private void initializeUI() {
+  public ImageUploadPanel() {
     JPanel headerPanel = createHeaderPanel(" Upload Image 🐥"); // Reuse the createHeaderPanel method
-    JPanel navigationPanel = createNavigationPanel(); // Reuse the createNavigationPanel method
 
     // Main content panel
     JPanel contentPanel = new JPanel();
@@ -58,13 +50,12 @@ public class ImageUploadUI extends BaseFrame {
     // Add panels to frame
     add(headerPanel, BorderLayout.NORTH);
     add(contentPanel, BorderLayout.CENTER);
-    add(navigationPanel, BorderLayout.SOUTH);
   }
 
   private JLabel createImagePreviewLabel() {
     JLabel imagePreviewLabel = new JLabel();
     imagePreviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    imagePreviewLabel.setPreferredSize(new Dimension(APP_WIDTH, APP_HEIGHT / 3));
+    imagePreviewLabel.setPreferredSize(new Dimension(App.WIDTH, App.HEIGHT / 3));
     return imagePreviewLabel;
   }
 
@@ -74,7 +65,7 @@ public class ImageUploadUI extends BaseFrame {
     bioTextArea.setLineWrap(true);
     bioTextArea.setWrapStyleWord(true);
     JScrollPane bioScrollPane = new JScrollPane(bioTextArea);
-    bioScrollPane.setPreferredSize(new Dimension(APP_WIDTH - 50, APP_HEIGHT / 6));
+    bioScrollPane.setPreferredSize(new Dimension(App.WIDTH - 50, App.HEIGHT / 6));
     return bioScrollPane;
   }
 
