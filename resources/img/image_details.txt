@@ -5,7 +5,7 @@ ImageID: Xylo_2, Username: Xylo, Bio: Jedi mind trick failed., Timestamp: 2023-1
 ImageID: Zara_1, Username: Zara, Bio: Lost my map I have. Oops., Timestamp: 2023-12-17 19:24:31, Likes: 0
 ImageID: Zara_2, Username: Zara, Bio: Yoga with Yoda, Timestamp: 2023-12-17 19:25:03, Likes: 0
 ImageID: Mystar_1, Username: Mystar, Bio: Cookies gone? , Timestamp: 2023-12-17 19:26:50, Likes: 0
-ImageID: Mystar_2, Username: Mystar, Bio: In my soup a fly is., Timestamp: 2023-12-17 19:27:24, Likes: 13
+ImageID: Mystar_2, Username: Mystar, Bio: In my soup a fly is., Timestamp: 2023-12-17 19:27:24, Likes: [Xylo]
 ImageID: Xylo - Fierce warrior, not solo_3, Username: Xylo - Fierce warrior, not solo, Bio: foo bar, Timestamp: 2024-03-07 20:05:30, Likes: 0
 ImageID: Xylo - Fierce warrior, not solo_4, Username: Xylo - Fierce warrior, not solo, Bio: gooo, Timestamp: 2024-03-07 20:07:17, Likes: 0
 ImageID: Xylo - Fierce warrior, not solo_5, Username: Xylo - Fierce warrior, not solo, Bio: Enter a caption, Timestamp: 2024-03-07 20:08:15, Likes: 0

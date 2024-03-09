@@ -116,8 +116,8 @@ public class HomePanel extends BasePanel {
           }
         }
       );
-
       itemPanel.add(nameLabel);
+
       itemPanel.add(imageLabel);
       itemPanel.add(descriptionLabel);
       itemPanel.add(likesLabel);
