@@ -89,6 +89,7 @@ public class UserManager {
         ) {
           // If the credentials are valid, return the corresponding User object
           currentUser = new User(username, password);
+          App.createPanels();
           System.out.println("User verified: " + currentUser);
           App.showPanel("Explore");
           return currentUser;

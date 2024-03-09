@@ -22,6 +22,7 @@ public class ProfilePanel extends BasePanel {
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
   private static final int GRID_IMAGE_SIZE = App.WIDTH / 3; // Static size for grid images
   private JPanel contentPanel = new JPanel(); // Panel to display the image grid or the clicked image
+  String currentUsername = UserManager.getCurrentUser().getUsername();
   private JPanel headerPanel = new JPanel(); // Panel for the header
 
   public ProfilePanel(User user) {
@@ -64,30 +65,12 @@ public class ProfilePanel extends BasePanel {
 
   private void createHeaderPanel() {
     boolean isCurrentUser = false;
-    String loggedInUsername = "";
-
-    // Read the logged-in user's username from users.txt
-    try (
-      BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.USERS))
-    ) {
-      String line = reader.readLine();
-      if (line != null) {
-        loggedInUsername = line.split(":")[0].trim();
-        isCurrentUser =
-          loggedInUsername.equals(UserManager.getCurrentUser().getUsername());
-        System.out.println("Logged in user is " + loggedInUsername);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
 
     // Header Panel
     JPanel headerPanel = new JPanel();
     try (Stream<String> lines = Files.lines(Paths.get(AppPaths.USERS))) {
       isCurrentUser =
-        lines.anyMatch(line ->
-          line.startsWith(UserManager.getCurrentUser().getUsername() + ":")
-        );
+        lines.anyMatch(line -> line.startsWith(currentUsername + ":"));
     } catch (IOException e) {
       e.printStackTrace(); // Log or handle the exception as appropriate
     }
@@ -99,28 +82,27 @@ public class ProfilePanel extends BasePanel {
     JPanel topHeaderPanel = new JPanel(new BorderLayout(10, 0));
     topHeaderPanel.setBackground(new Color(249, 249, 249));
 
-    String username = UserManager.getCurrentUser() != null
-      ? UserManager.getCurrentUser().getUsername()
-      : "No user";
-    System.out.println("Username at profile: " + username);
-
+    String imagePath =
+      AppPaths.PROFILE_IMAGES_STORAGE + currentUsername + ".png";
     // Profile image
-    ImageIcon profileIcon = new ImageIcon(
-      new ImageIcon(
-        AppPaths.PROFILE_IMAGES_STORAGE +
-        UserManager.getCurrentUser().getUsername() +
-        ".png"
-      )
-        .getImage()
-        .getScaledInstance(
-          PROFILE_IMAGE_SIZE,
-          PROFILE_IMAGE_SIZE,
-          Image.SCALE_SMOOTH
-        )
+    ImageIcon originalIcon = new ImageIcon(imagePath);
+    Image originalImage = originalIcon.getImage();
+
+    Image scaledImage = originalImage.getScaledInstance(
+      PROFILE_IMAGE_SIZE,
+      PROFILE_IMAGE_SIZE,
+      Image.SCALE_SMOOTH
     );
+    ImageIcon profileIcon = new ImageIcon(scaledImage);
 
     JLabel profileImage = new JLabel(profileIcon);
+    profileImage.setPreferredSize(
+      new Dimension(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE)
+    );
     profileImage.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    profileImage.setHorizontalAlignment(JLabel.CENTER);
+    profileImage.setVerticalAlignment(JLabel.CENTER);
+
     topHeaderPanel.add(profileImage, BorderLayout.WEST);
 
     // Stats Panel
@@ -154,7 +136,7 @@ public class ProfilePanel extends BasePanel {
     // Follow Button
     // Follow or Edit Profile Button
     // followButton.addActionListener(e ->
-    // handleFollowAction(UserManager.getCurrentUser().getUsername()));
+    // handleFollowAction(currentUsername));
     JButton followButton;
     if (isCurrentUser) {
       followButton = new JButton("Edit Profile");
@@ -167,14 +149,10 @@ public class ProfilePanel extends BasePanel {
         String line;
         while ((line = reader.readLine()) != null) {
           String[] parts = line.split(":");
-          if (parts[0].trim().equals(loggedInUsername)) {
+          if (parts[0].trim().equals(currentUsername)) {
             String[] followedUsers = parts[1].split(";");
             for (String followedUser : followedUsers) {
-              if (
-                followedUser
-                  .trim()
-                  .equals(UserManager.getCurrentUser().getUsername())
-              ) {
+              if (followedUser.trim().equals(currentUsername)) {
                 followButton.setText("Following");
                 break;
               }
@@ -185,7 +163,7 @@ public class ProfilePanel extends BasePanel {
         e.printStackTrace();
       }
       followButton.addActionListener(e -> {
-        handleFollowAction(UserManager.getCurrentUser().getUsername());
+        handleFollowAction(currentUsername);
         followButton.setText("Following");
       });
     }
@@ -218,16 +196,12 @@ public class ProfilePanel extends BasePanel {
     profileNameAndBioPanel.setLayout(new BorderLayout());
     profileNameAndBioPanel.setBackground(new Color(249, 249, 249));
 
-    JLabel profileNameLabel = new JLabel(
-      UserManager.getCurrentUser().getUsername()
-    );
+    JLabel profileNameLabel = new JLabel(currentUsername);
     profileNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
     profileNameLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10)); // Padding on the sides
 
     JTextArea profileBio = new JTextArea(UserManager.getCurrentUser().getBio());
-    System.out.println(
-      "This is the bio " + UserManager.getCurrentUser().getUsername()
-    );
+    System.out.println("This is the bio " + currentUsername);
     profileBio.setEditable(false);
     profileBio.setFont(new Font("Arial", Font.PLAIN, 12));
     profileBio.setBackground(new Color(249, 249, 249));
@@ -239,27 +213,25 @@ public class ProfilePanel extends BasePanel {
     headerPanel.add(profileNameAndBioPanel);
 
     this.headerPanel = headerPanel;
+    add(headerPanel, BorderLayout.NORTH);
   }
 
   private void handleFollowAction(String usernameToFollow) {
     Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
     Path usersFilePath = Paths.get(AppPaths.USERS);
-
-    String currentUserUsername = "";
-
     try {
       // Read the current user's username from users.txt
       try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
         String line;
         while ((line = reader.readLine()) != null) {
           String[] parts = line.split(":");
-          currentUserUsername = parts[0];
+          currentUsername = parts[0];
         }
       }
 
-      System.out.println("Real user is " + currentUserUsername);
-      // If currentUserUsername is not empty, process following.txt
-      if (!currentUserUsername.isEmpty()) {
+      System.out.println("Real user is " + currentUsername);
+      // If currentUsername is not empty, process following.txt
+      if (!currentUsername.isEmpty()) {
         boolean found = false;
         StringBuilder newContent = new StringBuilder();
 
@@ -271,7 +243,7 @@ public class ProfilePanel extends BasePanel {
             String line;
             while ((line = reader.readLine()) != null) {
               String[] parts = line.split(":");
-              if (parts[0].trim().equals(currentUserUsername)) {
+              if (parts[0].trim().equals(currentUsername)) {
                 found = true;
                 if (!line.contains(usernameToFollow)) {
                   line =
@@ -288,7 +260,7 @@ public class ProfilePanel extends BasePanel {
         // If the current user was not found in following.txt, add them
         if (!found) {
           newContent
-            .append(currentUserUsername)
+            .append(currentUsername)
             .append(": ")
             .append(usernameToFollow)
             .append("\n");
@@ -314,10 +286,7 @@ public class ProfilePanel extends BasePanel {
     try (Stream<Path> paths = Files.list(imageDir)) {
       paths
         .filter(path ->
-          path
-            .getFileName()
-            .toString()
-            .startsWith(UserManager.getCurrentUser().getUsername() + "_")
+          path.getFileName().toString().startsWith(currentUsername + "_")
         )
         .forEach(path -> {
           ImageIcon imageIcon = new ImageIcon(

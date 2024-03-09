@@ -30,16 +30,6 @@ public class App extends JFrame {
     setSize(WIDTH, HEIGHT);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-    // Add panels to card layout
-    cards.add(new SignUpPanel(), "SignUp");
-    cards.add(new HomePanel(), "Home");
-    cards.add(new ExplorePanel(), "Explore");
-    cards.add(new ImageUploadPanel(), "Image Upload");
-    cards.add(new NotificationsPanel(), "Notifications");
-
-    // this also throws
-    cards.add(new ProfilePanel(), "Profile");
-
     // this throws when the addStruct() in the SignIn ctor is called
     cards.add(new SignInPanel(), "SignIn");
 
@@ -48,6 +38,15 @@ public class App extends JFrame {
 
     // Show the initial panel
     cardLayout.show(cards, "SignIn");
+  }
+
+  public static void createPanels() {
+    cards.add(new SignUpPanel(), "SignUp");
+    cards.add(new HomePanel(), "Home");
+    cards.add(new ExplorePanel(), "Explore");
+    cards.add(new ImageUploadPanel(), "Image Upload");
+    cards.add(new NotificationsPanel(), "Notifications");
+    cards.add(new ProfilePanel(), "Profile");
   }
 
   public static void showPanel(String panelName) {
