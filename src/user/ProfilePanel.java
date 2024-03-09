@@ -1,5 +1,7 @@
 package user;
 
+import app.App;
+import auth.UserManager;
 import explore.ExplorePanel;
 import image.ImageUploadPanel;
 import java.awt.*;
@@ -11,9 +13,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.stream.Stream;
 import javax.swing.*;
-
-import app.App;
-import auth.UserManager;
 import notifications.NotificationsPanel;
 import utils.AppPaths;
 import utils.BasePanel;
@@ -22,27 +21,32 @@ public class ProfilePanel extends BasePanel {
 
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
   private static final int GRID_IMAGE_SIZE = App.WIDTH / 3; // Static size for grid images
-  private JPanel contentPanel; // Panel to display the image grid or the clicked image
-  private JPanel headerPanel; // Panel for the header
-  private User currentUser; // User object to store the current user's information
+  private JPanel contentPanel = new JPanel(); // Panel to display the image grid or the clicked image
+  private JPanel headerPanel = new JPanel(); // Panel for the header
 
   public ProfilePanel(User user) {
-    currentUser = user;
+    UserManager.setCurrentUser(user);
 
-    currentUser.loadPostsCount();
+    UserManager.getCurrentUser().loadPostsCount();
 
-    currentUser.loadFollowsCount();
+    UserManager.getCurrentUser().loadFollowsCount();
 
-    currentUser.loadBio();
+    UserManager.getCurrentUser().loadBio();
 
     // Is the first issue, after that line 194 comes up, if we dont deal with the
     // getPostsCOunt method
-    System.out.println(currentUser.getPostsCount());
+    System.out.println(UserManager.getCurrentUser().getPostsCount());
 
     initializeUI();
   }
 
   public ProfilePanel() {
+    if (UserManager.getCurrentUser() == null) {
+      // If no user is logged in, show the sign-in panel
+      System.out.println("No user is logged in");
+      App.showPanel("SignIn");
+      return;
+    }
     initializeUI();
   }
 
@@ -64,12 +68,14 @@ public class ProfilePanel extends BasePanel {
 
     // Read the logged-in user's username from users.txt
     try (
-        BufferedReader reader = Files.newBufferedReader(
-            Paths.get(AppPaths.USERS))) {
+      BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.USERS))
+    ) {
       String line = reader.readLine();
       if (line != null) {
         loggedInUsername = line.split(":")[0].trim();
-        isCurrentUser = loggedInUsername.equals(currentUser.getUsername());
+        isCurrentUser =
+          loggedInUsername.equals(UserManager.getCurrentUser().getUsername());
+        System.out.println("Logged in user is " + loggedInUsername);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -77,10 +83,11 @@ public class ProfilePanel extends BasePanel {
 
     // Header Panel
     JPanel headerPanel = new JPanel();
-    try (
-        Stream<String> lines = Files.lines(
-            Paths.get(AppPaths.USERS))) {
-      isCurrentUser = lines.anyMatch(line -> line.startsWith(currentUser.getUsername() + ":"));
+    try (Stream<String> lines = Files.lines(Paths.get(AppPaths.USERS))) {
+      isCurrentUser =
+        lines.anyMatch(line ->
+          line.startsWith(UserManager.getCurrentUser().getUsername() + ":")
+        );
     } catch (IOException e) {
       e.printStackTrace(); // Log or handle the exception as appropriate
     }
@@ -92,17 +99,25 @@ public class ProfilePanel extends BasePanel {
     JPanel topHeaderPanel = new JPanel(new BorderLayout(10, 0));
     topHeaderPanel.setBackground(new Color(249, 249, 249));
 
-    System.out.println("Username at profile: " + currentUser.getUsername());
+    String username = UserManager.getCurrentUser() != null
+      ? UserManager.getCurrentUser().getUsername()
+      : "No user";
+    System.out.println("Username at profile: " + username);
 
     // Profile image
     ImageIcon profileIcon = new ImageIcon(
-        new ImageIcon(
-            AppPaths.PROFILE_IMAGES_STORAGE + currentUser.getUsername() + ".png")
-            .getImage()
-            .getScaledInstance(
-                PROFILE_IMAGE_SIZE,
-                PROFILE_IMAGE_SIZE,
-                Image.SCALE_SMOOTH));
+      new ImageIcon(
+        AppPaths.PROFILE_IMAGES_STORAGE +
+        UserManager.getCurrentUser().getUsername() +
+        ".png"
+      )
+        .getImage()
+        .getScaledInstance(
+          PROFILE_IMAGE_SIZE,
+          PROFILE_IMAGE_SIZE,
+          Image.SCALE_SMOOTH
+        )
+    );
 
     JLabel profileImage = new JLabel(profileIcon);
     profileImage.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -113,23 +128,33 @@ public class ProfilePanel extends BasePanel {
     statsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
     statsPanel.setBackground(new Color(249, 249, 249));
     System.out.println(
-        "Number of posts for this user" + currentUser.getPostsCount());
+      "Number of posts for this user" +
+      UserManager.getCurrentUser().getPostsCount()
+    );
     statsPanel.add(
-        createStatLabel(Integer.toString(currentUser.getPostsCount()), "Posts"));
+      createStatLabel(
+        Integer.toString(UserManager.getCurrentUser().getPostsCount()),
+        "Posts"
+      )
+    );
     statsPanel.add(
-        createStatLabel(
-            Integer.toString(currentUser.getFollowersCount()),
-            "Followers"));
+      createStatLabel(
+        Integer.toString(UserManager.getCurrentUser().getFollowersCount()),
+        "Followers"
+      )
+    );
     statsPanel.add(
-        createStatLabel(
-            Integer.toString(currentUser.getFollowingCount()),
-            "Following"));
+      createStatLabel(
+        Integer.toString(UserManager.getCurrentUser().getFollowingCount()),
+        "Following"
+      )
+    );
     statsPanel.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 0)); // Add some vertical padding
 
     // Follow Button
     // Follow or Edit Profile Button
     // followButton.addActionListener(e ->
-    // handleFollowAction(currentUser.getUsername()));
+    // handleFollowAction(UserManager.getCurrentUser().getUsername()));
     JButton followButton;
     if (isCurrentUser) {
       followButton = new JButton("Edit Profile");
@@ -137,8 +162,7 @@ public class ProfilePanel extends BasePanel {
       followButton = new JButton("Follow");
 
       // Check if the current user is already being followed by the logged-in user
-      Path followingFilePath = Paths.get(
-          AppPaths.FOLLOWING);
+      Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
       try (BufferedReader reader = Files.newBufferedReader(followingFilePath)) {
         String line;
         while ((line = reader.readLine()) != null) {
@@ -146,7 +170,11 @@ public class ProfilePanel extends BasePanel {
           if (parts[0].trim().equals(loggedInUsername)) {
             String[] followedUsers = parts[1].split(";");
             for (String followedUser : followedUsers) {
-              if (followedUser.trim().equals(currentUser.getUsername())) {
+              if (
+                followedUser
+                  .trim()
+                  .equals(UserManager.getCurrentUser().getUsername())
+              ) {
                 followButton.setText("Following");
                 break;
               }
@@ -157,7 +185,7 @@ public class ProfilePanel extends BasePanel {
         e.printStackTrace();
       }
       followButton.addActionListener(e -> {
-        handleFollowAction(currentUser.getUsername());
+        handleFollowAction(UserManager.getCurrentUser().getUsername());
         followButton.setText("Following");
       });
     }
@@ -165,8 +193,9 @@ public class ProfilePanel extends BasePanel {
     followButton.setAlignmentX(Component.CENTER_ALIGNMENT);
     followButton.setFont(new Font("Arial", Font.BOLD, 12));
     followButton.setMaximumSize(
-        new Dimension(Integer.MAX_VALUE, followButton.getMinimumSize().height)); // Make the button fill the horizontal
-                                                                                 // space
+      new Dimension(Integer.MAX_VALUE, followButton.getMinimumSize().height)
+    ); // Make the button fill the horizontal
+    // space
     followButton.setBackground(new Color(225, 228, 232)); // A soft, appealing color that complements the UI
     followButton.setForeground(Color.BLACK);
     followButton.setOpaque(true);
@@ -176,7 +205,8 @@ public class ProfilePanel extends BasePanel {
     // Add Stats and Follow Button to a combined Panel
     JPanel statsFollowPanel = new JPanel();
     statsFollowPanel.setLayout(
-        new BoxLayout(statsFollowPanel, BoxLayout.Y_AXIS));
+      new BoxLayout(statsFollowPanel, BoxLayout.Y_AXIS)
+    );
     statsFollowPanel.add(statsPanel);
     statsFollowPanel.add(followButton);
     topHeaderPanel.add(statsFollowPanel, BorderLayout.CENTER);
@@ -188,12 +218,16 @@ public class ProfilePanel extends BasePanel {
     profileNameAndBioPanel.setLayout(new BorderLayout());
     profileNameAndBioPanel.setBackground(new Color(249, 249, 249));
 
-    JLabel profileNameLabel = new JLabel(currentUser.getUsername());
+    JLabel profileNameLabel = new JLabel(
+      UserManager.getCurrentUser().getUsername()
+    );
     profileNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
     profileNameLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10)); // Padding on the sides
 
-    JTextArea profileBio = new JTextArea(currentUser.getBio());
-    System.out.println("This is the bio " + currentUser.getUsername());
+    JTextArea profileBio = new JTextArea(UserManager.getCurrentUser().getBio());
+    System.out.println(
+      "This is the bio " + UserManager.getCurrentUser().getUsername()
+    );
     profileBio.setEditable(false);
     profileBio.setFont(new Font("Arial", Font.PLAIN, 12));
     profileBio.setBackground(new Color(249, 249, 249));
@@ -208,10 +242,8 @@ public class ProfilePanel extends BasePanel {
   }
 
   private void handleFollowAction(String usernameToFollow) {
-    Path followingFilePath = Paths.get(
-        AppPaths.FOLLOWING);
-    Path usersFilePath = Paths.get(
-        AppPaths.USERS);
+    Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
+    Path usersFilePath = Paths.get(AppPaths.USERS);
 
     String currentUserUsername = "";
 
@@ -234,14 +266,16 @@ public class ProfilePanel extends BasePanel {
         // Read and process following.txt
         if (Files.exists(followingFilePath)) {
           try (
-              BufferedReader reader = Files.newBufferedReader(followingFilePath)) {
+            BufferedReader reader = Files.newBufferedReader(followingFilePath)
+          ) {
             String line;
             while ((line = reader.readLine()) != null) {
               String[] parts = line.split(":");
               if (parts[0].trim().equals(currentUserUsername)) {
                 found = true;
                 if (!line.contains(usernameToFollow)) {
-                  line = line
+                  line =
+                    line
                       .concat(line.endsWith(":") ? "" : "; ")
                       .concat(usernameToFollow);
                 }
@@ -254,15 +288,16 @@ public class ProfilePanel extends BasePanel {
         // If the current user was not found in following.txt, add them
         if (!found) {
           newContent
-              .append(currentUserUsername)
-              .append(": ")
-              .append(usernameToFollow)
-              .append("\n");
+            .append(currentUserUsername)
+            .append(": ")
+            .append(usernameToFollow)
+            .append("\n");
         }
 
         // Write the updated content back to following.txt
         try (
-            BufferedWriter writer = Files.newBufferedWriter(followingFilePath)) {
+          BufferedWriter writer = Files.newBufferedWriter(followingFilePath)
+        ) {
           writer.write(newContent.toString());
         }
       }
@@ -278,28 +313,33 @@ public class ProfilePanel extends BasePanel {
     Path imageDir = Paths.get(AppPaths.UPLOADED);
     try (Stream<Path> paths = Files.list(imageDir)) {
       paths
-          .filter(path -> path
-              .getFileName()
-              .toString()
-              .startsWith(currentUser.getUsername() + "_"))
-          .forEach(path -> {
-            ImageIcon imageIcon = new ImageIcon(
-                new ImageIcon(path.toString())
-                    .getImage()
-                    .getScaledInstance(
-                        GRID_IMAGE_SIZE,
-                        GRID_IMAGE_SIZE,
-                        Image.SCALE_SMOOTH));
-            JLabel imageLabel = new JLabel(imageIcon);
-            imageLabel.addMouseListener(
-                new MouseAdapter() {
-                  @Override
-                  public void mouseClicked(MouseEvent e) {
-                    displayImage(imageIcon); // Call method to display the clicked image
-                  }
-                });
-            contentPanel.add(imageLabel);
-          });
+        .filter(path ->
+          path
+            .getFileName()
+            .toString()
+            .startsWith(UserManager.getCurrentUser().getUsername() + "_")
+        )
+        .forEach(path -> {
+          ImageIcon imageIcon = new ImageIcon(
+            new ImageIcon(path.toString())
+              .getImage()
+              .getScaledInstance(
+                GRID_IMAGE_SIZE,
+                GRID_IMAGE_SIZE,
+                Image.SCALE_SMOOTH
+              )
+          );
+          JLabel imageLabel = new JLabel(imageIcon);
+          imageLabel.addMouseListener(
+            new MouseAdapter() {
+              @Override
+              public void mouseClicked(MouseEvent e) {
+                displayImage(imageIcon); // Call method to display the clicked image
+              }
+            }
+          );
+          contentPanel.add(imageLabel);
+        });
     } catch (IOException ex) {
       ex.printStackTrace();
       // Handle exception (e.g., show a message or log)
@@ -307,9 +347,11 @@ public class ProfilePanel extends BasePanel {
 
     JScrollPane scrollPane = new JScrollPane(contentPanel);
     scrollPane.setHorizontalScrollBarPolicy(
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+    );
     scrollPane.setVerticalScrollBarPolicy(
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+    );
 
     add(scrollPane, BorderLayout.CENTER); // Add the scroll pane to the center
 
@@ -338,12 +380,13 @@ public class ProfilePanel extends BasePanel {
 
   private JLabel createStatLabel(String number, String text) {
     JLabel label = new JLabel(
-        "<html><div style='text-align: center;'>" +
-            number +
-            "<br/>" +
-            text +
-            "</div></html>",
-        SwingConstants.CENTER);
+      "<html><div style='text-align: center;'>" +
+      number +
+      "<br/>" +
+      text +
+      "</div></html>",
+      SwingConstants.CENTER
+    );
     label.setFont(new Font("Arial", Font.BOLD, 12));
     label.setForeground(Color.BLACK);
     return label;
