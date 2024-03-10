@@ -30,7 +30,7 @@ public class App extends JFrame {
     setSize(WIDTH, HEIGHT);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-    // this throws when the addStruct() in the SignIn ctor is called
+    cards.add(new SignUpPanel(), "SignUp");
     cards.add(new SignInPanel(), "SignIn");
 
     add(cards, BorderLayout.CENTER);
@@ -41,7 +41,6 @@ public class App extends JFrame {
   }
 
   public static void createPanels() {
-    cards.add(new SignUpPanel(), "SignUp");
     cards.add(new HomePanel(), "Home");
     cards.add(new ExplorePanel(), "Explore");
     cards.add(new ImageUploadPanel(), "Image Upload");

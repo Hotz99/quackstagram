@@ -107,9 +107,6 @@ public class SignInPanel extends BasePanel {
   }
 
   private void onRegisterNowClicked(ActionEvent event) {
-    SwingUtilities.invokeLater(() -> {
-      SignUpPanel signUpFrame = new SignUpPanel();
-      signUpFrame.setVisible(true);
-    });
+    App.showPanel("SignUp");
   }
 }
