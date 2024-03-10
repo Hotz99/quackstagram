@@ -89,7 +89,7 @@ public class SignInPanel extends BasePanel {
         openProfileUser();
       } else {
         System.out.println("It Didn't");
-        JOptionPane.showMessageDialog(null, "Did not work, dumb fuck", "Alert", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Did not work", "Alert", JOptionPane.WARNING_MESSAGE);
       }
     } catch (Exception e) {
       System.out.println("Error - You need to enter a username and password.");
