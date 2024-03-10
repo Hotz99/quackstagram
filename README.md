@@ -1,9 +1,9 @@
 # **Quackstagram:** 
-A Simplified Social Media Experience
 
 **Introduction**
 
 Quackstagram is a minimalist version of Instagram designed for effortless image sharing and social interaction. Built using Java, it focuses on providing users with a straightforward and engaging platform to share snapshots of their lives, connect with others, and explore new content. The entry point for this application is App.java, located at quackstagram_clean/src/app/App.java.
+
 
 **Features**
 
@@ -15,6 +15,7 @@ Design and Architecture
 
 Quackstagram adheres to core software design principles and patterns to ensure a robust, maintainable, and user-friendly application. Here's a glimpse into the architectural decisions:
 
+
 **Design Patterns and Principles**
 
 DRY (Don't Repeat Yourself): We've minimized repetition across the codebase to enhance maintainability and scalability.
@@ -25,6 +26,7 @@ Method and Class Design: Each method performs a single functionality, and classe
 Separation of Concerns: UI and business logic, including credential handling, are kept separate to enhance security and make the codebase more organized.
 Getting Started
 
+
 **To start using Quackstagram, follow these steps:**
 
 Navigate to the quackstagram_clean/src/app/ directory.
@@ -32,7 +34,11 @@ Open the App.java file in your Java IDE or compiler.
 Compile and run App.java to launch the application.
 Contributing
 
+
+**Contributions:**
+
 Contributions to Quackstagram are welcome! Whether it's feature requests, bug reports, or code contributions, your input is valuable to us. Please follow the standard GitHub pull request process to submit your contributions.
+
 
 **License**
 
