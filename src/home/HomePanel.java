@@ -1,5 +1,7 @@
 package home;
 
+import java.util.List;
+import java.util.ArrayList;
 import app.App;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -17,6 +19,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import utils.AppPaths;
@@ -66,83 +69,86 @@ public class HomePanel extends BasePanel {
     add(navigationPanel, BorderLayout.SOUTH);
   }
 
-  private void populateContentPanel(JPanel panel, String[][] sampleData) {
-    for (String[] postData : sampleData) {
-      JPanel itemPanel = new JPanel();
-      itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
-      itemPanel.setBackground(Color.WHITE); // Set the background color for the item panel
-      itemPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-      itemPanel.setAlignmentX(CENTER_ALIGNMENT);
-      JLabel nameLabel = new JLabel(postData[0]);
-      nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-      // Crop the image to the fixed size
-      JLabel imageLabel = new JLabel();
-      imageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      imageLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));
-      imageLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Add border to image label
-      String imageId = new File(postData[3]).getName().split("\\.")[0];
-      try {
-        BufferedImage originalImage = ImageIO.read(new File(postData[3]));
-        BufferedImage croppedImage = originalImage.getSubimage(
-          0,
-          0,
-          Math.min(originalImage.getWidth(), IMAGE_WIDTH),
-          Math.min(originalImage.getHeight(), IMAGE_HEIGHT)
-        );
-        ImageIcon imageIcon = new ImageIcon(croppedImage);
+  private JPanel createItemPanel() {
+    JPanel itemPanel = new JPanel();
+    itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
+    itemPanel.setBackground(Color.WHITE);
+    itemPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    itemPanel.setAlignmentX(CENTER_ALIGNMENT);
+    return itemPanel;
+}
+
+private void configureImageLabel(JLabel imageLabel, String imagePath) {
+    imageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    imageLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));
+    imageLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    ImageIcon imageIcon = loadImageIcon(imagePath);
+    if (imageIcon != null) {
         imageLabel.setIcon(imageIcon);
-      } catch (IOException ex) {
-        // Handle exception: Image file not found or reading error
+    } else {
         imageLabel.setText("Image not found");
-      }
-
-      JLabel descriptionLabel = new JLabel(postData[1]);
-      descriptionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-      JLabel likesLabel = new JLabel(postData[2]);
-      likesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-      JButton likeButton = new JButton("❤");
-      likeButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-      likeButton.setBackground(LIKE_BUTTON_COLOR); // Set the background color for the like button
-      likeButton.setOpaque(true);
-      likeButton.setBorderPainted(false); // Remove border
-      likeButton.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            handleLikeAction(imageId, likesLabel);
-          }
-        }
-      );
-      itemPanel.add(nameLabel);
-
-      itemPanel.add(imageLabel);
-      itemPanel.add(descriptionLabel);
-      itemPanel.add(likesLabel);
-      itemPanel.add(likeButton);
-
-      panel.add(itemPanel);
-
-      // Make the image clickable
-      imageLabel.addMouseListener(
-        new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            displayImage(postData); // Call a method to switch to the image view
-          }
-        }
-      );
-
-      // Grey spacing panel
-      JPanel spacingPanel = new JPanel();
-      spacingPanel.setPreferredSize(new Dimension(App.WIDTH - 10, 5)); // Set the height for spacing
-      spacingPanel.setBackground(new Color(230, 230, 230)); // Grey color for spacing
-      panel.add(spacingPanel);
     }
-  }
+}
 
+private JButton createLikeButton(String imageId, JLabel likesLabel) {
+    JButton likeButton = new JButton("❤");
+    likeButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+    likeButton.setBackground(LIKE_BUTTON_COLOR);
+    likeButton.setOpaque(true);
+    likeButton.setBorderPainted(false);
+    likeButton.addActionListener(e -> handleLikeAction(imageId, likesLabel));
+    return likeButton;
+}
+
+private void populateContentPanel(JPanel panel, String[][] sampleData) {
+    for (String[] postData : sampleData) {
+        JPanel itemPanel = createItemPanel();
+        JLabel nameLabel = new JLabel(postData[0]);
+        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel imageLabel = new JLabel();
+        configureImageLabel(imageLabel, postData[3]);
+
+        JLabel descriptionLabel = new JLabel(postData[1]);
+        descriptionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel likesLabel = new JLabel(postData[2]);
+        likesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JButton likeButton = createLikeButton(new File(postData[3]).getName().split("\\.")[0], likesLabel);
+
+        itemPanel.add(nameLabel);
+        itemPanel.add(imageLabel);
+        itemPanel.add(descriptionLabel);
+        itemPanel.add(likesLabel);
+        itemPanel.add(likeButton);
+
+        panel.add(itemPanel);
+
+        imageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                displayImage(postData);
+            }
+        });
+
+        addSpacingPanel(panel);
+    }
+}
+
+private void addSpacingPanel(JPanel panel) {
+    JPanel spacingPanel = new JPanel();
+    spacingPanel.setPreferredSize(new Dimension(App.WIDTH - 10, 5));
+    spacingPanel.setBackground(new Color(230, 230, 230));
+    panel.add(spacingPanel);
+}
+
+
+
+
+
+  //TODO
   private void handleLikeAction(String imageId, JLabel likesLabel) {
     Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
     StringBuilder newContent = new StringBuilder();
@@ -174,7 +180,18 @@ public class HomePanel extends BasePanel {
         if (line.contains("ImageID: " + imageId)) {
           String[] parts = line.split(", ");
           imageOwner = parts[1].split(": ")[1];
-          int likes = Integer.parseInt(parts[4].split(": ")[1]);
+
+          //Test integration 
+          int likes = 0;
+          try {
+              likes = Integer.parseInt(parts[4].split(": ")[1].trim());
+          } catch (NumberFormatException e) {
+              System.err.println("Error parsing likes count for image ID (file HomePanel line 189)" + imageId + ": " + e.getMessage());
+              continue; // Skip this record or handle as appropriate
+          }
+
+
+          // int likes = Integer.parseInt(parts[4].split(": ")[1]);
           likes++; // Increment the likes count
           parts[4] = "Likes: " + likes;
           line = String.join(", ", parts);
@@ -219,127 +236,126 @@ public class HomePanel extends BasePanel {
     }
   }
 
-  private String[][] createSampleData() {
-    String currentUser = "";
-    try (
-      BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.USERS))
-    ) {
-      String line = reader.readLine();
-      if (line != null) {
-        currentUser = line.split(":")[0].trim();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    String followedUsers = "";
-    try (
-      BufferedReader reader = Files.newBufferedReader(
-        Paths.get(AppPaths.FOLLOWING)
-      )
-    ) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith(currentUser + ":")) {
-          followedUsers = line.split(":")[1].trim();
-          break;
+  private String readCurrentUser() {
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.USERS))) {
+        String line = reader.readLine();
+        if (line != null) {
+            return line.split(":")[0].trim();
         }
-      }
     } catch (IOException e) {
-      e.printStackTrace();
+        e.printStackTrace();
     }
+    return "";
+}
 
-    // Temporary structure to hold the data
-    String[][] tempData = new String[100][]; // Assuming a maximum of 100 posts for simplicity
-    int count = 0;
-
-    try (
-      BufferedReader reader = Files.newBufferedReader(
-        Paths.get(AppPaths.IMAGE_DETAILS)
-      )
-    ) {
-      String line;
-      while ((line = reader.readLine()) != null && count < tempData.length) {
-        String[] details = line.split(", ");
-        String imagePoster = "";
-        String[] splitDetails = details[1].split(": ");
-        if (splitDetails.length > 1) {
-          imagePoster = splitDetails[1];
+private String readFollowedUsers(String currentUser) {
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.FOLLOWING))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (line.startsWith(currentUser + ":")) {
+                return line.split(":")[1].trim();
+            }
         }
-        if (followedUsers.contains(imagePoster)) {
-          String imagePath =
-            AppPaths.UPLOADED + details[0].split(": ")[1] + ".png"; // Assuming PNG format
-          String description = details[2].split(": ")[1];
-          String likes = "Likes: " + details[4].split(": ")[1];
-
-          tempData[count++] =
-            new String[] { imagePoster, description, likes, imagePath };
-        }
-      }
     } catch (IOException e) {
-      e.printStackTrace();
+        e.printStackTrace();
     }
+    return "";
+}
 
-    // Transfer the data to the final array
-    String[][] sampleData = new String[count][];
-    System.arraycopy(tempData, 0, sampleData, 0, count);
+private String[][] readImageDetails(String followedUsers) {
+    List<String[]> tempList = new ArrayList<>();
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.IMAGE_DETAILS))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] details = line.split(", ");
+            String imagePoster = ""; // Default to empty or a placeholder value
+            String[] splitDetail = details[1].split(": ");
+            if (splitDetail.length > 1) {
+                imagePoster = splitDetail[1]; // Only access the element if it exists
+            }           
+            if (followedUsers.contains(imagePoster)) {
+                String imagePath = AppPaths.UPLOADED + details[0].split(": ")[1] + ".png";
+                String description = details[2].split(": ")[1];
+                String likes = "Likes: " + details[4].split(": ")[1];
+                tempList.add(new String[]{imagePoster, description, likes, imagePath});
+            }
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return tempList.toArray(new String[0][]);
+}
 
-    return sampleData;
-  }
-
-  private void displayImage(String[] postData) {
-    imageViewPanel.removeAll(); // Clear previous content
-
-    String imageId = new File(postData[3]).getName().split("\\.")[0];
-    JLabel likesLabel = new JLabel(postData[2]); // Update this line
-
-    // Display the image
-    JLabel fullSizeImageLabel = new JLabel();
-    fullSizeImageLabel.setHorizontalAlignment(JLabel.CENTER);
-
+private String[][] createSampleData() {
+    String currentUser = readCurrentUser();
+    String followedUsers = readFollowedUsers(currentUser);
+    return readImageDetails(followedUsers);
+}
+  
+  
+  private ImageIcon loadImageIcon(String imagePath) {
     try {
-      BufferedImage originalImage = ImageIO.read(new File(postData[3]));
-      BufferedImage croppedImage = originalImage.getSubimage(
-        0,
-        0,
-        Math.min(originalImage.getWidth(), App.WIDTH - 20),
-        Math.min(originalImage.getHeight(), App.HEIGHT - 40)
-      );
-      ImageIcon imageIcon = new ImageIcon(croppedImage);
-      fullSizeImageLabel.setIcon(imageIcon);
+        BufferedImage originalImage = ImageIO.read(new File(imagePath));
+        BufferedImage croppedImage = originalImage.getSubimage(
+            0, 0,
+            Math.min(originalImage.getWidth(), App.WIDTH - 20),
+            Math.min(originalImage.getHeight(), App.HEIGHT - 40));
+        return new ImageIcon(croppedImage);
     } catch (IOException ex) {
-      // Handle exception: Image file not found or reading error
-      fullSizeImageLabel.setText("Image not found");
+        ex.printStackTrace();
+        return null;
     }
+}
 
-    // User Info
+
+private JPanel createUserPanel(String userNameText) {
     JPanel userPanel = new JPanel();
     userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.Y_AXIS));
-    JLabel userName = new JLabel(postData[0]);
+    JLabel userName = new JLabel(userNameText);
     userName.setFont(new Font("Arial", Font.BOLD, 18));
-    userPanel.add(userName); // User Name
+    userPanel.add(userName);
+    return userPanel;
+}
 
+private JButton createLikeButton(String imageId, JLabel likesLabel, String[] postData) {
     JButton likeButton = new JButton("❤");
     likeButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-    likeButton.setBackground(LIKE_BUTTON_COLOR); // Set the background color for the like button
+    likeButton.setBackground(LIKE_BUTTON_COLOR);
     likeButton.setOpaque(true);
-    likeButton.setBorderPainted(false); // Remove border
-    likeButton.addActionListener(
-      new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          handleLikeAction(imageId, likesLabel); // Update this line
-          refreshDisplayImage(postData, imageId); // Refresh the view
-        }
-      }
-    );
+    likeButton.setBorderPainted(false);
+    likeButton.addActionListener(e -> {
+        handleLikeAction(imageId, likesLabel);
+        refreshDisplayImage(postData, imageId);
+    });
+    return likeButton;
+}
 
-    // Information panel at the bottom
+private JPanel createInfoPanel(String description, JLabel likesLabel, JButton likeButton) {
     JPanel infoPanel = new JPanel();
     infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-    infoPanel.add(new JLabel(postData[1])); // Description
-    infoPanel.add(new JLabel(postData[2])); // Likes
+    infoPanel.add(new JLabel(description));
+    infoPanel.add(likesLabel);
     infoPanel.add(likeButton);
+    return infoPanel;
+}
+
+private void displayImage(String[] postData) {
+    imageViewPanel.removeAll();
+    String imageId = new File(postData[3]).getName().split("\\.")[0];
+    JLabel likesLabel = new JLabel("Likes: " + postData[2]);
+    ImageIcon imageIcon = loadImageIcon(postData[3]);
+
+    JLabel fullSizeImageLabel = new JLabel();
+    fullSizeImageLabel.setHorizontalAlignment(JLabel.CENTER);
+    if (imageIcon != null) {
+        fullSizeImageLabel.setIcon(imageIcon);
+    } else {
+        fullSizeImageLabel.setText("Image not found");
+    }
+
+    JPanel userPanel = createUserPanel(postData[0]);
+    JButton likeButton = createLikeButton(imageId, likesLabel, postData);
+    JPanel infoPanel = createInfoPanel(postData[1], likesLabel, likeButton);
 
     imageViewPanel.add(fullSizeImageLabel, BorderLayout.CENTER);
     imageViewPanel.add(infoPanel, BorderLayout.SOUTH);
@@ -347,9 +363,9 @@ public class HomePanel extends BasePanel {
 
     imageViewPanel.revalidate();
     imageViewPanel.repaint();
+    cardLayout.show(cardPanel, "ImageView");
+}
 
-    cardLayout.show(cardPanel, "ImageView"); // Switch to the image view
-  }
 
   private void refreshDisplayImage(String[] postData, String imageId) {
     // Read updated likes count from image_details.txt
