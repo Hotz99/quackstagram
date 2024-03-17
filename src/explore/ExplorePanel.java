@@ -3,6 +3,8 @@ package explore;
 import app.App;
 import auth.UserManager;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import user.ProfilePanel;
 import user.User;
 import utils.*;
@@ -85,11 +89,56 @@ public class ExplorePanel extends BasePanel {
    */
   private JPanel createSearchPanel() {
     JPanel searchPanel = new JPanel(new BorderLayout());
-    JTextField searchField = new JTextField(" Search Users");
+    JTextField searchField = new JTextField(" Search");
+    searchField.addFocusListener(
+      new FocusListener() {
+        public void focusGained(FocusEvent e) {
+          if (searchField.getText().equals(" Search")) {
+            searchField.setText("");
+          }
+        }
+
+        public void focusLost(FocusEvent e) {
+          if (searchField.getText().isEmpty()) {
+            searchField.setText(" Search");
+          }
+        }
+      }
+    );
+
+    searchField
+      .getDocument()
+      .addDocumentListener(
+        new DocumentListener() {
+          public void changedUpdate(DocumentEvent e) {
+            runSearch();
+          }
+
+          public void removeUpdate(DocumentEvent e) {
+            runSearch();
+          }
+
+          public void insertUpdate(DocumentEvent e) {
+            runSearch();
+          }
+
+          public void runSearch() {
+            String query = searchField.getText();
+            if (query.trim().isEmpty()) {
+              System.out.println("Search field is empty, not running search");
+              return;
+            }
+            List<String> results = Search.search(query);
+            System.out.println("found this after searching: " + results);
+          }
+        }
+      );
+
     searchPanel.add(searchField, BorderLayout.CENTER);
     searchPanel.setMaximumSize(
       new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height)
     );
+
     return searchPanel;
   }
 
