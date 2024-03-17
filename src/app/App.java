@@ -6,6 +6,8 @@ import auth.UserManager;
 import explore.ExplorePanel;
 import home.HomePanel;
 import image.ImageUploadPanel;
+import image.ImageViewer;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import javax.swing.JButton;
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import notifications.NotificationsPanel;
 import user.ProfilePanel;
+import utils.BasePanel;
 
 public class App extends JFrame {
 
@@ -24,6 +27,8 @@ public class App extends JFrame {
   private static JPanel cards = new JPanel(cardLayout);
 
   public static UserManager userManager = new UserManager();
+  public static ImageViewer imageViewer = new ImageViewer();
+  public static BasePanel imageView = new BasePanel();
 
   public App() {
     setTitle("Quackstagram");
@@ -44,6 +49,7 @@ public class App extends JFrame {
     cards.add(new HomePanel(), "Home");
     cards.add(new ExplorePanel(), "Explore");
     cards.add(new ImageUploadPanel(), "Image Upload");
+    cards.add(imageView, "Image View");
     cards.add(new NotificationsPanel(), "Notifications");
     cards.add(new ProfilePanel(), "Profile");
   }

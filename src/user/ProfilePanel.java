@@ -69,8 +69,7 @@ public class ProfilePanel extends BasePanel {
     // Header Panel
     JPanel headerPanel = new JPanel();
     try (Stream<String> lines = Files.lines(Paths.get(AppPaths.USERS))) {
-      isCurrentUser =
-        lines.anyMatch(line -> line.startsWith(currentUsername + ":"));
+      isCurrentUser = lines.anyMatch(line -> line.startsWith(currentUsername + ":"));
     } catch (IOException e) {
       e.printStackTrace(); // Log or handle the exception as appropriate
     }
@@ -115,8 +114,7 @@ public class ProfilePanel extends BasePanel {
     // Add Stats and Follow Button to a combined Panel
     JPanel statsFollowPanel = new JPanel();
     statsFollowPanel.setLayout(
-      new BoxLayout(statsFollowPanel, BoxLayout.Y_AXIS)
-    );
+        new BoxLayout(statsFollowPanel, BoxLayout.Y_AXIS));
     statsFollowPanel.add(statsPanel);
     statsFollowPanel.add(followButton);
     topHeaderPanel.add(statsFollowPanel, BorderLayout.CENTER);
@@ -163,8 +161,7 @@ public class ProfilePanel extends BasePanel {
     followButton.setAlignmentX(Component.CENTER_ALIGNMENT);
     followButton.setFont(new Font("Arial", Font.BOLD, 12));
     followButton.setMaximumSize(
-      new Dimension(Integer.MAX_VALUE, followButton.getMinimumSize().height)
-    ); // Make the button fill the horizontal
+        new Dimension(Integer.MAX_VALUE, followButton.getMinimumSize().height)); // Make the button fill the horizontal
     // space
     followButton.setBackground(new Color(225, 228, 232)); // A soft, appealing color that complements the UI
     followButton.setForeground(Color.BLACK);
@@ -180,27 +177,20 @@ public class ProfilePanel extends BasePanel {
     statsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
     statsPanel.setBackground(new Color(249, 249, 249));
     System.out.println(
-      "Number of posts for this user" +
-      UserManager.getCurrentUser().getPostsCount()
-    );
+        "Number of posts for this user" +
+            UserManager.getCurrentUser().getPostsCount());
     statsPanel.add(
-      createStatLabel(
-        Integer.toString(UserManager.getCurrentUser().getPostsCount()),
-        "Posts"
-      )
-    );
+        createStatLabel(
+            Integer.toString(UserManager.getCurrentUser().getPostsCount()),
+            "Posts"));
     statsPanel.add(
-      createStatLabel(
-        Integer.toString(UserManager.getCurrentUser().getFollowersCount()),
-        "Followers"
-      )
-    );
+        createStatLabel(
+            Integer.toString(UserManager.getCurrentUser().getFollowersCount()),
+            "Followers"));
     statsPanel.add(
-      createStatLabel(
-        Integer.toString(UserManager.getCurrentUser().getFollowingCount()),
-        "Following"
-      )
-    );
+        createStatLabel(
+            Integer.toString(UserManager.getCurrentUser().getFollowingCount()),
+            "Following"));
     statsPanel.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 0)); // Add some vertical padding
     return statsPanel;
   }
@@ -210,23 +200,20 @@ public class ProfilePanel extends BasePanel {
     JPanel topHeaderPanel = new JPanel(new BorderLayout(10, 0));
     topHeaderPanel.setBackground(new Color(249, 249, 249));
 
-    String imagePath =
-      AppPaths.PROFILE_IMAGES_STORAGE + currentUsername + ".png";
+    String imagePath = AppPaths.PROFILE_IMAGES_STORAGE + currentUsername + ".png";
     // Profile image
     ImageIcon originalIcon = new ImageIcon(imagePath);
     Image originalImage = originalIcon.getImage();
 
     Image scaledImage = originalImage.getScaledInstance(
-      PROFILE_IMAGE_SIZE,
-      PROFILE_IMAGE_SIZE,
-      Image.SCALE_SMOOTH
-    );
+        PROFILE_IMAGE_SIZE,
+        PROFILE_IMAGE_SIZE,
+        Image.SCALE_SMOOTH);
     ImageIcon profileIcon = new ImageIcon(scaledImage);
 
     JLabel profileImage = new JLabel(profileIcon);
     profileImage.setPreferredSize(
-      new Dimension(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE)
-    );
+        new Dimension(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE));
     profileImage.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     profileImage.setHorizontalAlignment(JLabel.CENTER);
     profileImage.setVerticalAlignment(JLabel.CENTER);
@@ -235,243 +222,236 @@ public class ProfilePanel extends BasePanel {
     return topHeaderPanel;
   }
 
-//--------------------------
+  // --------------------------
 
   // private void handleFollowAction(String usernameToFollow) {
-  //   Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
-  //   Path usersFilePath = Paths.get(AppPaths.USERS);
-  //   try {
-  //     // Read the current user's username from users.txt
-  //     try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
-  //       String line;
-  //       while ((line = reader.readLine()) != null) {
-  //         String[] parts = line.split(":");
-  //         currentUsername = parts[0];
-  //       }
-  //     }
-
-  //     System.out.println("Real user is " + currentUsername);
-  //     // If currentUsername is not empty, process following.txt
-  //     if (!currentUsername.isEmpty()) {
-  //       boolean found = false;
-  //       StringBuilder newContent = new StringBuilder();
-
-  //       // Read and process following.txt
-  //       if (Files.exists(followingFilePath)) {
-  //         try (
-  //           BufferedReader reader = Files.newBufferedReader(followingFilePath)
-  //         ) {
-  //           String line;
-  //           while ((line = reader.readLine()) != null) {
-  //             String[] parts = line.split(":");
-  //             if (parts[0].trim().equals(currentUsername)) {
-  //               found = true;
-  //               if (!line.contains(usernameToFollow)) {
-  //                 line =
-  //                   line
-  //                     .concat(line.endsWith(":") ? "" : "; ")
-  //                     .concat(usernameToFollow);
-  //               }
-  //             }
-  //             newContent.append(line).append("\n");
-  //           }
-  //         }
-  //       }
-
-  //       // If the current user was not found in following.txt, add them
-  //       if (!found) {
-  //         newContent
-  //           .append(currentUsername)
-  //           .append(": ")
-  //           .append(usernameToFollow)
-  //           .append("\n");
-  //       }
-
-  //       // Write the updated content back to following.txt
-  //       try (
-  //         BufferedWriter writer = Files.newBufferedWriter(followingFilePath)
-  //       ) {
-  //         writer.write(newContent.toString());
-  //       }
-  //     }
-  //   } catch (IOException e) {
-  //     e.printStackTrace();
-  //   }
+  // Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
+  // Path usersFilePath = Paths.get(AppPaths.USERS);
+  // try {
+  // // Read the current user's username from users.txt
+  // try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
+  // String line;
+  // while ((line = reader.readLine()) != null) {
+  // String[] parts = line.split(":");
+  // currentUsername = parts[0];
+  // }
   // }
 
+  // System.out.println("Real user is " + currentUsername);
+  // // If currentUsername is not empty, process following.txt
+  // if (!currentUsername.isEmpty()) {
+  // boolean found = false;
+  // StringBuilder newContent = new StringBuilder();
 
+  // // Read and process following.txt
+  // if (Files.exists(followingFilePath)) {
+  // try (
+  // BufferedReader reader = Files.newBufferedReader(followingFilePath)
+  // ) {
+  // String line;
+  // while ((line = reader.readLine()) != null) {
+  // String[] parts = line.split(":");
+  // if (parts[0].trim().equals(currentUsername)) {
+  // found = true;
+  // if (!line.contains(usernameToFollow)) {
+  // line =
+  // line
+  // .concat(line.endsWith(":") ? "" : "; ")
+  // .concat(usernameToFollow);
+  // }
+  // }
+  // newContent.append(line).append("\n");
+  // }
+  // }
+  // }
+
+  // // If the current user was not found in following.txt, add them
+  // if (!found) {
+  // newContent
+  // .append(currentUsername)
+  // .append(": ")
+  // .append(usernameToFollow)
+  // .append("\n");
+  // }
+
+  // // Write the updated content back to following.txt
+  // try (
+  // BufferedWriter writer = Files.newBufferedWriter(followingFilePath)
+  // ) {
+  // writer.write(newContent.toString());
+  // }
+  // }
+  // } catch (IOException e) {
+  // e.printStackTrace();
+  // }
+  // }
 
   private String readCurrentUser(Path usersFilePath) {
     try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(":");
-            if (parts.length > 0) {
-                // Assuming the last line in users.txt is the current user
-                return parts[0];
-            }
+      String line;
+      while ((line = reader.readLine()) != null) {
+        String[] parts = line.split(":");
+        if (parts.length > 0) {
+          // Assuming the last line in users.txt is the current user
+          return parts[0];
         }
+      }
     } catch (IOException e) {
-        e.printStackTrace();
+      e.printStackTrace();
     }
     return "";
-}
+  }
 
-private StringBuilder processFollowingFile(Path followingFilePath, String currentUsername, String usernameToFollow) throws IOException {
+  private StringBuilder processFollowingFile(Path followingFilePath, String currentUsername, String usernameToFollow)
+      throws IOException {
     boolean found = false;
     StringBuilder newContent = new StringBuilder();
 
     if (Files.exists(followingFilePath)) {
-        try (BufferedReader reader = Files.newBufferedReader(followingFilePath)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts[0].trim().equals(currentUsername)) {
-                    found = true;
-                    if (!line.contains(usernameToFollow)) {
-                        line = line.concat(line.endsWith(":") ? "" : "; ").concat(usernameToFollow);
-                    }
-                }
-                newContent.append(line).append("\n");
+      try (BufferedReader reader = Files.newBufferedReader(followingFilePath)) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+          String[] parts = line.split(":");
+          if (parts[0].trim().equals(currentUsername)) {
+            found = true;
+            if (!line.contains(usernameToFollow)) {
+              line = line.concat(line.endsWith(":") ? "" : "; ").concat(usernameToFollow);
             }
+          }
+          newContent.append(line).append("\n");
         }
+      }
     }
 
     if (!found) {
-        newContent.append(currentUsername).append(": ").append(usernameToFollow).append("\n");
+      newContent.append(currentUsername).append(": ").append(usernameToFollow).append("\n");
     }
 
     return newContent;
-}
+  }
 
-private void writeFollowingFile(Path followingFilePath, StringBuilder newContent) throws IOException {
+  private void writeFollowingFile(Path followingFilePath, StringBuilder newContent) throws IOException {
     try (BufferedWriter writer = Files.newBufferedWriter(followingFilePath)) {
-        writer.write(newContent.toString());
+      writer.write(newContent.toString());
     }
-}
+  }
 
-private void handleFollowAction(String usernameToFollow) {
+  private void handleFollowAction(String usernameToFollow) {
     Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
     Path usersFilePath = Paths.get(AppPaths.USERS);
     String currentUsername = readCurrentUser(usersFilePath);
 
     if (!currentUsername.isEmpty()) {
-        try {
-            StringBuilder newContent = processFollowingFile(followingFilePath, currentUsername, usernameToFollow);
-            writeFollowingFile(followingFilePath, newContent);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+      try {
+        StringBuilder newContent = processFollowingFile(followingFilePath, currentUsername, usernameToFollow);
+        writeFollowingFile(followingFilePath, newContent);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
-}
+  }
 
-
-  //--------------------------
-
+  // --------------------------
 
   // private void initializeImageGrid() {
-  //   contentPanel.removeAll(); // Clear existing content
-  //   contentPanel.setLayout(new GridLayout(0, 3, 5, 5)); // Grid layout for image grid
+  // contentPanel.removeAll(); // Clear existing content
+  // contentPanel.setLayout(new GridLayout(0, 3, 5, 5)); // Grid layout for image
+  // grid
 
-  //   Path imageDir = Paths.get(AppPaths.UPLOADED);
-  //   try (Stream<Path> paths = Files.list(imageDir)) {
-  //     paths
-  //       .filter(path ->
-  //         path.getFileName().toString().startsWith(currentUsername + "_")
-  //       )
-  //       .forEach(path -> {
-  //         ImageIcon imageIcon = new ImageIcon(
-  //           new ImageIcon(path.toString())
-  //             .getImage()
-  //             .getScaledInstance(
-  //               GRID_IMAGE_SIZE,
-  //               GRID_IMAGE_SIZE,
-  //               Image.SCALE_SMOOTH
-  //             )
-  //         );
-  //         JLabel imageLabel = new JLabel(imageIcon);
-  //         imageLabel.addMouseListener(
-  //           new MouseAdapter() {
-  //             @Override
-  //             public void mouseClicked(MouseEvent e) {
-  //               displayImage(imageIcon); // Call method to display the clicked image
-  //             }
-  //           }
-  //         );
-  //         contentPanel.add(imageLabel);
-  //       });
-  //   } catch (IOException ex) {
-  //     ex.printStackTrace();
-  //     // Handle exception (e.g., show a message or log)
-  //   }
-
-  //   JScrollPane scrollPane = new JScrollPane(contentPanel);
-  //   scrollPane.setHorizontalScrollBarPolicy(
-  //     JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-  //   );
-  //   scrollPane.setVerticalScrollBarPolicy(
-  //     JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-  //   );
-
-  //   add(scrollPane, BorderLayout.CENTER); // Add the scroll pane to the center
-
-  //   revalidate();
-  //   repaint();
+  // Path imageDir = Paths.get(AppPaths.UPLOADED);
+  // try (Stream<Path> paths = Files.list(imageDir)) {
+  // paths
+  // .filter(path ->
+  // path.getFileName().toString().startsWith(currentUsername + "_")
+  // )
+  // .forEach(path -> {
+  // ImageIcon imageIcon = new ImageIcon(
+  // new ImageIcon(path.toString())
+  // .getImage()
+  // .getScaledInstance(
+  // GRID_IMAGE_SIZE,
+  // GRID_IMAGE_SIZE,
+  // Image.SCALE_SMOOTH
+  // )
+  // );
+  // JLabel imageLabel = new JLabel(imageIcon);
+  // imageLabel.addMouseListener(
+  // new MouseAdapter() {
+  // @Override
+  // public void mouseClicked(MouseEvent e) {
+  // displayImage(imageIcon); // Call method to display the clicked image
+  // }
+  // }
+  // );
+  // contentPanel.add(imageLabel);
+  // });
+  // } catch (IOException ex) {
+  // ex.printStackTrace();
+  // // Handle exception (e.g., show a message or log)
   // }
 
-  
+  // JScrollPane scrollPane = new JScrollPane(contentPanel);
+  // scrollPane.setHorizontalScrollBarPolicy(
+  // JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+  // );
+  // scrollPane.setVerticalScrollBarPolicy(
+  // JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+  // );
+
+  // add(scrollPane, BorderLayout.CENTER); // Add the scroll pane to the center
+
+  // revalidate();
+  // repaint();
+  // }
+
   private void configureContentPanel() {
     contentPanel.removeAll();
     contentPanel.setLayout(new GridLayout(0, 3, 5, 5));
-}
+  }
 
-private void loadAndDisplayImages() {
+  private void loadAndDisplayImages() {
     Path imageDir = Paths.get(AppPaths.UPLOADED);
     try (Stream<Path> paths = Files.list(imageDir)) {
-        paths.filter(path -> path.getFileName().toString().startsWith(currentUsername + "_"))
-             .forEach(this::addImageToPanel);
+      paths.filter(path -> path.getFileName().toString().startsWith(currentUsername + "_"))
+          .forEach(this::addImageToPanel);
     } catch (IOException ex) {
-        ex.printStackTrace(); // Consider more user-friendly error handling
+      ex.printStackTrace(); // Consider more user-friendly error handling
     }
-}
+  }
 
-private void addImageToPanel(Path imagePath) {
+  private void addImageToPanel(Path imagePath) {
     ImageIcon imageIcon = new ImageIcon(
         new ImageIcon(imagePath.toString()).getImage().getScaledInstance(
             GRID_IMAGE_SIZE,
             GRID_IMAGE_SIZE,
-            Image.SCALE_SMOOTH
-        )
-    );
+            Image.SCALE_SMOOTH));
     JLabel imageLabel = new JLabel(imageIcon);
     imageLabel.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            displayImage(imageIcon); // Adapt this if necessary to match your displayImage method's parameters
-        }
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        displayImage(imageIcon); // Adapt this if necessary to match your displayImage method's parameters
+      }
     });
     contentPanel.add(imageLabel);
-}
+  }
 
-private JScrollPane createScrollPane() {
+  private JScrollPane createScrollPane() {
     JScrollPane scrollPane = new JScrollPane(contentPanel);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     return scrollPane;
-}
+  }
 
-private void initializeImageGrid() {
+  private void initializeImageGrid() {
     configureContentPanel();
     loadAndDisplayImages();
     JScrollPane scrollPane = createScrollPane();
     add(scrollPane, BorderLayout.CENTER);
     revalidate();
     repaint();
-}
+  }
 
-
-
- //--------------------------
+  // --------------------------
 
   private void displayImage(ImageIcon imageIcon) {
     contentPanel.removeAll(); // Remove existing content
@@ -494,13 +474,12 @@ private void initializeImageGrid() {
 
   private JLabel createStatLabel(String number, String text) {
     JLabel label = new JLabel(
-      "<html><div style='text-align: center;'>" +
-      number +
-      "<br/>" +
-      text +
-      "</div></html>",
-      SwingConstants.CENTER
-    );
+        "<html><div style='text-align: center;'>" +
+            number +
+            "<br/>" +
+            text +
+            "</div></html>",
+        SwingConstants.CENTER);
     label.setFont(new Font("Arial", Font.BOLD, 12));
     label.setForeground(Color.BLACK);
     return label;

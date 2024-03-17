@@ -21,22 +21,20 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import user.ProfilePanel;
 import user.User;
 import utils.*;
 
-public abstract class ImageViewer {
-    BasePanel currentPanel;
+public class ImageViewer {
+  private boolean goHome = false;
 
-    /**
+  /**
    * Displays the image with the given image path.
    *
    * @param imagePath the path of the image to be displayed
    */
-  public void displayImage(BasePanel panel, String headerLabel, String imagePath) {
-    currentPanel = panel;
+  public void displayImage(String headerLabel, String imagePath) {
+    goHome = headerLabel.toLowerCase().contains("home");
 
     String imageId = extractImageId(imagePath);
     ImageDetails imageDetails = readImageDetails(imageId);
@@ -46,54 +44,51 @@ public abstract class ImageViewer {
       return;
     }
 
-    currentPanel.removeAll();
-    currentPanel.setLayout(new BorderLayout());
-    // panel.add(panel.createHeaderPanel("Explore 🐥"), BorderLayout.NORTH);
-    currentPanel.add(currentPanel.createHeaderPanel(headerLabel), BorderLayout.NORTH);
+    App.imageView.removeAll();
+    App.imageView.setLayout(new BorderLayout());
+    App.imageView.add(App.imageView.createHeaderPanel(headerLabel),
+        BorderLayout.NORTH);
 
     String timeSincePosting = calculateTimeSincePosting(
-      imageDetails.getTimestampString()
-    );
+        imageDetails.getTimestampString());
     JPanel topPanel = createTopPanel(
-      imageDetails.getUsername(),
-      timeSincePosting
-    );
+        imageDetails.getUsername(),
+        timeSincePosting);
     JLabel imageLabel = prepareImageLabel(imagePath);
 
     JPanel bottomPanel = createBottomPanel(
-      imageDetails.getBio(),
-      imageDetails.getLikes()
-    );
+        imageDetails.getBio(),
+        imageDetails.getLikes());
 
     JPanel containerPanel = new JPanel(new BorderLayout());
     containerPanel.add(topPanel, BorderLayout.NORTH);
     containerPanel.add(imageLabel, BorderLayout.CENTER);
     containerPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-    currentPanel.add(containerPanel, BorderLayout.CENTER);
-    currentPanel.add(createBackButtonPanel(), BorderLayout.SOUTH);
+    App.imageView.add(containerPanel, BorderLayout.CENTER);
+    App.imageView.add(createBackButtonPanel(), BorderLayout.SOUTH);
 
-    //make the image likeable
+    // make the image likeable
     imageLabel.addMouseListener(
-      new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          if (e.getClickCount() == 2) {
-            System.out.println("Liked image");
-            imageDetails.toggleLike(
-              imageId,
-              UserManager.getCurrentUser().getUsername()
-            );
-            // Update the likes label
-            int likes = imageDetails.getLikes();
-            ((JLabel) bottomPanel.getComponent(1)).setText("Likes: " + likes);
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+              System.out.println("Liked image");
+              imageDetails.toggleLike(
+                  imageId,
+                  UserManager.getCurrentUser().getUsername());
+              // Update the likes label
+              int likes = imageDetails.getLikes();
+              ((JLabel) bottomPanel.getComponent(1)).setText("Likes: " + likes);
+            }
           }
-        }
-      }
-    );
+        });
 
-    currentPanel.revalidate();
-    currentPanel.repaint();
+    App.imageView.revalidate();
+    App.imageView.repaint();
+
+    app.App.showPanel("Image View");
   }
 
   /**
@@ -109,13 +104,13 @@ public abstract class ImageViewer {
   /**
    * Represents the details of an image.
    */
-  private ImageDetails readImageDetails(String imageId) {
+  public ImageDetails readImageDetails(String imageId) {
     Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
     try (Stream<String> lines = Files.lines(detailsPath)) {
       String details = lines
-        .filter(line -> line.contains("ImageID: " + imageId))
-        .findFirst()
-        .orElse("");
+          .filter(line -> line.contains("ImageID: " + imageId))
+          .findFirst()
+          .orElse("");
 
       if (details.isEmpty()) {
         return null;
@@ -131,17 +126,18 @@ public abstract class ImageViewer {
   /**
    * Calculates the time since a post was made based on the given timestamp.
    *
-   * @param timestampString the timestamp of the post in the format "yyyy-MM-dd HH:mm:ss"
-   * @return a string representing the time since the post was made, e.g. "2 days ago"
+   * @param timestampString the timestamp of the post in the format "yyyy-MM-dd
+   *                        HH:mm:ss"
+   * @return a string representing the time since the post was made, e.g. "2 days
+   *         ago"
    */
   private String calculateTimeSincePosting(String timestampString) {
     if (timestampString.isEmpty()) {
       return "Unknown";
     }
     LocalDateTime timestamp = LocalDateTime.parse(
-      timestampString,
-      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    );
+        timestampString,
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     LocalDateTime now = LocalDateTime.now();
     long days = ChronoUnit.DAYS.between(timestamp, now);
     return days + " day" + (days != 1 ? "s" : "") + " ago";
@@ -150,7 +146,7 @@ public abstract class ImageViewer {
   /**
    * Creates a JPanel for the top panel of the ExplorePanel.
    *
-   * @param username the username of the user
+   * @param username         the username of the user
    * @param timeSincePosting the time since the post was made
    * @return the created JPanel
    */
@@ -175,7 +171,8 @@ public abstract class ImageViewer {
    * Creates and returns a JLabel with the specified image.
    *
    * @param imagePath the path to the image file
-   * @return a JLabel with the specified image, or a label with "Image not found" text if the image file is not found
+   * @return a JLabel with the specified image, or a label with "Image not found"
+   *         text if the image file is not found
    */
   private JLabel prepareImageLabel(String imagePath) {
     JLabel imageLabel = new JLabel();
@@ -218,17 +215,14 @@ public abstract class ImageViewer {
     JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     JButton backButton = new JButton("Back");
     backButton.setPreferredSize(
-      new Dimension(App.WIDTH - 20, backButton.getPreferredSize().height)
-    );
+        new Dimension(App.WIDTH - 20, backButton.getPreferredSize().height));
     backButtonPanel.add(backButton);
 
-    backButton.addActionListener(e -> {
-      currentPanel.removeAll();
-      currentPanel.add(currentPanel.createHeaderPanel("Explore 🐥"), BorderLayout.NORTH);
-      currentPanel.add(currentPanel.createMainContentPanel(), BorderLayout.CENTER);
-      currentPanel.revalidate();
-      currentPanel.repaint();
-    });
+    if (goHome) {
+      backButton.addActionListener(e -> App.showPanel("Home"));
+    } else {
+      backButton.addActionListener(e -> App.showPanel("Explore"));
+    }
 
     return backButtonPanel;
   }
@@ -246,8 +240,10 @@ public abstract class ImageViewer {
      * Constructs an ImageDetails object with the provided details.
      *
      * @param details the string containing the image details in the format:
-     *                "id: [imageId], username: [username], bio: [bio], timestamp: [timestamp], likes: [likes]"
-     * @throws IllegalArgumentException if the provided details string does not have the correct format
+     *                "id: [imageId], username: [username], bio: [bio], timestamp:
+     *                [timestamp], likes: [likes]"
+     * @throws IllegalArgumentException if the provided details string does not have
+     *                                  the correct format
      */
     public ImageDetails(String details) {
       String[] parts = details.split(", (?![^\\[]*\\])");
@@ -285,7 +281,7 @@ public abstract class ImageViewer {
      * If the user has already liked the image, it removes the like.
      * If the user has not liked the image, it adds the like.
      *
-     * @param imageId The ID of the image to toggle the like for.
+     * @param imageId  The ID of the image to toggle the like for.
      * @param username The username of the user toggling the like.
      */
     public void toggleLike(String imageId, String username) {
@@ -299,15 +295,12 @@ public abstract class ImageViewer {
           if (line.contains("ImageID: " + imageId)) {
             String[] parts = line.split(", (?![^\\[]*\\])");
             String likes = parts[4].split(": ")[1];
-            likes =
-              likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
+            likes = likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
             // Check if the current user's username is already in the likes string
             if (likes.contains(username)) {
               System.out.println(
-                "User has already liked this image, unliking it"
-              );
-              likes =
-                likes
+                  "User has already liked this image, unliking it");
+              likes = likes
                   .replace(username + ", ", "")
                   .replace(", " + username, "")
                   .replace(username, "");

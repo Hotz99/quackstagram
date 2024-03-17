@@ -42,7 +42,7 @@ public class HomePanel extends BasePanel {
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Vertical box layout
 
     String[][] sampleData = createSampleData();
-    populateContentPanel(contentPanel, sampleData);
+    populateContentPanel(this, contentPanel, sampleData);
 
     JScrollPane scrollPane = new JScrollPane(contentPanel);
     scrollPane.setHorizontalScrollBarPolicy(
@@ -89,10 +89,13 @@ public class HomePanel extends BasePanel {
     likeButton.setOpaque(true);
     likeButton.setBorderPainted(false);
     likeButton.addActionListener(e -> handleLikeAction(imageId, likesLabel));
+    // likeButton.addActionListener(e -> {
+    // App.imageViewer.ImageDetails.toggleLike(imageId, likesLabel);
+    // });
     return likeButton;
   }
 
-  private void populateContentPanel(JPanel panel, String[][] sampleData) {
+  private void populateContentPanel(BasePanel homePanel, JPanel panel, String[][] sampleData) {
     for (String[] postData : sampleData) {
       JPanel itemPanel = createItemPanel();
       JLabel nameLabel = new JLabel(postData[0]);
@@ -125,7 +128,7 @@ public class HomePanel extends BasePanel {
       imageLabel.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          displayImage(postData);
+          App.imageViewer.displayImage(" Quackstagram Home ", postData[3]);
         }
       });
 
