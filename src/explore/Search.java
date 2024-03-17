@@ -30,8 +30,9 @@ public abstract class Search {
 
   private static List<String> searchInFile(Path filePath, String query) {
     List<String> results = new ArrayList<>();
+    String queryLower = query.toLowerCase();
     try (Stream<String> lines = Files.lines(filePath)) {
-      lines.filter(line -> line.contains(query)).forEach(results::add);
+      lines.filter(line -> line.toLowerCase().contains(queryLower)).forEach(results::add);
     } catch (IOException ex) {
       ex.printStackTrace();
     }
