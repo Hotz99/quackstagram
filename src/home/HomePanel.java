@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import app.App;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
