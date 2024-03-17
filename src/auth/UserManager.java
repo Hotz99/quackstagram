@@ -29,10 +29,8 @@ public class UserManager {
 
   public boolean doesUsernameExist(String username) {
     try (
-      BufferedReader reader = new BufferedReader(
-        new FileReader(AppPaths.CREDENTIALS)
-      )
-    ) {
+        BufferedReader reader = new BufferedReader(
+            new FileReader(AppPaths.CREDENTIALS))) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.startsWith(username + ":")) {
@@ -49,8 +47,7 @@ public class UserManager {
     try {
       BufferedImage image = ImageIO.read(file);
       File outputFile = new File(
-        AppPaths.PROFILE_IMAGES_STORAGE + username + ".png"
-      );
+          AppPaths.PROFILE_IMAGES_STORAGE + username + ".png");
       ImageIO.write(image, "png", outputFile);
     } catch (IOException e) {
       e.printStackTrace();
@@ -59,10 +56,8 @@ public class UserManager {
 
   public void saveCredentials(String username, String password, String bio) {
     try (
-      BufferedWriter writer = new BufferedWriter(
-        new FileWriter(AppPaths.CREDENTIALS, true)
-      )
-    ) {
+        BufferedWriter writer = new BufferedWriter(
+            new FileWriter(AppPaths.CREDENTIALS, true))) {
       writer.write(username + ":" + password + ":" + bio);
       writer.newLine();
     } catch (IOException e) {
@@ -71,27 +66,22 @@ public class UserManager {
   }
 
   public User verifyCredentials(
-    String enteredUsername,
-    String enteredPassword
-  ) {
+      String enteredUsername,
+      String enteredPassword) {
     try (
-      BufferedReader reader = new BufferedReader(
-        new FileReader(AppPaths.CREDENTIALS)
-      )
-    ) {
+        BufferedReader reader = new BufferedReader(
+            new FileReader(AppPaths.CREDENTIALS))) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(":");
         String username = parts[0];
         String password = parts[1];
-        if (
-          username.equals(enteredUsername) && password.equals(enteredPassword)
-        ) {
+        if (username.equals(enteredUsername) && password.equals(enteredPassword)) {
           // If the credentials are valid, return the corresponding User object
           currentUser = new User(username, password);
           App.createPanels();
           System.out.println("User verified: " + currentUser);
-          App.showPanel("Explore");
+          App.showPanel("Home");
           return currentUser;
         }
       }
@@ -106,10 +96,8 @@ public class UserManager {
     System.out.println("Saving user information: " + NewUser);
 
     try (
-      BufferedWriter writer = new BufferedWriter(
-        new FileWriter(AppPaths.USERS, false)
-      )
-    ) {
+        BufferedWriter writer = new BufferedWriter(
+            new FileWriter(AppPaths.USERS, false))) {
       writer.write(NewUser.toString());
     } catch (IOException e) {
       e.printStackTrace();

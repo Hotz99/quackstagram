@@ -21,19 +21,19 @@ public class Navbar extends JPanel {
   protected static final String LABEL = "Quackstagram 🐥";
 
   private final String[] iconPaths = {
-    AppPaths.ICONS + "home.png",
-    AppPaths.ICONS + "search.png",
-    AppPaths.ICONS + "add.png",
-    AppPaths.ICONS + "heart.png",
-    AppPaths.ICONS + "profile.png",
+      AppPaths.ICONS + "home.png",
+      AppPaths.ICONS + "search.png",
+      AppPaths.ICONS + "add.png",
+      AppPaths.ICONS + "heart.png",
+      AppPaths.ICONS + "profile.png",
   };
 
   private final String[] buttonTypes = {
-    "home",
-    "explore",
-    "add",
-    "notification",
-    "profile",
+      "home",
+      "explore",
+      "add",
+      "notification",
+      "profile",
   };
 
   public Navbar() {
@@ -45,7 +45,10 @@ public class Navbar extends JPanel {
 
     for (int i = 0; i < iconPaths.length; i++) {
       add(createIconButton(iconPaths[i], buttonTypes[i]));
-      add(Box.createHorizontalGlue());
+
+      if (i < iconPaths.length - 1) {
+        add(Box.createHorizontalGlue());
+      }
     }
   }
 
@@ -53,8 +56,8 @@ public class Navbar extends JPanel {
     ImageIcon iconOriginal = new ImageIcon(iconPath);
 
     Image iconScaled = iconOriginal
-      .getImage()
-      .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
+        .getImage()
+        .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
 
     JButton button = new JButton(new ImageIcon(iconScaled));
     button.setBorder(BorderFactory.createEmptyBorder());
