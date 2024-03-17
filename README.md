@@ -13,7 +13,9 @@ Social Interaction: Like images, follow users, and explore new posts to connect 
 Notifications: Stay updated with alerts on interactions with your posts.
 Design and Architecture
 
-Quackstagram adheres to core software design principles and patterns to ensure a robust, maintainable, and user-friendly application. Here's a glimpse into the architectural decisions:
+Quackstagram adheres to core software design principles and patterns to ensure a robust, maintainable, and user-friendly application. 
+
+Here's a glimpse into the architectural decisions:
 
 
 **Design Patterns and Principles**
@@ -24,15 +26,17 @@ GRASP (General Responsibility Assignment Software Patterns): Used to ensure a pr
 Best Practices
 Method and Class Design: Each method performs a single functionality, and classes are focused on a single concept, ensuring clarity and ease of debugging.
 Separation of Concerns: UI and business logic, including credential handling, are kept separate to enhance security and make the codebase more organized.
-Getting Started
+
+Getting Started->
 
 
 **To start using Quackstagram, follow these steps:**
 
-Navigate to the quackstagram_clean/src/app/ directory.
-Open the App.java file in your Java IDE or compiler.
-Compile and run App.java to launch the application.
-Contributing
+1 Navigate to the quackstagram_clean/src/app/ directory.
+2 Open the App.java file in your Java IDE or compiler.
+3 Compile and run App.java to launch the application.
+
+Contributing->
 
 
 **Contributions:**
