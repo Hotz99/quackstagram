@@ -28,6 +28,9 @@ import utils.*;
 public class ImageViewer {
   private boolean goHome = false;
 
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
+
   /**
    * Displays the image with the given image path.
    *
@@ -105,7 +108,7 @@ public class ImageViewer {
    * Represents the details of an image.
    */
   public ImageDetails readImageDetails(String imageId) {
-    Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
+    Path detailsPath = Paths.get(imageDetails);
     try (Stream<String> lines = Files.lines(detailsPath)) {
       String details = lines
           .filter(line -> line.contains("ImageID: " + imageId))
@@ -288,7 +291,7 @@ public class ImageViewer {
       System.out.println("Liked the picture!");
       // Update the details file with the new likes count
       try {
-        Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
+        Path detailsPath = Paths.get(imageDetails);
         List<String> lines = Files.readAllLines(detailsPath);
         List<String> updatedLines = new ArrayList<>();
         for (String line : lines) {

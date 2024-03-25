@@ -14,7 +14,7 @@ import java.nio.file.*;
 import java.util.stream.Stream;
 import javax.swing.*;
 import notifications.NotificationsPanel;
-import utils.AppPaths;
+import utils.AppPathsSingleton;
 import utils.BasePanel;
 
 public class ProfilePanel extends BasePanel {
@@ -24,6 +24,16 @@ public class ProfilePanel extends BasePanel {
   private JPanel contentPanel = new JPanel(); // Panel to display the image grid or the clicked image
   String currentUsername = UserManager.getCurrentUser().getUsername();
   private JPanel headerPanel = new JPanel(); // Panel for the header
+
+    //Singleton pattern
+    private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+    private final String credentials = appPathsSingleton.CREDENTIALS;
+    private final String profileImagesStorage = appPathsSingleton.PROFILE_IMAGES_STORAGE;
+    private final String users = appPathsSingleton.USERS;
+    private final String notifications = appPathsSingleton.NOTIFICATIONS;
+    private final String following = appPathsSingleton.FOLLOWING;
+    private final String uploaded = appPathsSingleton.UPLOADED;
+
 
   public ProfilePanel(User user) {
     super(false, false, false);
@@ -70,7 +80,7 @@ public class ProfilePanel extends BasePanel {
 
     // Header Panel
     JPanel headerPanel = new JPanel();
-    try (Stream<String> lines = Files.lines(Paths.get(AppPaths.USERS))) {
+    try (Stream<String> lines = Files.lines(Paths.get(users))) {
       isCurrentUser = lines.anyMatch(line -> line.startsWith(currentUsername + ":"));
     } catch (IOException e) {
       e.printStackTrace(); // Log or handle the exception as appropriate
@@ -136,7 +146,7 @@ public class ProfilePanel extends BasePanel {
       followButton = new JButton("Follow");
 
       // Check if the current user is already being followed by the logged-in user
-      Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
+      Path followingFilePath = Paths.get(following);
       try (BufferedReader reader = Files.newBufferedReader(followingFilePath)) {
         String line;
         while ((line = reader.readLine()) != null) {
@@ -202,7 +212,7 @@ public class ProfilePanel extends BasePanel {
     JPanel topHeaderPanel = new JPanel(new BorderLayout(10, 0));
     topHeaderPanel.setBackground(new Color(249, 249, 249));
 
-    String imagePath = AppPaths.PROFILE_IMAGES_STORAGE + currentUsername + ".png";
+    String imagePath = profileImagesStorage + currentUsername + ".png";
     // Profile image
     ImageIcon originalIcon = new ImageIcon(imagePath);
     Image originalImage = originalIcon.getImage();
@@ -224,69 +234,6 @@ public class ProfilePanel extends BasePanel {
     return topHeaderPanel;
   }
 
-  // --------------------------
-
-  // private void handleFollowAction(String usernameToFollow) {
-  // Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
-  // Path usersFilePath = Paths.get(AppPaths.USERS);
-  // try {
-  // // Read the current user's username from users.txt
-  // try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
-  // String line;
-  // while ((line = reader.readLine()) != null) {
-  // String[] parts = line.split(":");
-  // currentUsername = parts[0];
-  // }
-  // }
-
-  // System.out.println("Real user is " + currentUsername);
-  // // If currentUsername is not empty, process following.txt
-  // if (!currentUsername.isEmpty()) {
-  // boolean found = false;
-  // StringBuilder newContent = new StringBuilder();
-
-  // // Read and process following.txt
-  // if (Files.exists(followingFilePath)) {
-  // try (
-  // BufferedReader reader = Files.newBufferedReader(followingFilePath)
-  // ) {
-  // String line;
-  // while ((line = reader.readLine()) != null) {
-  // String[] parts = line.split(":");
-  // if (parts[0].trim().equals(currentUsername)) {
-  // found = true;
-  // if (!line.contains(usernameToFollow)) {
-  // line =
-  // line
-  // .concat(line.endsWith(":") ? "" : "; ")
-  // .concat(usernameToFollow);
-  // }
-  // }
-  // newContent.append(line).append("\n");
-  // }
-  // }
-  // }
-
-  // // If the current user was not found in following.txt, add them
-  // if (!found) {
-  // newContent
-  // .append(currentUsername)
-  // .append(": ")
-  // .append(usernameToFollow)
-  // .append("\n");
-  // }
-
-  // // Write the updated content back to following.txt
-  // try (
-  // BufferedWriter writer = Files.newBufferedWriter(followingFilePath)
-  // ) {
-  // writer.write(newContent.toString());
-  // }
-  // }
-  // } catch (IOException e) {
-  // e.printStackTrace();
-  // }
-  // }
 
   private String readCurrentUser(Path usersFilePath) {
     try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
@@ -339,8 +286,8 @@ public class ProfilePanel extends BasePanel {
   }
 
   private void handleFollowAction(String usernameToFollow) {
-    Path followingFilePath = Paths.get(AppPaths.FOLLOWING);
-    Path usersFilePath = Paths.get(AppPaths.USERS);
+    Path followingFilePath = Paths.get(following);
+    Path usersFilePath = Paths.get(users);
     String currentUsername = readCurrentUser(usersFilePath);
 
     if (!currentUsername.isEmpty()) {
@@ -353,66 +300,13 @@ public class ProfilePanel extends BasePanel {
     }
   }
 
-  // --------------------------
-
-  // private void initializeImageGrid() {
-  // contentPanel.removeAll(); // Clear existing content
-  // contentPanel.setLayout(new GridLayout(0, 3, 5, 5)); // Grid layout for image
-  // grid
-
-  // Path imageDir = Paths.get(AppPaths.UPLOADED);
-  // try (Stream<Path> paths = Files.list(imageDir)) {
-  // paths
-  // .filter(path ->
-  // path.getFileName().toString().startsWith(currentUsername + "_")
-  // )
-  // .forEach(path -> {
-  // ImageIcon imageIcon = new ImageIcon(
-  // new ImageIcon(path.toString())
-  // .getImage()
-  // .getScaledInstance(
-  // GRID_IMAGE_SIZE,
-  // GRID_IMAGE_SIZE,
-  // Image.SCALE_SMOOTH
-  // )
-  // );
-  // JLabel imageLabel = new JLabel(imageIcon);
-  // imageLabel.addMouseListener(
-  // new MouseAdapter() {
-  // @Override
-  // public void mouseClicked(MouseEvent e) {
-  // displayImage(imageIcon); // Call method to display the clicked image
-  // }
-  // }
-  // );
-  // contentPanel.add(imageLabel);
-  // });
-  // } catch (IOException ex) {
-  // ex.printStackTrace();
-  // // Handle exception (e.g., show a message or log)
-  // }
-
-  // JScrollPane scrollPane = new JScrollPane(contentPanel);
-  // scrollPane.setHorizontalScrollBarPolicy(
-  // JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-  // );
-  // scrollPane.setVerticalScrollBarPolicy(
-  // JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-  // );
-
-  // add(scrollPane, BorderLayout.CENTER); // Add the scroll pane to the center
-
-  // revalidate();
-  // repaint();
-  // }
-
   private void configureContentPanel() {
     contentPanel.removeAll();
     contentPanel.setLayout(new GridLayout(0, 3, 5, 5));
   }
 
   private void loadAndDisplayImages() {
-    Path imageDir = Paths.get(AppPaths.UPLOADED);
+    Path imageDir = Paths.get(uploaded);
     try (Stream<Path> paths = Files.list(imageDir)) {
       paths.filter(path -> path.getFileName().toString().startsWith(currentUsername + "_"))
           .forEach(this::addImageToPanel);
@@ -452,8 +346,6 @@ public class ProfilePanel extends BasePanel {
     revalidate();
     repaint();
   }
-
-  // --------------------------
 
   private void displayImage(ImageIcon imageIcon) {
     contentPanel.removeAll(); // Remove existing content

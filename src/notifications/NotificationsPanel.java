@@ -10,9 +10,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
 import utils.BasePanel;
-import utils.AppPaths;
+import utils.AppPathsSingleton;
 
 public class NotificationsPanel extends BasePanel {
+
+   //Singleton pattern
+   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+   private final String users = appPathsSingleton.USERS;
+   private final String notifications = appPathsSingleton.NOTIFICATIONS; 
+
+
   public NotificationsPanel() {
     super(false, false, false);
     JPanel headerPanel = createHeaderPanel(" Notifications 🐥");
@@ -38,7 +45,7 @@ public class NotificationsPanel extends BasePanel {
 
     try (
         BufferedReader reader = Files.newBufferedReader(
-            Paths.get(AppPaths.USERS))) {
+            Paths.get(users))) {
       String line = reader.readLine();
       if (line != null) {
         currentUsername = line.split(":")[0].trim();
@@ -50,7 +57,7 @@ public class NotificationsPanel extends BasePanel {
     try (
         BufferedReader reader = Files.newBufferedReader(
             Paths.get(
-                AppPaths.NOTIFICATIONS))) {
+                notifications))) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(";");

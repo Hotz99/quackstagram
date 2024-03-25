@@ -20,7 +20,8 @@ import java.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import utils.AppPaths;
+// import utils.AppPaths;
+import utils.AppPathsSingleton;
 import utils.BasePanel;
 
 public class HomePanel extends BasePanel {
@@ -29,9 +30,19 @@ public class HomePanel extends BasePanel {
   private static final int IMAGE_HEIGHT = 150; // Height for the image posts
   private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
 
+  //singleton pattern
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String users = appPathsSingleton.USERS; 
+  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
+  private final String following = appPathsSingleton.FOLLOWING;
+  private final String uploaded = appPathsSingleton.UPLOADED;
+  private final String notification = appPathsSingleton.NOTIFICATIONS;
+
+
+
 //--------
 
-  Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
+  Path detailsPath = Paths.get(imageDetails);
      StringBuilder newContent = new StringBuilder();
      boolean updated = false;
      String currentUser = "";
@@ -157,92 +168,6 @@ public class HomePanel extends BasePanel {
     panel.add(spacingPanel);
   }
 
-  //-----------------------
-
-
-  // private void handleLikeAction(String imageId, JLabel likesLabel) {
-  //   Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
-  //   StringBuilder newContent = new StringBuilder();
-  //   boolean updated = false;
-  //   String currentUser = "";
-  //   String imageOwner = "";
-  //   String timestamp = LocalDateTime
-  //       .now()
-  //       .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-  //   // Retrieve the current user from users.txt
-  //   try (
-  //       BufferedReader userReader = Files.newBufferedReader(
-  //           Paths.get(AppPaths.USERS))) {
-  //     String line = userReader.readLine();
-  //     if (line != null) {
-  //       currentUser = line.split(":")[0].trim();
-  //     }
-  //   } catch (IOException e) {
-  //     e.printStackTrace();
-  //   }
-
-  //   // Read and update image_details.txt
-  //   try (BufferedReader reader = Files.newBufferedReader(detailsPath)) {
-  //     String line;
-  //     while ((line = reader.readLine()) != null) {
-  //       if (line.contains("ImageID: " + imageId)) {
-  //         String[] parts = line.split(", ");
-  //         imageOwner = parts[1].split(": ")[1];
-
-  //         // Test integration
-  //         int likes = 0;
-  //         try {
-  //           likes = Integer.parseInt(parts[4].split(": ")[1].trim());
-  //         } catch (NumberFormatException e) {
-  //           System.err.println(
-  //               "Error parsing likes count for image ID (file HomePanel line 189)" + imageId + ": " + e.getMessage());
-  //           continue; // Skip this record or handle as appropriate
-  //         }
-
-  //         // int likes = Integer.parseInt(parts[4].split(": ")[1]);
-  //         likes++; // Increment the likes count
-  //         parts[4] = "Likes: " + likes;
-  //         line = String.join(", ", parts);
-
-  //         // Update the UI
-  //         likesLabel.setText("Likes: " + likes);
-  //         updated = true;
-  //       }
-  //       newContent.append(line).append("\n");
-  //     }
-  //   } catch (IOException e) {
-  //     e.printStackTrace();
-  //   }
-
-  //   if (!updated)
-  //     return;
-
-  //   // Write updated likes back to image_details.txt
-  //   try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
-  //     writer.write(newContent.toString());
-  //   } catch (IOException e) {
-  //     e.printStackTrace();
-  //   }
-
-  //   // Record the like in notifications.txt
-  //   String notification = String.format(
-  //       "%s; %s; %s; %s\n",
-  //       imageOwner,
-  //       currentUser,
-  //       imageId,
-  //       timestamp);
-  //   try (
-  //       BufferedWriter notificationWriter = Files.newBufferedWriter(
-  //           Paths.get(AppPaths.NOTIFICATIONS),
-  //           StandardOpenOption.CREATE,
-  //           StandardOpenOption.APPEND)) {
-  //     notificationWriter.write(notification);
-  //   } catch (IOException e) {
-  //     e.printStackTrace();
-  //   }
-  // }
-
 
   private void handleLikeAction(String imageId, JLabel likesLabel) {
     String currentUser = getCurrentUser();
@@ -256,7 +181,7 @@ public class HomePanel extends BasePanel {
 }
 
 private String getCurrentUser() {
-  try (BufferedReader userReader = Files.newBufferedReader(Paths.get(AppPaths.USERS))) {
+  try (BufferedReader userReader = Files.newBufferedReader(Paths.get(users))) {
       String line = userReader.readLine();
       if (line != null) {
           return line.split(":")[0].trim();
@@ -268,7 +193,7 @@ private String getCurrentUser() {
 }
 
 private String readAndUpdateImageDetails(String imageId, JLabel likesLabel) {
-  Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
+  Path detailsPath = Paths.get(imageDetails);
   StringBuilder newContent = new StringBuilder();
   boolean updated = false;
 
@@ -307,7 +232,7 @@ private String updateLikeCount(String line, JLabel likesLabel) {
 
 
 private void writeUpdatedDetails(String details) {
-  Path detailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
+  Path detailsPath = Paths.get(imageDetails);
   try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
       writer.write(details);
   } catch (IOException e) {
@@ -319,7 +244,7 @@ private void recordLikeNotification(String imageId, String currentUser) {
   String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
   String notification = String.format("%s; %s; %s; %s\n", imageOwner, currentUser, imageId, timestamp);
   try (BufferedWriter notificationWriter = Files.newBufferedWriter(
-          Paths.get(AppPaths.NOTIFICATIONS),
+          Paths.get(notification),
           StandardOpenOption.CREATE,
           StandardOpenOption.APPEND)) {
       notificationWriter.write(notification);
@@ -328,16 +253,8 @@ private void recordLikeNotification(String imageId, String currentUser) {
   }
 }
 
-
-
-
-
-
-
-  //-----------------------
-
   private String readCurrentUser() {
-    try (BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.USERS))) {
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(users))) {
       String line = reader.readLine();
       if (line != null) {
         return line.split(":")[0].trim();
@@ -349,7 +266,7 @@ private void recordLikeNotification(String imageId, String currentUser) {
   }
 
   private String readFollowedUsers(String currentUser) {
-    try (BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.FOLLOWING))) {
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(following))) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.startsWith(currentUser + ":")) {
@@ -364,7 +281,7 @@ private void recordLikeNotification(String imageId, String currentUser) {
 
   private String[][] readImageDetails(String followedUsers) {
     List<String[]> tempList = new ArrayList<>();
-    try (BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.IMAGE_DETAILS))) {
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(imageDetails))) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] details = line.split(", ");
@@ -374,7 +291,7 @@ private void recordLikeNotification(String imageId, String currentUser) {
           imagePoster = splitDetail[1]; // Only access the element if it exists
         }
         if (followedUsers.contains(imagePoster)) {
-          String imagePath = AppPaths.UPLOADED + details[0].split(": ")[1] + ".png";
+          String imagePath = uploaded + details[0].split(": ")[1] + ".png";
           String description = details[2].split(": ")[1];
           String likes = "Likes: " + details[4].split(": ")[1];
           tempList.add(new String[] { imagePoster, description, likes, imagePath });
@@ -472,7 +389,7 @@ private void recordLikeNotification(String imageId, String currentUser) {
     // Read updated likes count from image_details.txt
     try (
         BufferedReader reader = Files.newBufferedReader(
-            Paths.get(AppPaths.IMAGE_DETAILS))) {
+            Paths.get(imageDetails))) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.contains("ImageID: " + imageId)) {

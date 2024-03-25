@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import app.App;
-import utils.AppPaths;
+import utils.AppPathsSingleton;
 import utils.BasePanel;
 
 public class ImageUploadPanel extends BasePanel {
@@ -21,6 +21,13 @@ public class ImageUploadPanel extends BasePanel {
   private JTextArea bioTextArea;
   private JButton uploadButton;
   private JButton saveButton;
+
+  //singleton pattern
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String uploaded = appPathsSingleton.UPLOADED; 
+  private final String users = appPathsSingleton.USERS; 
+  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS; 
+
 
   public ImageUploadPanel() {
     super(false, false, false);
@@ -105,8 +112,7 @@ public class ImageUploadPanel extends BasePanel {
         String newFileName = username + "_" + nextImageId + "." + fileExtension;
 
         Path uploadedImagePath = Paths.get(
-            AppPaths.UPLOADED +
-                newFileName);
+            uploaded + newFileName);
         Files.copy(
             selectedFile.toPath(),
             uploadedImagePath,
@@ -170,7 +176,7 @@ public class ImageUploadPanel extends BasePanel {
 
   private int getNextImageId(String username) throws IOException {
     Path storageDir = Paths.get(
-        AppPaths.UPLOADED); // Ensure this is the directory where images are saved
+        uploaded); // Ensure this is the directory where images are saved
     if (!Files.exists(storageDir)) {
       Files.createDirectories(storageDir);
     }
@@ -203,7 +209,7 @@ public class ImageUploadPanel extends BasePanel {
 
   private void saveImageDetails(String imageId, String username, String bio)
       throws IOException {
-    Path imageDetailsPath = Paths.get(AppPaths.IMAGE_DETAILS);
+    Path imageDetailsPath = Paths.get(imageDetails);
     if (!Files.exists(imageDetailsPath)) {
       Files.createFile(imageDetailsPath);
     }
@@ -240,7 +246,7 @@ public class ImageUploadPanel extends BasePanel {
   }
 
   private String getCurrentUsername() throws IOException {
-    Path usersFilePath = Paths.get(AppPaths.USERS);
+    Path usersFilePath = Paths.get(users);
     try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
       String line = reader.readLine();
       if (line != null) {

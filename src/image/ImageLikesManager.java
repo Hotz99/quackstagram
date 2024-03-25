@@ -4,11 +4,13 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import utils.AppPaths;
+import utils.AppPathsSingleton;
 
 public class ImageLikesManager {
 
-  private final String likesFilePath = AppPaths.LIKES;
+  //singleton pattern
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String likesFilePath = appPathsSingleton.LIKES;
 
   // Method to like an image
   public void likeImage(String username, String imageID) throws IOException {

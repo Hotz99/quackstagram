@@ -28,6 +28,7 @@ import javax.swing.event.DocumentListener;
 import user.ProfilePanel;
 import user.User;
 import utils.*;
+import utils.AppPathsSingleton;
 
 /**
  * The ExplorePanel class represents a panel that displays the explore
@@ -39,6 +40,10 @@ import utils.*;
 public class ExplorePanel extends BasePanel {
 
   private final int IMAGE_SIZE = App.WIDTH / 3; // Size for each image in the grid
+
+  //singleton pattern
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String uploaded = appPathsSingleton.UPLOADED;
 
   /**
    * The ExplorePanel class represents a panel that displays the explore
@@ -149,7 +154,7 @@ public class ExplorePanel extends BasePanel {
    */
   private JPanel createImageGridPanel() {
     JPanel imageGridPanel = new JPanel(new GridLayout(0, 3, 2, 2)); // 3 columns, auto rows
-    File imageDir = new File(AppPaths.UPLOADED);
+    File imageDir = new File(uploaded);
 
     if (imageDir.exists() && imageDir.isDirectory()) {
       File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));

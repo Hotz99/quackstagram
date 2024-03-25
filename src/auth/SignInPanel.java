@@ -15,7 +15,6 @@ import javax.swing.*;
 import app.App;
 import user.ProfilePanel;
 import user.User;
-import utils.AppPaths;
 import utils.BasePanel;
 
 public class SignInPanel extends BasePanel {

@@ -1,7 +1,6 @@
 package user;
 
 import image.Picture;
-import utils.AppPaths;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import utils.AppPathsSingleton;
 
 /**
  * Represents a user in the system, maintaining user details,
@@ -31,6 +31,14 @@ public class User {
   private int postsCount;
   private int followersCount;
   private int followingCount;
+
+
+    //Singleton pattern
+    private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+    private final String credentials = appPathsSingleton.CREDENTIALS;
+    private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
+    private final String followingPath = appPathsSingleton.FOLLOWING;
+
 
   /**
    * Constructs a new User with the specified username, bio, and password.
@@ -97,7 +105,7 @@ public class User {
     int postsCount = 0;
 
     Path imageDetailsFilePath = Paths.get(
-        AppPaths.IMAGE_DETAILS);
+        imageDetails);
     try (
         BufferedReader imageDetailsReader = Files.newBufferedReader(
             imageDetailsFilePath)) {
@@ -119,7 +127,7 @@ public class User {
     int followingCount = 0;
 
     Path followingFilePath = Paths.get(
-        AppPaths.FOLLOWING);
+        followingPath);
     try (
         BufferedReader followingReader = Files.newBufferedReader(
             followingFilePath)) {
@@ -152,7 +160,7 @@ public class User {
     String bio = "";
 
     Path bioDetailsFilePath = Paths.get(
-        AppPaths.CREDENTIALS);
+        credentials);
     try (
         BufferedReader bioDetailsReader = Files.newBufferedReader(
             bioDetailsFilePath)) {

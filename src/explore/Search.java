@@ -3,9 +3,15 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
-import utils.AppPaths;
+import utils.AppPathsSingleton;
 
 public abstract class Search {
+
+  //singleton pattern
+  private final static AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final static String users = appPathsSingleton.USERS; 
+  private final static String imageDetails = appPathsSingleton.IMAGE_DETAILS; 
+  private final static String[] searchPaths = appPathsSingleton.SEARCH_PATHS; 
 
   public static List<String> search(String query) {
     List<String> results = new ArrayList<>();
@@ -30,14 +36,14 @@ public abstract class Search {
 
     if (query.charAt(0) == '@') {
       results.addAll(
-        searchInFile(Paths.get(AppPaths.USERS), query.substring(1))
+        searchInFile(Paths.get(users), query.substring(1))
       );
     } else if (query.charAt(0) == '#') {
       results.addAll(
-        searchInFile(Paths.get(AppPaths.IMAGE_DETAILS), query.substring(1))
+        searchInFile(Paths.get(imageDetails), query.substring(1))
       );
     } else {
-      for (String path : AppPaths.SEARCH_PATHS) {
+      for (String path : searchPaths) {
         results.addAll(searchInFile(Paths.get(path), query));
       }
     }

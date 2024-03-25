@@ -8,7 +8,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import utils.AppPaths;
+import utils.AppPathsSingleton;
 
 public class Navbar extends JPanel {
 
@@ -19,25 +19,13 @@ public class Navbar extends JPanel {
   protected static final String FONT_NAME = "Arial";
   protected static final String LABEL = "Quackstagram 🐥";
 
-  private final String[] iconPaths = {
-      AppPaths.ICONS + "home.png",
-      AppPaths.ICONS + "search.png",
-      AppPaths.ICONS + "add.png",
-      AppPaths.ICONS + "heart.png",
-      AppPaths.ICONS + "profile.png",
-  };
-
-  private final String[] buttonTypes = {
-      "home",
-      "explore",
-      "add",
-      "notification",
-      "profile",
-  };
+  //Singleton instance
+  private final static AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private static final String[] iconPaths = appPathsSingleton.ICON_PATHS;
+  private static final String[] buttonTypes = appPathsSingleton.BUTTON_TYPES;
+  
 
   public Navbar() {
-    // Create and return the navigation panel
-    // Navigation Bar
     setBackground(new Color(249, 249, 249));
     setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

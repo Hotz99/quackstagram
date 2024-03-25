@@ -15,6 +15,7 @@ import notifications.NotificationsPanel;
 import user.ProfilePanel;
 import user.User;
 import utils.BasePanel;
+import utils.AppPathsSingleton;
 
 public class BasePanel extends JPanel {
 
@@ -40,7 +41,14 @@ public class BasePanel extends JPanel {
   );
   public User newUser;
 
-//--------------------------
+
+    //Singleton pattern
+    private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+    private final String users = appPathsSingleton.USERS;
+    private final String dacsLogo = appPathsSingleton.DACS_LOGO; 
+    private final String[] iconPaths = appPathsSingleton.ICON_PATHS; 
+    private final String[] buttonTypes = appPathsSingleton.BUTTON_TYPES;
+
 
 public BasePanel(boolean includeUsername, boolean includePassword,boolean includeBio) {
   if (includeUsername) {
@@ -100,27 +108,13 @@ public JTextField getTxtBio() {
     });
 }
 
-//--------------------------
-
-  // public JTextField getTxtUsername() {
-  //   return txtUsername;
-  // }
-
   public void setTxtUsername(JTextField txtUsername) {
     this.txtUsername = txtUsername;
   }
 
-  // public JTextField getTxtPassword() {
-  //   return txtPassword;
-  // }
-
   public void setTxtPassword(JTextField txtPassword) {
     this.txtPassword = txtPassword;
   }
-
-  // public JTextField getTxtBio() {
-  //   return txtBio;
-  // }
 
   public void setTxtBio(JTextField txtBio) {
     this.txtBio = txtBio;
@@ -174,21 +168,21 @@ public JTextField getTxtBio() {
     this.newUser = newUser;
   }
 
-  private final String[] iconPaths = {
-    AppPaths.ICONS + "home.png",
-    AppPaths.ICONS + "search.png",
-    AppPaths.ICONS + "add.png",
-    AppPaths.ICONS + "heart.png",
-    AppPaths.ICONS + "profile.png",
-  };
+  // private final String[] iconPaths = {
+  //   AppPaths.ICONS + "home.png",
+  //   AppPaths.ICONS + "search.png",
+  //   AppPaths.ICONS + "add.png",
+  //   AppPaths.ICONS + "heart.png",
+  //   AppPaths.ICONS + "profile.png",
+  // };
 
-  private final String[] buttonTypes = {
-    "home",
-    "explore",
-    "add",
-    "notification",
-    "profile",
-  };
+  // private final String[] buttonTypes = {
+  //   "home",
+  //   "explore",
+  //   "add",
+  //   "notification",
+  //   "profile",
+  // };
 
   public JPanel createHeaderPanel(String label) {
     JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -289,7 +283,7 @@ public JTextField getTxtBio() {
 
     // Read the logged-in user's username from users.txt
     try (
-      BufferedReader reader = Files.newBufferedReader(Paths.get(AppPaths.USERS))
+      BufferedReader reader = Files.newBufferedReader(Paths.get(users))
     ) {
       String line = reader.readLine();
 
@@ -311,7 +305,7 @@ public JTextField getTxtBio() {
     lblPhoto.setVerticalAlignment(JLabel.CENTER);
     lblPhoto.setIcon(
       new ImageIcon(
-        new ImageIcon(AppPaths.DACS_LOGO)
+        new ImageIcon(dacsLogo)
           .getImage()
           .getScaledInstance(80, 80, Image.SCALE_SMOOTH)
       )
