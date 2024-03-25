@@ -23,6 +23,7 @@ public class ImageUploadPanel extends BasePanel {
   private JButton saveButton;
 
   public ImageUploadPanel() {
+    super(false, false, false);
     JPanel headerPanel = createHeaderPanel(" Upload Image 🐥"); // Reuse the createHeaderPanel method
 
     // Main content panel

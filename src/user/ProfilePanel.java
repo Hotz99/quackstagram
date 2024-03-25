@@ -26,6 +26,7 @@ public class ProfilePanel extends BasePanel {
   private JPanel headerPanel = new JPanel(); // Panel for the header
 
   public ProfilePanel(User user) {
+    super(false, false, false);
     UserManager.setCurrentUser(user);
 
     UserManager.getCurrentUser().loadPostsCount();
@@ -42,6 +43,7 @@ public class ProfilePanel extends BasePanel {
   }
 
   public ProfilePanel() {
+    super(false, false, false);
     if (UserManager.getCurrentUser() == null) {
       // If no user is logged in, show the sign-in panel
       System.out.println("No user is logged in");

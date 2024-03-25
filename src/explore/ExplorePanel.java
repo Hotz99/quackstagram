@@ -46,6 +46,7 @@ public class ExplorePanel extends BasePanel {
    * It contains a header panel and a main content panel.
    */
   public ExplorePanel() {
+    super(false,false,false);
     removeAll(); // Clear existing components
     setLayout(new BorderLayout()); // Reset the layout manager
 

@@ -28,7 +28,7 @@ public class App extends JFrame {
 
   public static UserManager userManager = new UserManager();
   public static ImageViewer imageViewer = new ImageViewer();
-  public static BasePanel imageView = new BasePanel();
+  public static BasePanel imageView = new BasePanel(true, true, true);
 
   public App() {
     setTitle("Quackstagram");

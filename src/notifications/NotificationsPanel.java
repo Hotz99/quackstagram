@@ -14,6 +14,7 @@ import utils.AppPaths;
 
 public class NotificationsPanel extends BasePanel {
   public NotificationsPanel() {
+    super(false, false, false);
     JPanel headerPanel = createHeaderPanel(" Notifications 🐥");
 
     JScrollPane scrollPane = new JScrollPane(createContentPanel());

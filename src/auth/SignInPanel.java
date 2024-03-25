@@ -20,6 +20,7 @@ import utils.BasePanel;
 
 public class SignInPanel extends BasePanel {
   public SignInPanel() {
+    super(true,true,false);
     JPanel headerPanel = createHeaderPanel(SIGNIN_LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
     JPanel fieldsPanel = getFieldsPanel();

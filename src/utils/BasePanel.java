@@ -5,6 +5,8 @@ import explore.ExplorePanel;
 import home.HomePanel;
 import image.ImageUploadPanel;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusAdapter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.*;
@@ -29,6 +31,7 @@ public class BasePanel extends JPanel {
   public JTextField txtUsername = new JTextField("Username");
   public JTextField txtPassword = new JTextField("Password");
   public JTextField txtBio = new JTextField("Bio");
+ 
   public JButton btnRegister = new JButton("Register");
   public JLabel lblPhoto = new JLabel();
   public JButton btnUploadPhoto = new JButton("Upload Photo");
@@ -37,25 +40,87 @@ public class BasePanel extends JPanel {
   );
   public User newUser;
 
-  public JTextField getTxtUsername() {
-    return txtUsername;
+//--------------------------
+
+public BasePanel(boolean includeUsername, boolean includePassword,boolean includeBio) {
+  if (includeUsername) {
+    add(getTxtUsername());
+    setupPlaceholder(txtUsername, "Username");
   }
+  if (includePassword) {
+    add(getTxtPassword());
+    setupPlaceholder(txtPassword, "Password");
+  }
+  if (includeBio) {
+  add(getTxtBio());
+  setupPlaceholder(txtBio, "Bio");
+  }
+}
+
+public JTextField getTxtUsername() {
+  if (txtUsername.getText().equals("Username")) {
+      setupPlaceholder(txtUsername, "Username");
+  }
+  return txtUsername;
+}
+
+public JTextField getTxtPassword() {
+  if (txtPassword.getText().equals("Password")) {
+      setupPlaceholder(txtPassword, "Password");
+  }
+  return txtPassword;
+}
+
+public JTextField getTxtBio() {
+  if (txtBio.getText().equals("Bio")) {
+      setupPlaceholder(txtBio, "Bio");
+  }
+  return txtBio;
+}
+
+
+  private void setupPlaceholder(JTextField textField, String placeholder) {
+    textField.setForeground(Color.GRAY);
+    textField.addFocusListener(new FocusAdapter() {
+        @Override
+        public void focusGained(FocusEvent e) {
+            if (textField.getText().equals(placeholder)) {
+                textField.setText("");
+                textField.setForeground(Color.BLACK);
+            }
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (textField.getText().isEmpty()) {
+                textField.setForeground(Color.GRAY);
+                textField.setText(placeholder);
+            }
+        }
+    });
+}
+
+//--------------------------
+
+  // public JTextField getTxtUsername() {
+  //   return txtUsername;
+  // }
 
   public void setTxtUsername(JTextField txtUsername) {
     this.txtUsername = txtUsername;
   }
 
-  public JTextField getTxtPassword() {
-    return txtPassword;
-  }
+  // public JTextField getTxtPassword() {
+  //   return txtPassword;
+  // }
 
   public void setTxtPassword(JTextField txtPassword) {
     this.txtPassword = txtPassword;
   }
 
-  public JTextField getTxtBio() {
-    return txtBio;
-  }
+  // public JTextField getTxtBio() {
+  //   return txtBio;
+  // }
 
   public void setTxtBio(JTextField txtBio) {
     this.txtBio = txtBio;

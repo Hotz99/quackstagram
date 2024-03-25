@@ -13,6 +13,7 @@ import utils.BasePanel;
 
 public class SignUpPanel extends BasePanel {
   public SignUpPanel() {
+    super(true,true,true);
     JPanel headerPanel = createHeaderPanel(LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
     JPanel fieldsPanel = getFieldsPanel();
