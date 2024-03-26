@@ -12,9 +12,15 @@ public abstract class Search {
   private static final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private static final String users = appPathsSingleton.USERS;
 
+  private static Set<String> usernames = new HashSet<>();
+
+
   public static List<String> search(String query) {
     List<String> results = new ArrayList<>();
     if (query.isEmpty()) return results;
+
+      // Clear the usernames set before a new search
+    usernames.clear();
 
     // if (query.charAt(0) == '@') {
     results.addAll(searchInFile(Paths.get(users), query.substring(1)));
@@ -34,11 +40,21 @@ public abstract class Search {
       lines
         .filter(line -> line.toLowerCase().contains(queryLower))
         .map(line -> line.split(":")[0]) // Extract the username
-        .forEach(results::add);
+        .forEach(result -> {
+          results.add(result);
+          usernames.add(result); // Add the username to the usernames set
+        });
     } catch (IOException ex) {
       System.out.println("Error reading from file: " + filePath);
       //ex.printStackTrace();
     }
+    SearchResult.setQueryUsernames(usernames);
     return results;
+  }
+
+
+  // Getter for the Set of usernames in the current query
+  public static Set<String> getUsernames() {
+    return usernames;
   }
 }
