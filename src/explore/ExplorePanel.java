@@ -3,7 +3,6 @@ package explore;
 import app.App;
 import auth.UserManager;
 import image.ImageViewer;
-
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -51,7 +50,7 @@ public class ExplorePanel extends BasePanel {
    * It contains a header panel and a main content panel.
    */
   public ExplorePanel() {
-    super(false,false,false);
+    super(false, false, false);
     removeAll(); // Clear existing components
     setLayout(new BorderLayout()); // Reset the layout manager
 
@@ -66,6 +65,32 @@ public class ExplorePanel extends BasePanel {
     repaint();
   }
 
+  public void overlayComponent(Component component) {
+    JLayeredPane layeredPane = this.getRootPane().getLayeredPane();
+
+    // Set the size and position of the component to take up the bottom 50% of the screen
+    int height = this.getHeight();
+    int width = this.getWidth();
+    component.setBounds(0, height / 2, width, height / 2);
+
+    // Add the component to the layered pane at the highest z-index
+    layeredPane.add(component, JLayeredPane.POPUP_LAYER);
+  }
+
+  public void closeOverlayComponents() {
+    JLayeredPane layeredPane = this.getRootPane().getLayeredPane();
+
+    // Remove all components in the POPUP_LAYER
+    for (Component comp : layeredPane.getComponentsInLayer(
+      JLayeredPane.POPUP_LAYER
+    )) {
+      layeredPane.remove(comp);
+    }
+
+    // Repaint the layered pane to reflect the changes
+    layeredPane.repaint();
+  }
+
   /**
    * Creates and returns a JPanel that serves as the main content panel.
    * The main content panel contains a search panel and an image grid panel
@@ -78,13 +103,16 @@ public class ExplorePanel extends BasePanel {
     JPanel imageGridPanel = createImageGridPanel();
     JScrollPane scrollPane = new JScrollPane(imageGridPanel);
     scrollPane.setHorizontalScrollBarPolicy(
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+    );
     scrollPane.setVerticalScrollBarPolicy(
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+    );
 
     JPanel mainContentPanel = new JPanel();
     mainContentPanel.setLayout(
-        new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
+      new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS)
+    );
     mainContentPanel.add(searchPanel);
     mainContentPanel.add(scrollPane); // This will stretch to take up remaining space
     return mainContentPanel;
@@ -99,50 +127,53 @@ public class ExplorePanel extends BasePanel {
     JPanel searchPanel = new JPanel(new BorderLayout());
     JTextField searchField = new JTextField(" Search");
     searchField.addFocusListener(
-        new FocusListener() {
-          public void focusGained(FocusEvent e) {
-            if (searchField.getText().equals(" Search")) {
-              searchField.setText("");
-            }
+      new FocusListener() {
+        public void focusGained(FocusEvent e) {
+          if (searchField.getText().equals(" Search")) {
+            searchField.setText("");
           }
+        }
 
-          public void focusLost(FocusEvent e) {
-            if (searchField.getText().isEmpty()) {
-              searchField.setText(" Search");
-            }
+        public void focusLost(FocusEvent e) {
+          if (searchField.getText().isEmpty()) {
+            searchField.setText(" Search");
           }
-        });
+        }
+      }
+    );
 
     searchField
-        .getDocument()
-        .addDocumentListener(
-            new DocumentListener() {
-              public void changedUpdate(DocumentEvent e) {
-                runSearch();
-              }
+      .getDocument()
+      .addDocumentListener(
+        new DocumentListener() {
+          public void changedUpdate(DocumentEvent e) {
+            runSearch();
+          }
 
-              public void removeUpdate(DocumentEvent e) {
-                runSearch();
-              }
+          public void removeUpdate(DocumentEvent e) {
+            runSearch();
+          }
 
-              public void insertUpdate(DocumentEvent e) {
-                runSearch();
-              }
+          public void insertUpdate(DocumentEvent e) {
+            runSearch();
+          }
 
-              public void runSearch() {
-                String query = searchField.getText();
-                if (query.trim().isEmpty()) {
-                  System.out.println("Search field is empty, not running search");
-                  return;
-                }
-                List<String> results = Search.search(query);
-                System.out.println("found this after searching: " + results);
-              }
-            });
+          public void runSearch() {
+            String query = searchField.getText();
+            if (query.trim().isEmpty()) {
+              System.out.println("Search field is empty, not running search");
+              return;
+            }
+            List<String> results = Search.search(query);
+            System.out.println("found this after searching: " + results);
+          }
+        }
+      );
 
     searchPanel.add(searchField, BorderLayout.CENTER);
     searchPanel.setMaximumSize(
-        new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
+      new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height)
+    );
 
     return searchPanel;
   }
@@ -157,22 +188,29 @@ public class ExplorePanel extends BasePanel {
     File imageDir = new File(uploaded);
 
     if (imageDir.exists() && imageDir.isDirectory()) {
-      File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));
+      File[] imageFiles = imageDir.listFiles((dir, name) ->
+        name.matches(".*\\.(png|jpg|jpeg)")
+      );
       if (imageFiles != null) {
         for (File imageFile : imageFiles) {
           ImageIcon imageIcon = new ImageIcon(
-              new ImageIcon(imageFile.getPath())
-                  .getImage()
-                  .getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
+            new ImageIcon(imageFile.getPath())
+              .getImage()
+              .getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH)
+          );
           JLabel imageLabel = new JLabel(imageIcon);
           imageLabel.addMouseListener(
-              new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                  App.imageViewer.displayImage(" Explore 🐥 ", imageFile.getPath()); // Call method to display the
-                  // clicked image
-                }
-              });
+            new MouseAdapter() {
+              @Override
+              public void mouseClicked(MouseEvent e) {
+                App.imageViewer.displayImage(
+                  " Explore 🐥 ",
+                  imageFile.getPath()
+                ); // Call method to display the
+                // clicked image
+              }
+            }
+          );
           imageGridPanel.add(imageLabel);
         }
       }

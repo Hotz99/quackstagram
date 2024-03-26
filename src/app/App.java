@@ -73,4 +73,9 @@ public class App extends JFrame {
       app.setVisible(true);
     });
   }
+
+  //getter for the cards
+  public static JPanel getCards() {
+    return cards;
+  }
 }

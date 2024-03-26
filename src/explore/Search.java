@@ -14,21 +14,21 @@ public abstract class Search {
 
   private static Set<String> usernames = new HashSet<>();
 
-
   public static List<String> search(String query) {
     List<String> results = new ArrayList<>();
     if (query.isEmpty()) return results;
 
-      // Clear the usernames set before a new search
+    // Clear the usernames set before a new search
     usernames.clear();
 
     // if (query.charAt(0) == '@') {
-    results.addAll(searchInFile(Paths.get(users), query.substring(1)));
+    results.addAll(searchInFile(Paths.get(users), query));
     // } else {
     //   System.out.println("Invalid query. User search should start with '@'.");
-    // }
+    // }c
 
     System.out.println("Found after searching: " + results);
+    SearchResult.createSearchResultList(usernames);
     return results;
   }
 
@@ -48,10 +48,8 @@ public abstract class Search {
       System.out.println("Error reading from file: " + filePath);
       //ex.printStackTrace();
     }
-    SearchResult.setQueryUsernames(usernames);
     return results;
   }
-
 
   // Getter for the Set of usernames in the current query
   public static Set<String> getUsernames() {
