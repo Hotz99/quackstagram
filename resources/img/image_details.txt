@@ -1,10 +1,10 @@
 ImageID: Lorin_1, Username: Lorin, Bio: In the cookie jar my hand was not., Timestamp: 2023-12-17 19:07:43, Likes: 36
 ImageID: Lorin_2, Username: Lorin, Bio: Meditate I must., Timestamp: 2023-12-17 19:09:35, Likes: 16
-ImageID: Xylo_1, Username: Xylo, Bio: My tea strong as Force is., Timestamp: 2023-12-17 19:22:40, Likes: [Xylo]
+ImageID: Xylo_1, Username: Xylo, Bio: My tea strong as Force is., Timestamp: 2023-12-17 19:22:40, Likes: []
 ImageID: Xylo_2, Username: Xylo, Bio: Jedi mind trick failed., Timestamp: 2023-12-17 19:23:14, Likes: [Mystar, Xylo, Tom]
 ImageID: Zara_1, Username: Zara, Bio: Lost my map I have. Oops., Timestamp: 2023-12-17 19:24:31, Likes: [Mystar, Xylo]
 ImageID: Zara_2, Username: Zara, Bio: Yoga with Yoda, Timestamp: 2023-12-17 19:25:03, Likes: [Xylo, Mystar]
-ImageID: Mystar_1, Username: Mystar, Bio: Cookies gone? , Timestamp: 2023-12-17 19:26:50, Likes: [Xylo, Lorin, Mystar]
+ImageID: Mystar_1, Username: Mystar, Bio: Cookies gone? , Timestamp: 2023-12-17 19:26:50, Likes: [Lorin, Mystar]
 ImageID: Mystar_2, Username: Mystar, Bio: In my soup a fly is., Timestamp: 2023-12-17 19:27:24, Likes: [Mystar, Tom]
 ImageID: Xylo_3, Username: Xylo, Bio: aaa, Timestamp: 2024-03-07 20:24:30, Likes: []
-ImageID: Xylo_6, Username: Xylo, Bio: Enter a caption, Timestamp: 2024-03-10 03:02:13, Likes: []
+ImageID: Xylo_6, Username: Xylo, Bio: Enter a caption, Timestamp: 2024-03-10 03:02:13, Likes: [Xylo]

@@ -25,16 +25,17 @@ public class ProfilePanel extends BasePanel {
   String currentUsername = UserManager.getCurrentUser().getUsername();
   private JPanel headerPanel = new JPanel(); // Panel for the header
 
-    //Singleton pattern
-    private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-    private final String profileImagesStorage = appPathsSingleton.PROFILE_IMAGES_STORAGE;
-    private final String users = appPathsSingleton.USERS;
-    private final String following = appPathsSingleton.FOLLOWING;
-    private final String uploaded = appPathsSingleton.UPLOADED;
-
+  //Singleton pattern
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String profileImagesStorage =
+    appPathsSingleton.PROFILE_IMAGES_STORAGE;
+  private final String users = appPathsSingleton.USERS;
+  private final String following = appPathsSingleton.FOLLOWING;
+  private final String uploaded = appPathsSingleton.UPLOADED;
 
   public ProfilePanel(User user) {
     super(false, false, false);
+    currentUsername = user.getUsername();
     UserManager.setCurrentUser(user);
 
     UserManager.getCurrentUser().loadPostsCount();
@@ -79,7 +80,8 @@ public class ProfilePanel extends BasePanel {
     // Header Panel
     JPanel headerPanel = new JPanel();
     try (Stream<String> lines = Files.lines(Paths.get(users))) {
-      isCurrentUser = lines.anyMatch(line -> line.startsWith(currentUsername + ":"));
+      isCurrentUser =
+        lines.anyMatch(line -> line.startsWith(currentUsername + ":"));
     } catch (IOException e) {
       e.printStackTrace(); // Log or handle the exception as appropriate
     }
@@ -120,11 +122,17 @@ public class ProfilePanel extends BasePanel {
     add(headerPanel, BorderLayout.NORTH);
   }
 
-  private void getStatsFollowPanel(JPanel headerPanel, JPanel topHeaderPanel, JPanel statsPanel, JButton followButton) {
+  private void getStatsFollowPanel(
+    JPanel headerPanel,
+    JPanel topHeaderPanel,
+    JPanel statsPanel,
+    JButton followButton
+  ) {
     // Add Stats and Follow Button to a combined Panel
     JPanel statsFollowPanel = new JPanel();
     statsFollowPanel.setLayout(
-        new BoxLayout(statsFollowPanel, BoxLayout.Y_AXIS));
+      new BoxLayout(statsFollowPanel, BoxLayout.Y_AXIS)
+    );
     statsFollowPanel.add(statsPanel);
     statsFollowPanel.add(followButton);
     topHeaderPanel.add(statsFollowPanel, BorderLayout.CENTER);
@@ -171,7 +179,8 @@ public class ProfilePanel extends BasePanel {
     followButton.setAlignmentX(Component.CENTER_ALIGNMENT);
     followButton.setFont(new Font("Arial", Font.BOLD, 12));
     followButton.setMaximumSize(
-        new Dimension(Integer.MAX_VALUE, followButton.getMinimumSize().height)); // Make the button fill the horizontal
+      new Dimension(Integer.MAX_VALUE, followButton.getMinimumSize().height)
+    ); // Make the button fill the horizontal
     // space
     followButton.setBackground(new Color(225, 228, 232)); // A soft, appealing color that complements the UI
     followButton.setForeground(Color.BLACK);
@@ -187,20 +196,27 @@ public class ProfilePanel extends BasePanel {
     statsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
     statsPanel.setBackground(new Color(249, 249, 249));
     System.out.println(
-        "Number of posts for this user" +
-            UserManager.getCurrentUser().getPostsCount());
+      "Number of posts for this user" +
+      UserManager.getCurrentUser().getPostsCount()
+    );
     statsPanel.add(
-        createStatLabel(
-            Integer.toString(UserManager.getCurrentUser().getPostsCount()),
-            "Posts"));
+      createStatLabel(
+        Integer.toString(UserManager.getCurrentUser().getPostsCount()),
+        "Posts"
+      )
+    );
     statsPanel.add(
-        createStatLabel(
-            Integer.toString(UserManager.getCurrentUser().getFollowersCount()),
-            "Followers"));
+      createStatLabel(
+        Integer.toString(UserManager.getCurrentUser().getFollowersCount()),
+        "Followers"
+      )
+    );
     statsPanel.add(
-        createStatLabel(
-            Integer.toString(UserManager.getCurrentUser().getFollowingCount()),
-            "Following"));
+      createStatLabel(
+        Integer.toString(UserManager.getCurrentUser().getFollowingCount()),
+        "Following"
+      )
+    );
     statsPanel.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 0)); // Add some vertical padding
     return statsPanel;
   }
@@ -216,14 +232,16 @@ public class ProfilePanel extends BasePanel {
     Image originalImage = originalIcon.getImage();
 
     Image scaledImage = originalImage.getScaledInstance(
-        PROFILE_IMAGE_SIZE,
-        PROFILE_IMAGE_SIZE,
-        Image.SCALE_SMOOTH);
+      PROFILE_IMAGE_SIZE,
+      PROFILE_IMAGE_SIZE,
+      Image.SCALE_SMOOTH
+    );
     ImageIcon profileIcon = new ImageIcon(scaledImage);
 
     JLabel profileImage = new JLabel(profileIcon);
     profileImage.setPreferredSize(
-        new Dimension(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE));
+      new Dimension(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE)
+    );
     profileImage.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     profileImage.setHorizontalAlignment(JLabel.CENTER);
     profileImage.setVerticalAlignment(JLabel.CENTER);
@@ -231,7 +249,6 @@ public class ProfilePanel extends BasePanel {
     topHeaderPanel.add(profileImage, BorderLayout.WEST);
     return topHeaderPanel;
   }
-
 
   private String readCurrentUser(Path usersFilePath) {
     try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
@@ -249,8 +266,11 @@ public class ProfilePanel extends BasePanel {
     return "";
   }
 
-  private StringBuilder processFollowingFile(Path followingFilePath, String currentUsername, String usernameToFollow)
-      throws IOException {
+  private StringBuilder processFollowingFile(
+    Path followingFilePath,
+    String currentUsername,
+    String usernameToFollow
+  ) throws IOException {
     boolean found = false;
     StringBuilder newContent = new StringBuilder();
 
@@ -262,7 +282,10 @@ public class ProfilePanel extends BasePanel {
           if (parts[0].trim().equals(currentUsername)) {
             found = true;
             if (!line.contains(usernameToFollow)) {
-              line = line.concat(line.endsWith(":") ? "" : "; ").concat(usernameToFollow);
+              line =
+                line
+                  .concat(line.endsWith(":") ? "" : "; ")
+                  .concat(usernameToFollow);
             }
           }
           newContent.append(line).append("\n");
@@ -271,13 +294,20 @@ public class ProfilePanel extends BasePanel {
     }
 
     if (!found) {
-      newContent.append(currentUsername).append(": ").append(usernameToFollow).append("\n");
+      newContent
+        .append(currentUsername)
+        .append(": ")
+        .append(usernameToFollow)
+        .append("\n");
     }
 
     return newContent;
   }
 
-  private void writeFollowingFile(Path followingFilePath, StringBuilder newContent) throws IOException {
+  private void writeFollowingFile(
+    Path followingFilePath,
+    StringBuilder newContent
+  ) throws IOException {
     try (BufferedWriter writer = Files.newBufferedWriter(followingFilePath)) {
       writer.write(newContent.toString());
     }
@@ -290,7 +320,11 @@ public class ProfilePanel extends BasePanel {
 
     if (!currentUsername.isEmpty()) {
       try {
-        StringBuilder newContent = processFollowingFile(followingFilePath, currentUsername, usernameToFollow);
+        StringBuilder newContent = processFollowingFile(
+          followingFilePath,
+          currentUsername,
+          usernameToFollow
+        );
         writeFollowingFile(followingFilePath, newContent);
       } catch (IOException e) {
         e.printStackTrace();
@@ -306,8 +340,11 @@ public class ProfilePanel extends BasePanel {
   private void loadAndDisplayImages() {
     Path imageDir = Paths.get(uploaded);
     try (Stream<Path> paths = Files.list(imageDir)) {
-      paths.filter(path -> path.getFileName().toString().startsWith(currentUsername + "_"))
-          .forEach(this::addImageToPanel);
+      paths
+        .filter(path ->
+          path.getFileName().toString().startsWith(currentUsername + "_")
+        )
+        .forEach(this::addImageToPanel);
     } catch (IOException ex) {
       ex.printStackTrace(); // Consider more user-friendly error handling
     }
@@ -315,24 +352,30 @@ public class ProfilePanel extends BasePanel {
 
   private void addImageToPanel(Path imagePath) {
     ImageIcon imageIcon = new ImageIcon(
-        new ImageIcon(imagePath.toString()).getImage().getScaledInstance(
-            GRID_IMAGE_SIZE,
-            GRID_IMAGE_SIZE,
-            Image.SCALE_SMOOTH));
+      new ImageIcon(imagePath.toString())
+        .getImage()
+        .getScaledInstance(GRID_IMAGE_SIZE, GRID_IMAGE_SIZE, Image.SCALE_SMOOTH)
+    );
     JLabel imageLabel = new JLabel(imageIcon);
-    imageLabel.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        displayImage(imageIcon); // Adapt this if necessary to match your displayImage method's parameters
+    imageLabel.addMouseListener(
+      new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          displayImage(imageIcon); // Adapt this if necessary to match your displayImage method's parameters
+        }
       }
-    });
+    );
     contentPanel.add(imageLabel);
   }
 
   private JScrollPane createScrollPane() {
     JScrollPane scrollPane = new JScrollPane(contentPanel);
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+    scrollPane.setHorizontalScrollBarPolicy(
+      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+    );
+    scrollPane.setVerticalScrollBarPolicy(
+      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+    );
     return scrollPane;
   }
 
@@ -366,12 +409,13 @@ public class ProfilePanel extends BasePanel {
 
   private JLabel createStatLabel(String number, String text) {
     JLabel label = new JLabel(
-        "<html><div style='text-align: center;'>" +
-            number +
-            "<br/>" +
-            text +
-            "</div></html>",
-        SwingConstants.CENTER);
+      "<html><div style='text-align: center;'>" +
+      number +
+      "<br/>" +
+      text +
+      "</div></html>",
+      SwingConstants.CENTER
+    );
     label.setFont(new Font("Arial", Font.BOLD, 12));
     label.setForeground(Color.BLACK);
     return label;

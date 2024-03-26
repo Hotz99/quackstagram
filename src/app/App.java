@@ -7,7 +7,6 @@ import explore.ExplorePanel;
 import home.HomePanel;
 import image.ImageUploadPanel;
 import image.ImageViewer;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import javax.swing.JButton;
@@ -16,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import notifications.NotificationsPanel;
 import user.ProfilePanel;
+import user.User;
 import utils.BasePanel;
 
 public class App extends JFrame {
@@ -56,6 +56,14 @@ public class App extends JFrame {
 
   public static void showPanel(String panelName) {
     cardLayout.show(cards, panelName);
+  }
+
+  public static void showPanelWithUsername(String username) {
+    final User user = new User(username);
+    final ProfilePanel profilePanel = new ProfilePanel(user);
+    // Add the new ProfilePanel
+    cards.add(profilePanel, "UserProfile");
+    cardLayout.show(cards, "UserProfile");
   }
 
   public static void main(String[] args) {
