@@ -36,7 +36,7 @@ public class HomePanel extends BasePanel {
   private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
   private final String following = appPathsSingleton.FOLLOWING;
   private final String uploaded = appPathsSingleton.UPLOADED;
-  private final String notification = appPathsSingleton.NOTIFICATIONS;
+  
 
 
 

@@ -27,10 +27,8 @@ public class ProfilePanel extends BasePanel {
 
     //Singleton pattern
     private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-    private final String credentials = appPathsSingleton.CREDENTIALS;
     private final String profileImagesStorage = appPathsSingleton.PROFILE_IMAGES_STORAGE;
     private final String users = appPathsSingleton.USERS;
-    private final String notifications = appPathsSingleton.NOTIFICATIONS;
     private final String following = appPathsSingleton.FOLLOWING;
     private final String uploaded = appPathsSingleton.UPLOADED;
 

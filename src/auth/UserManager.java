@@ -24,9 +24,6 @@ public class UserManager {
   private final String credentials = appPathsSingleton.CREDENTIALS;
   private final String profileImagesStorage = appPathsSingleton.PROFILE_IMAGES_STORAGE;
   private final String users = appPathsSingleton.USERS;
-  private final String notifications = appPathsSingleton.NOTIFICATIONS;
-  private final String following = appPathsSingleton.FOLLOWING;
-  private final String uploaded = appPathsSingleton.UPLOADED;
 
   public static User getCurrentUser() {
     return currentUser;
