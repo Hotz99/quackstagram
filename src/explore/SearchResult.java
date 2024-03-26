@@ -6,8 +6,10 @@ import java.util.Set;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.text.html.ListView;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import app.App;
 import user.User;
 
 public abstract class SearchResult {
@@ -21,19 +23,24 @@ public abstract class SearchResult {
         queriedUsernames = newQueriedUsernames;
     }
     
-    
-
-    public ListView createSearchResultList(Set<String> results) {
-        JList<String> list = new JList(results);
+    public JList createSearchResultList(Set<String> results) {
+        JList<String> list = new JList(results.toArray());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setLayoutOrientation(JList.VERTICAL);
         list.setVisibleRowCount(-1);
 
+        list.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent evt) {
+                if (!evt.getValueIsAdjusting()) {
+                    String selectedUsername = (String) list.getSelectedValue();
+                    App.showPanelWithUsername(selectedUsername);
+                }
+            }
+        });
 
+        return list;
     }
-
-   
     
 }
-    
 
