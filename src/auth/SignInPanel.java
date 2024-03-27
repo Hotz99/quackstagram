@@ -14,12 +14,13 @@ import javax.swing.*;
 import user.ProfilePanel;
 import user.User;
 import utils.BasePanel;
+import utils.HeaderFactory;
 
 public class SignInPanel extends BasePanel {
 
   public SignInPanel() {
     super(true, true, false);
-    JPanel headerPanel = createHeaderPanel(SIGNIN_LABEL);
+    JPanel headerPanel = HeaderFactory.createHeader(SIGNIN_LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
     JPanel fieldsPanel = getFieldsPanel();
 

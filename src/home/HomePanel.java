@@ -22,6 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import utils.AppPathsSingleton;
 import utils.BasePanel;
+import utils.HeaderFactory;
 
 public class HomePanel extends BasePanel {
 
@@ -50,7 +51,7 @@ public class HomePanel extends BasePanel {
   public HomePanel() {
     super(false, false, false);
     // Create header panel and add it to the north
-    add(createHeaderPanel("Quackstagram Home"), BorderLayout.NORTH);
+    add(HeaderFactory.createHeader("Quackstagram Home"), BorderLayout.NORTH);
 
     // Create content panel and populate it with sample data
     JPanel contentPanel = new JPanel();

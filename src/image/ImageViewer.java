@@ -52,7 +52,7 @@ public class ImageViewer {
     App.imageView.removeAll();
     App.imageView.setLayout(new BorderLayout());
     App.imageView.add(
-      App.imageView.createHeaderPanel(headerLabel),
+      HeaderFactory.createHeader(headerLabel),
       BorderLayout.NORTH
     );
 

@@ -1,5 +1,6 @@
 package auth;
 
+import app.App;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,14 +8,14 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import app.App;
 import utils.BasePanel;
+import utils.HeaderFactory;
 
 public class SignUpPanel extends BasePanel {
+
   public SignUpPanel() {
-    super(true,true,true);
-    JPanel headerPanel = createHeaderPanel(LABEL);
+    super(true, true, true);
+    JPanel headerPanel = HeaderFactory.createHeader(LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
     JPanel fieldsPanel = getFieldsPanel();
     getUsername();
@@ -54,12 +55,14 @@ public class SignUpPanel extends BasePanel {
 
   private void btnUploadImage() {
     btnUploadPhoto = new JButton("Upload Photo");
-    btnUploadPhoto.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        handleProfilePictureUpload();
+    btnUploadPhoto.addActionListener(
+      new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          handleProfilePictureUpload();
+        }
       }
-    });
+    );
   }
 
   private void onRegisterClicked(ActionEvent event) {
@@ -69,10 +72,11 @@ public class SignUpPanel extends BasePanel {
 
     if (App.userManager.doesUsernameExist(username)) {
       JOptionPane.showMessageDialog(
-          this,
-          "Username already exists. Please choose a different username.",
-          "Error",
-          JOptionPane.ERROR_MESSAGE);
+        this,
+        "Username already exists. Please choose a different username.",
+        "Error",
+        JOptionPane.ERROR_MESSAGE
+      );
     } else {
       App.userManager.saveCredentials(username, password, bio);
       handleProfilePictureUpload();
@@ -84,8 +88,9 @@ public class SignUpPanel extends BasePanel {
   private void handleProfilePictureUpload() {
     JFileChooser fileChooser = new JFileChooser();
     FileNameExtensionFilter filter = new FileNameExtensionFilter(
-        "Image files",
-        ImageIO.getReaderFileSuffixes());
+      "Image files",
+      ImageIO.getReaderFileSuffixes()
+    );
     fileChooser.setFileFilter(filter);
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       File selectedFile = fileChooser.getSelectedFile();

@@ -20,6 +20,7 @@ import utils.BasePanel;
 public class BasePanel extends JPanel {
 
   private final int NAV_ICON_SIZE = 20; // Corrected size for bottom icons
+  private static final int HEADER_HEIGHT = 40;
   public static final Color COLOR_WHITE = Color.WHITE;
   public static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
   public static final Color BUTTON_TEXT_COLOR = Color.BLACK;
@@ -169,17 +170,6 @@ public class BasePanel extends JPanel {
   public void setNewUser(User newUser) {
     this.newUser = newUser;
   }
-
-  // public JPanel createHeaderPanel(String label) {
-  //   JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-  //   headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
-  //   JLabel lblRegister = new JLabel(label);
-  //   lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
-  //   lblRegister.setForeground(Color.WHITE); // Set the text color to white
-  //   headerPanel.add(lblRegister);
-  //   headerPanel.setPreferredSize(new Dimension(App.WIDTH, HEADER_HEIGHT)); // Give the header a fixed height
-  //   return headerPanel;
-  // }
 
   public JButton createIconButton(String iconPath, String buttonType) {
     ImageIcon iconOriginal = new ImageIcon(iconPath);

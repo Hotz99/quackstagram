@@ -10,7 +10,7 @@ public class HeaderFactory {
 
   private static final int HEADER_HEIGHT = 40; // Corrected static size for bottom icons
 
-  public JPanel createHeaderPanel(String label) {
+  private JPanel createHeaderPanel(String label) {
     JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
     JLabel lblRegister = new JLabel(label);

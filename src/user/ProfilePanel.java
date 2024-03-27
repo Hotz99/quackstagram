@@ -16,6 +16,7 @@ import javax.swing.*;
 import notifications.NotificationsPanel;
 import utils.AppPathsSingleton;
 import utils.BasePanel;
+import utils.HeaderFactory;
 
 public class ProfilePanel extends BasePanel {
 

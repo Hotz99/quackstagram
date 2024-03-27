@@ -1,5 +1,6 @@
 package image;
 
+import app.App;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -11,12 +12,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import app.App;
 import utils.AppPathsSingleton;
 import utils.BasePanel;
+import utils.HeaderFactory;
 
 public class ImageUploadPanel extends BasePanel {
+
   private JLabel imagePreviewLabel;
   private JTextArea bioTextArea;
   private JButton uploadButton;
@@ -24,14 +25,13 @@ public class ImageUploadPanel extends BasePanel {
 
   //singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String uploaded = appPathsSingleton.UPLOADED; 
-  private final String users = appPathsSingleton.USERS; 
-  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS; 
-
+  private final String uploaded = appPathsSingleton.UPLOADED;
+  private final String users = appPathsSingleton.USERS;
+  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
 
   public ImageUploadPanel() {
     super(false, false, false);
-    JPanel headerPanel = createHeaderPanel(" Upload Image 🐥"); // Reuse the createHeaderPanel method
+    JPanel headerPanel = HeaderFactory.createHeader(" Upload Image 🐥"); // Reuse the HeaderFactory.createHeader method
 
     // Main content panel
     JPanel contentPanel = new JPanel();
@@ -63,7 +63,9 @@ public class ImageUploadPanel extends BasePanel {
   private JLabel createImagePreviewLabel() {
     JLabel imagePreviewLabel = new JLabel();
     imagePreviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    imagePreviewLabel.setPreferredSize(new Dimension(App.WIDTH, App.HEIGHT / 3));
+    imagePreviewLabel.setPreferredSize(
+      new Dimension(App.WIDTH, App.HEIGHT / 3)
+    );
     return imagePreviewLabel;
   }
 
@@ -73,7 +75,9 @@ public class ImageUploadPanel extends BasePanel {
     bioTextArea.setLineWrap(true);
     bioTextArea.setWrapStyleWord(true);
     JScrollPane bioScrollPane = new JScrollPane(bioTextArea);
-    bioScrollPane.setPreferredSize(new Dimension(App.WIDTH - 50, App.HEIGHT / 6));
+    bioScrollPane.setPreferredSize(
+      new Dimension(App.WIDTH - 50, App.HEIGHT / 6)
+    );
     return bioScrollPane;
   }
 
@@ -95,11 +99,9 @@ public class ImageUploadPanel extends BasePanel {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setDialogTitle("Select an image file");
     fileChooser.setAcceptAllFileFilterUsed(false);
-    fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(
-        "Image files",
-        "png",
-        "jpg",
-        "jpeg"));
+    fileChooser.addChoosableFileFilter(
+      new FileNameExtensionFilter("Image files", "png", "jpg", "jpeg")
+    );
 
     int returnValue = fileChooser.showOpenDialog(null);
     if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -111,30 +113,37 @@ public class ImageUploadPanel extends BasePanel {
         String fileExtension = getFileExtension(selectedFile);
         String newFileName = username + "_" + nextImageId + "." + fileExtension;
 
-        Path uploadedImagePath = Paths.get(
-            uploaded + newFileName);
+        Path uploadedImagePath = Paths.get(uploaded + newFileName);
         Files.copy(
-            selectedFile.toPath(),
-            uploadedImagePath,
-            StandardCopyOption.REPLACE_EXISTING);
+          selectedFile.toPath(),
+          uploadedImagePath,
+          StandardCopyOption.REPLACE_EXISTING
+        );
 
         // Save the bio and image ID to a text file
         saveImageDetails(
-            username + "_" + nextImageId,
-            username,
-            bioTextArea.getText());
+          username + "_" + nextImageId,
+          username,
+          bioTextArea.getText()
+        );
 
-        System.out.println("Image uploaded to: " + uploadedImagePath.toString());
+        System.out.println(
+          "Image uploaded to: " + uploadedImagePath.toString()
+        );
 
         // Load the image from the saved path
         ImageIcon imageIcon = new ImageIcon(uploadedImagePath.toString());
 
         // Check if imagePreviewLabel has a valid size
-        if (imagePreviewLabel.getWidth() <= 0 || imagePreviewLabel.getHeight() <= 0)
-          return;
+        if (
+          imagePreviewLabel.getWidth() <= 0 ||
+          imagePreviewLabel.getHeight() <= 0
+        ) return;
 
         // Set the image icon with the scaled image
-        imageIcon.setImage(getScaledImage(imageIcon.getImage(), imagePreviewLabel));
+        imageIcon.setImage(
+          getScaledImage(imageIcon.getImage(), imagePreviewLabel)
+        );
 
         imagePreviewLabel.setIcon(imageIcon);
 
@@ -142,17 +151,18 @@ public class ImageUploadPanel extends BasePanel {
         uploadButton.setText("Upload Another Image");
 
         JOptionPane.showMessageDialog(
-            this,
-            "Image uploaded and preview updated!");
+          this,
+          "Image uploaded and preview updated!"
+        );
       } catch (IOException ex) {
         JOptionPane.showMessageDialog(
-            this,
-            "Error saving image: " + ex.getMessage(),
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
+          this,
+          "Error saving image: " + ex.getMessage(),
+          "Error",
+          JOptionPane.ERROR_MESSAGE
+        );
       }
     }
-
   }
 
   private Image getScaledImage(Image image, JLabel imagePreviewLabel) {
@@ -167,16 +177,16 @@ public class ImageUploadPanel extends BasePanel {
     int scaledHeight = (int) (scale * imageHeight);
 
     Image scaledImage = image.getScaledInstance(
-        scaledWidth,
-        scaledHeight,
-        Image.SCALE_SMOOTH);
+      scaledWidth,
+      scaledHeight,
+      Image.SCALE_SMOOTH
+    );
 
     return scaledImage;
   }
 
   private int getNextImageId(String username) throws IOException {
-    Path storageDir = Paths.get(
-        uploaded); // Ensure this is the directory where images are saved
+    Path storageDir = Paths.get(uploaded); // Ensure this is the directory where images are saved
     if (!Files.exists(storageDir)) {
       Files.createDirectories(storageDir);
     }
@@ -184,9 +194,11 @@ public class ImageUploadPanel extends BasePanel {
     int maxId = 0;
 
     try (
-        DirectoryStream<Path> stream = Files.newDirectoryStream(
-            storageDir,
-            username + "_*")) {
+      DirectoryStream<Path> stream = Files.newDirectoryStream(
+        storageDir,
+        username + "_*"
+      )
+    ) {
       for (Path path : stream) {
         String fileName = path.getFileName().toString();
         int idEndIndex = fileName.lastIndexOf('.');
@@ -208,27 +220,31 @@ public class ImageUploadPanel extends BasePanel {
   }
 
   private void saveImageDetails(String imageId, String username, String bio)
-      throws IOException {
+    throws IOException {
     Path imageDetailsPath = Paths.get(imageDetails);
     if (!Files.exists(imageDetailsPath)) {
       Files.createFile(imageDetailsPath);
     }
 
     String timestamp = LocalDateTime
-        .now()
-        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+      .now()
+      .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
     try (
-        BufferedWriter writer = Files.newBufferedWriter(
-            imageDetailsPath,
-            StandardOpenOption.APPEND)) {
+      BufferedWriter writer = Files.newBufferedWriter(
+        imageDetailsPath,
+        StandardOpenOption.APPEND
+      )
+    ) {
       writer.write(
-          String.format(
-              "ImageID: %s, Username: %s, Bio: %s, Timestamp: %s, Likes: 0",
-              imageId,
-              username,
-              bio,
-              timestamp));
+        String.format(
+          "ImageID: %s, Username: %s, Bio: %s, Timestamp: %s, Likes: 0",
+          imageId,
+          username,
+          bio,
+          timestamp
+        )
+      );
       writer.newLine();
     }
   }
