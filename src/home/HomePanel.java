@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-// import utils.AppPaths;
 import utils.AppPathsSingleton;
 import utils.BasePanel;
 
@@ -226,6 +225,7 @@ public class HomePanel extends BasePanel {
   private void writeUpdatedDetails(String details) {
     Path detailsPath = Paths.get(imageDetails);
     try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
+      System.out.println("Writing updated details to file");
       writer.write(details);
     } catch (IOException e) {
       e.printStackTrace();

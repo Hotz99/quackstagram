@@ -1,5 +1,5 @@
-ImageID: Lorin_1, Username: Lorin, Bio: In the cookie jar my hand was not., Timestamp: 2023-12-17 19:07:43, Likes: 13
-ImageID: Lorin_2, Username: Lorin, Bio: Meditate I must., Timestamp: 2023-12-17 19:09:35, Likes: 16
+ImageID: Lorin_1, Username: Lorin, Bio: In the cookie jar my hand was not., Timestamp: 2023-12-17 19:07:43, Likes: 30
+ImageID: Lorin_2, Username: Lorin, Bio: Meditate I must., Timestamp: 2023-12-17 19:09:35, Likes: 21
 ImageID: Xylo_1, Username: Xylo, Bio: My tea strong as Force is., Timestamp: 2023-12-17 19:22:40, Likes: []
 ImageID: Xylo_2, Username: Xylo, Bio: Jedi mind trick failed., Timestamp: 2023-12-17 19:23:14, Likes: [Mystar, Xylo, Tom]
 ImageID: Zara_1, Username: Zara, Bio: Lost my map I have. Oops., Timestamp: 2023-12-17 19:24:31, Likes: [Mystar, Xylo]
