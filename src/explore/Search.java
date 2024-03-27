@@ -8,7 +8,7 @@ import utils.AppPathsSingleton;
 
 public abstract class Search {
 
-  //singleton pattern
+  // singleton pattern
   private static final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private static final String users = appPathsSingleton.USERS;
 
@@ -16,7 +16,8 @@ public abstract class Search {
 
   public static List<String> search(String query) {
     List<String> results = new ArrayList<>();
-    if (query.isEmpty()) return results;
+    if (query.isEmpty())
+      return results;
 
     // Clear the usernames set before a new search
     usernames.clear();
@@ -24,11 +25,9 @@ public abstract class Search {
     // if (query.charAt(0) == '@') {
     results.addAll(searchInFile(Paths.get(users), query));
     // } else {
-    //   System.out.println("Invalid query. User search should start with '@'.");
-    // }c
+    // System.out.println("Invalid query. User search should start with '@'.");
+    // }
 
-    System.out.println("Found after searching: " + results);
-    SearchResult.createSearchResultList(usernames);
     return results;
   }
 
@@ -38,15 +37,15 @@ public abstract class Search {
     String queryLower = query.toLowerCase();
     try (Stream<String> lines = Files.lines(filePath)) {
       lines
-        .filter(line -> line.toLowerCase().contains(queryLower))
-        .map(line -> line.split(":")[0]) // Extract the username
-        .forEach(result -> {
-          results.add(result);
-          usernames.add(result); // Add the username to the usernames set
-        });
+          .filter(line -> line.toLowerCase().contains(queryLower))
+          .map(line -> line.split(":")[0]) // Extract the username
+          .forEach(result -> {
+            results.add(result);
+            usernames.add(result); // Add the username to the usernames set
+          });
     } catch (IOException ex) {
       System.out.println("Error reading from file: " + filePath);
-      //ex.printStackTrace();
+      // ex.printStackTrace();
     }
     return results;
   }

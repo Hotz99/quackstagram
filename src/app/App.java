@@ -74,7 +74,6 @@ public class App extends JFrame {
     });
   }
 
-  //getter for the cards
   public static JPanel getCards() {
     return cards;
   }

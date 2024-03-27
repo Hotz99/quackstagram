@@ -24,47 +24,47 @@ public class AppPathsSingleton {
     public final String[] BUTTON_TYPES;
 
     private AppPathsSingleton() {
-    
+
         DATA = "resources/data/";
-        CREDENTIALS =  "resources/data/credentials.txt";
-        FOLLOWING =  "resources/data/following.txt";
-        FOLLOWERS =  "resources/data/followers.txt";
-        USERS =  "resources/data/users.txt";
-        LIKES =  "resources/data/likes.txt";
+        CREDENTIALS = "resources/data/credentials.txt";
+        FOLLOWING = "resources/data/following.txt";
+        FOLLOWERS = "resources/data/followers.txt";
+        USERS = "resources/data/users.txt";
+        LIKES = "resources/data/likes.txt";
         NOTIFICATIONS = "resources/data/notifications.txt";
         IMG = "resources/img/";
         UPLOADED = "resources/img/uploaded/";
-        LOGOS =  "resources/img/logos/";
-        DACS_LOGO =  "resources/img/logos/DACS.png";
-        IMAGE_DETAILS =  "resources/img/image_details.txt";
+        LOGOS = "resources/img/logos/";
+        DACS_LOGO = "resources/img/logos/DACS.png";
+        IMAGE_DETAILS = "resources/img/image_details.txt";
         PROFILE_IMAGES_STORAGE = "resources/img/storage/profile/";
-        ICONS =  "resources/img/icons/";
+        ICONS = "resources/img/icons/";
         DEFAULT_PROFILE_ICON = "resources/img/icons/default_profile.png";
-        SEARCH_PATHS = new String[]{
-        "resources/data/users.txt", 
-        "resources/img/image_details.txt",
+        SEARCH_PATHS = new String[] {
+                "resources/data/users.txt",
+                "resources/img/image_details.txt",
         };
-        ICON_PATHS = new String []{
-        "resources/img/icons/home.png",
-        "resources/img/icons/search.png",
-        "resources/img/icons/add.png",
-        "resources/img/icons/heart.png",
-        "resources/img/icons/profile.png"
+        ICON_PATHS = new String[] {
+                "resources/img/icons/home.png",
+                "resources/img/icons/search.png",
+                "resources/img/icons/add.png",
+                "resources/img/icons/heart.png",
+                "resources/img/icons/profile.png"
         };
-        BUTTON_TYPES = new String[]{
-            "home",
-            "explore",
-            "add",
-            "notification",
-            "profile",
+        BUTTON_TYPES = new String[] {
+                "home",
+                "explore",
+                "add",
+                "notification",
+                "profile",
         };
     }
 
-public static AppPathsSingleton getInstance(){
-    if (instance == null){
-        instance = new AppPathsSingleton();
+    public static AppPathsSingleton getInstance() {
+        if (instance == null) {
+            instance = new AppPathsSingleton();
+        }
+        return instance;
     }
-    return instance;
-}
-   
+
 }

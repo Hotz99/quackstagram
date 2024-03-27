@@ -27,7 +27,6 @@ import javax.swing.event.DocumentListener;
 import user.ProfilePanel;
 import user.User;
 import utils.*;
-import utils.AppPathsSingleton;
 
 /**
  * The ExplorePanel class represents a panel that displays the explore
@@ -40,7 +39,7 @@ public class ExplorePanel extends BasePanel {
 
   private final int IMAGE_SIZE = App.WIDTH / 3; // Size for each image in the grid
 
-  //singleton pattern
+  // singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String uploaded = appPathsSingleton.UPLOADED;
 
@@ -68,7 +67,8 @@ public class ExplorePanel extends BasePanel {
   public void overlayComponent(Component component) {
     JLayeredPane layeredPane = this.getRootPane().getLayeredPane();
 
-    // Set the size and position of the component to take up the bottom 50% of the screen
+    // Set the size and position of the component to take up the bottom 50% of the
+    // screen
     int height = this.getHeight();
     int width = this.getWidth();
     component.setBounds(0, height / 2, width, height / 2);
@@ -82,8 +82,7 @@ public class ExplorePanel extends BasePanel {
 
     // Remove all components in the POPUP_LAYER
     for (Component comp : layeredPane.getComponentsInLayer(
-      JLayeredPane.POPUP_LAYER
-    )) {
+        JLayeredPane.POPUP_LAYER)) {
       layeredPane.remove(comp);
     }
 
@@ -103,16 +102,13 @@ public class ExplorePanel extends BasePanel {
     JPanel imageGridPanel = createImageGridPanel();
     JScrollPane scrollPane = new JScrollPane(imageGridPanel);
     scrollPane.setHorizontalScrollBarPolicy(
-      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-    );
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     scrollPane.setVerticalScrollBarPolicy(
-      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-    );
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
     JPanel mainContentPanel = new JPanel();
     mainContentPanel.setLayout(
-      new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS)
-    );
+        new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
     mainContentPanel.add(searchPanel);
     mainContentPanel.add(scrollPane); // This will stretch to take up remaining space
     return mainContentPanel;
@@ -127,53 +123,52 @@ public class ExplorePanel extends BasePanel {
     JPanel searchPanel = new JPanel(new BorderLayout());
     JTextField searchField = new JTextField(" Search");
     searchField.addFocusListener(
-      new FocusListener() {
-        public void focusGained(FocusEvent e) {
-          if (searchField.getText().equals(" Search")) {
-            searchField.setText("");
+        new FocusListener() {
+          public void focusGained(FocusEvent e) {
+            if (searchField.getText().equals(" Search")) {
+              searchField.setText("");
+            }
           }
-        }
 
-        public void focusLost(FocusEvent e) {
-          if (searchField.getText().isEmpty()) {
-            searchField.setText(" Search");
+          public void focusLost(FocusEvent e) {
+            if (searchField.getText().isEmpty()) {
+              searchField.setText(" Search");
+            }
           }
-        }
-      }
-    );
+        });
 
     searchField
-      .getDocument()
-      .addDocumentListener(
-        new DocumentListener() {
-          public void changedUpdate(DocumentEvent e) {
-            runSearch();
-          }
+        .getDocument()
+        .addDocumentListener(
+            new DocumentListener() {
+              public void changedUpdate(DocumentEvent e) {
+                runSearch();
+              }
 
-          public void removeUpdate(DocumentEvent e) {
-            runSearch();
-          }
+              public void removeUpdate(DocumentEvent e) {
+                runSearch();
+              }
 
-          public void insertUpdate(DocumentEvent e) {
-            runSearch();
-          }
+              public void insertUpdate(DocumentEvent e) {
+                runSearch();
+              }
 
-          public void runSearch() {
-            String query = searchField.getText();
-            if (query.trim().isEmpty()) {
-              System.out.println("Search field is empty, not running search");
-              return;
-            }
-            List<String> results = Search.search(query);
-            System.out.println("found this after searching: " + results);
-          }
-        }
-      );
+              private void runSearch() {
+                String query = searchField.getText();
+                if (query.trim().isEmpty()) {
+                  System.out.println("Search field is empty, not running search");
+                  return;
+                }
+                List<String> results = Search.search(query);
+                System.out.println("found this after searching: " + results);
+
+                SearchResult.createSearchResultList(results);
+              }
+            });
 
     searchPanel.add(searchField, BorderLayout.CENTER);
     searchPanel.setMaximumSize(
-      new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height)
-    );
+        new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
 
     return searchPanel;
   }
@@ -188,29 +183,24 @@ public class ExplorePanel extends BasePanel {
     File imageDir = new File(uploaded);
 
     if (imageDir.exists() && imageDir.isDirectory()) {
-      File[] imageFiles = imageDir.listFiles((dir, name) ->
-        name.matches(".*\\.(png|jpg|jpeg)")
-      );
+      File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));
       if (imageFiles != null) {
         for (File imageFile : imageFiles) {
           ImageIcon imageIcon = new ImageIcon(
-            new ImageIcon(imageFile.getPath())
-              .getImage()
-              .getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH)
-          );
+              new ImageIcon(imageFile.getPath())
+                  .getImage()
+                  .getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, Image.SCALE_SMOOTH));
           JLabel imageLabel = new JLabel(imageIcon);
           imageLabel.addMouseListener(
-            new MouseAdapter() {
-              @Override
-              public void mouseClicked(MouseEvent e) {
-                App.imageViewer.displayImage(
-                  " Explore 🐥 ",
-                  imageFile.getPath()
-                ); // Call method to display the
-                // clicked image
-              }
-            }
-          );
+              new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                  App.imageViewer.displayImage(
+                      " Explore 🐥 ",
+                      imageFile.getPath()); // Call method to display the
+                  // clicked image
+                }
+              });
           imageGridPanel.add(imageLabel);
         }
       }

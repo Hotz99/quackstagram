@@ -30,28 +30,25 @@ public class HomePanel extends BasePanel {
   private static final int IMAGE_HEIGHT = 150; // Height for the image posts
   private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
 
-  //singleton pattern
+  // singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String users = appPathsSingleton.USERS; 
+  private final String users = appPathsSingleton.USERS;
   private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
   private final String following = appPathsSingleton.FOLLOWING;
   private final String uploaded = appPathsSingleton.UPLOADED;
-  
 
-
-
-//--------
+  // --------
 
   Path detailsPath = Paths.get(imageDetails);
-     StringBuilder newContent = new StringBuilder();
-     boolean updated = false;
-     String currentUser = "";
-     String imageOwner = "";
-     String timestamp = LocalDateTime
-         .now()
-         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+  StringBuilder newContent = new StringBuilder();
+  boolean updated = false;
+  String currentUser = "";
+  String imageOwner = "";
+  String timestamp = LocalDateTime
+      .now()
+      .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-//----------         
+  // ----------
 
   private CardLayout cardLayout;
   private JPanel cardPanel;
@@ -59,23 +56,19 @@ public class HomePanel extends BasePanel {
   private JPanel imageViewPanel;
 
   public HomePanel() {
-    super(false,false,false);
+    super(false, false, false);
     add(createHeaderPanel("Quackstagram Home"), BorderLayout.NORTH);
 
     // Content Scroll Panel
     JPanel contentPanel = new JPanel();
-    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Vertical box layout
+    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
     String[][] sampleData = createSampleData();
     populateContentPanel(this, contentPanel, sampleData);
 
-    JScrollPane scrollPane = new JScrollPane(contentPanel);
-    scrollPane.setHorizontalScrollBarPolicy(
+    JScrollPane homePanel = new JScrollPane(contentPanel);
+    homePanel.setHorizontalScrollBarPolicy(
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-    // Set up the home panel
-    homePanel = new JPanel(new BorderLayout());
-    homePanel.add(scrollPane, BorderLayout.CENTER);
 
     imageViewPanel = new JPanel(new BorderLayout());
 
@@ -168,90 +161,89 @@ public class HomePanel extends BasePanel {
     panel.add(spacingPanel);
   }
 
-
   private void handleLikeAction(String imageId, JLabel likesLabel) {
     String currentUser = getCurrentUser();
-    if (currentUser.isEmpty()) return; // Early exit if user not found
+    if (currentUser.isEmpty())
+      return; // Early exit if user not found
 
     String details = readAndUpdateImageDetails(imageId, likesLabel);
-    if (details.isEmpty()) return; // Early exit if update failed or not needed
+    if (details.isEmpty())
+      return; // Early exit if update failed or not needed
 
     writeUpdatedDetails(details);
     recordLikeNotification(imageId, currentUser);
-}
+  }
 
-private String getCurrentUser() {
-  try (BufferedReader userReader = Files.newBufferedReader(Paths.get(users))) {
+  private String getCurrentUser() {
+    try (BufferedReader userReader = Files.newBufferedReader(Paths.get(users))) {
       String line = userReader.readLine();
       if (line != null) {
-          return line.split(":")[0].trim();
+        return line.split(":")[0].trim();
       }
-  } catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
+    }
+    return "";
   }
-  return "";
-}
 
-private String readAndUpdateImageDetails(String imageId, JLabel likesLabel) {
-  Path detailsPath = Paths.get(imageDetails);
-  StringBuilder newContent = new StringBuilder();
-  boolean updated = false;
+  private String readAndUpdateImageDetails(String imageId, JLabel likesLabel) {
+    Path detailsPath = Paths.get(imageDetails);
+    StringBuilder newContent = new StringBuilder();
+    boolean updated = false;
 
-  try (BufferedReader reader = Files.newBufferedReader(detailsPath)) {
+    try (BufferedReader reader = Files.newBufferedReader(detailsPath)) {
       String line;
       while ((line = reader.readLine()) != null) {
-          if (line.contains("ImageID: " + imageId)) {
-              line = updateLikeCount(line, likesLabel);
-              updated = true;
-          }
-          newContent.append(line).append("\n");
+        if (line.contains("ImageID: " + imageId)) {
+          line = updateLikeCount(line, likesLabel);
+          updated = true;
+        }
+        newContent.append(line).append("\n");
       }
-  } catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
+    }
+    return updated ? newContent.toString() : "";
   }
-  return updated ? newContent.toString() : "";
-}
 
-
-private String updateLikeCount(String line, JLabel likesLabel) {
-  String[] parts = line.split(", ");
-  String[] likesParts = parts[4].split(": ");
-  int likes = 0;
-  if (likesParts.length > 1) {
+  private String updateLikeCount(String line, JLabel likesLabel) {
+    String[] parts = line.split(", ");
+    String[] likesParts = parts[4].split(": ");
+    int likes = 0;
+    if (likesParts.length > 1) {
       try {
-          likes = Integer.parseInt(likesParts[1].trim()) + 1; // Increment likes
+        likes = Integer.parseInt(likesParts[1].trim()) + 1; // Increment likes
       } catch (NumberFormatException e) {
-          // Handle exception
-          System.out.println("Unable to parse likes count: " + likesParts[1]);
+        // Handle exception
+        System.out.println("Unable to parse likes count: " + likesParts[1]);
       }
+    }
+    parts[4] = "Likes: " + likes; // Update like count
+    likesLabel.setText("Likes: " + likes); // Update UI
+    return String.join(", ", parts);
   }
-  parts[4] = "Likes: " + likes; // Update like count
-  likesLabel.setText("Likes: " + likes); // Update UI
-  return String.join(", ", parts);
-}
 
-
-private void writeUpdatedDetails(String details) {
-  Path detailsPath = Paths.get(imageDetails);
-  try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
+  private void writeUpdatedDetails(String details) {
+    Path detailsPath = Paths.get(imageDetails);
+    try (BufferedWriter writer = Files.newBufferedWriter(detailsPath)) {
       writer.write(details);
-  } catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
+    }
   }
-}
 
-private void recordLikeNotification(String imageId, String currentUser) {
-  String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-  String notification = String.format("%s; %s; %s; %s\n", imageOwner, currentUser, imageId, timestamp);
-  try (BufferedWriter notificationWriter = Files.newBufferedWriter(
-          Paths.get(notification),
-          StandardOpenOption.CREATE,
-          StandardOpenOption.APPEND)) {
+  private void recordLikeNotification(String imageId, String currentUser) {
+    String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    String notification = String.format("%s; %s; %s; %s\n", imageOwner, currentUser, imageId, timestamp);
+    try (BufferedWriter notificationWriter = Files.newBufferedWriter(
+        Paths.get(notification),
+        StandardOpenOption.CREATE,
+        StandardOpenOption.APPEND)) {
       notificationWriter.write(notification);
-  } catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
+    }
   }
-}
 
   private String readCurrentUser() {
     try (BufferedReader reader = Files.newBufferedReader(Paths.get(users))) {
