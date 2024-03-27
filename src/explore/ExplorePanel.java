@@ -42,13 +42,14 @@ public class ExplorePanel extends BasePanel {
   // singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String uploaded = appPathsSingleton.UPLOADED;
+  private static ExplorePanel instance = null;
 
   /**
    * The ExplorePanel class represents a panel that displays the explore
    * functionality in the application.
    * It contains a header panel and a main content panel.
    */
-  public ExplorePanel() {
+  private ExplorePanel() {
     super(false, false, false);
     removeAll(); // Clear existing components
     setLayout(new BorderLayout()); // Reset the layout manager
@@ -62,6 +63,14 @@ public class ExplorePanel extends BasePanel {
 
     revalidate();
     repaint();
+  }
+
+  // Public static method to get the single instance of ExplorePanel
+  public static ExplorePanel getInstance() {
+    if (instance == null) {
+      instance = new ExplorePanel();
+    }
+    return instance;
   }
 
   public void overlayComponent(Component component) {

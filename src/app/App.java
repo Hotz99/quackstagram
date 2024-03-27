@@ -47,7 +47,7 @@ public class App extends JFrame {
 
   public static void createPanels() {
     cards.add(new HomePanel(), "Home");
-    cards.add(new ExplorePanel(), "Explore");
+    cards.add(ExplorePanel.getInstance(), "Explore");
     cards.add(new ImageUploadPanel(), "Image Upload");
     cards.add(imageView, "Image View");
     cards.add(new NotificationsPanel(), "Notifications");
@@ -56,6 +56,7 @@ public class App extends JFrame {
 
   public static void showPanel(String panelName) {
     cardLayout.show(cards, panelName);
+    ExplorePanel.getInstance().closeOverlayComponents();
   }
 
   public static void showPanelWithUsername(String username) {

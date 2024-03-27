@@ -221,7 +221,7 @@ public class BasePanel extends JPanel {
 
   // Open ExploreUI frame
   private void openExploreUI() {
-    ExplorePanel explore = new ExplorePanel();
+    ExplorePanel explore = ExplorePanel.getInstance();
     explore.setVisible(true);
   }
 
