@@ -5,8 +5,8 @@ import explore.ExplorePanel;
 import home.HomePanel;
 import image.ImageUploadPanel;
 import java.awt.*;
-import java.awt.event.FocusEvent;
 import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.*;
@@ -14,13 +14,12 @@ import javax.swing.*;
 import notifications.NotificationsPanel;
 import user.ProfilePanel;
 import user.User;
-import utils.BasePanel;
 import utils.AppPathsSingleton;
+import utils.BasePanel;
 
 public class BasePanel extends JPanel {
 
   private final int NAV_ICON_SIZE = 20; // Corrected size for bottom icons
-  private static final int HEADER_HEIGHT = 40; // Corrected static size for bottom icons
   public static final Color COLOR_WHITE = Color.WHITE;
   public static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
   public static final Color BUTTON_TEXT_COLOR = Color.BLACK;
@@ -32,7 +31,7 @@ public class BasePanel extends JPanel {
   public JTextField txtUsername = new JTextField("Username");
   public JTextField txtPassword = new JTextField("Password");
   public JTextField txtBio = new JTextField("Bio");
- 
+
   public JButton btnRegister = new JButton("Register");
   public JLabel lblPhoto = new JLabel();
   public JButton btnUploadPhoto = new JButton("Upload Photo");
@@ -41,72 +40,75 @@ public class BasePanel extends JPanel {
   );
   public User newUser;
 
+  //Singleton pattern
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String users = appPathsSingleton.USERS;
+  private final String dacsLogo = appPathsSingleton.DACS_LOGO;
+  private final String[] iconPaths = appPathsSingleton.ICON_PATHS;
+  private final String[] buttonTypes = appPathsSingleton.BUTTON_TYPES;
 
-    //Singleton pattern
-    private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-    private final String users = appPathsSingleton.USERS;
-    private final String dacsLogo = appPathsSingleton.DACS_LOGO; 
-    private final String[] iconPaths = appPathsSingleton.ICON_PATHS; 
-    private final String[] buttonTypes = appPathsSingleton.BUTTON_TYPES;
-
-
-public BasePanel(boolean includeUsername, boolean includePassword,boolean includeBio) {
-  if (includeUsername) {
-    add(getTxtUsername());
-    setupPlaceholder(txtUsername, "Username");
-  }
-  if (includePassword) {
-    add(getTxtPassword());
-    setupPlaceholder(txtPassword, "Password");
-  }
-  if (includeBio) {
-  add(getTxtBio());
-  setupPlaceholder(txtBio, "Bio");
-  }
-}
-
-public JTextField getTxtUsername() {
-  if (txtUsername.getText().equals("Username")) {
+  public BasePanel(
+    boolean includeUsername,
+    boolean includePassword,
+    boolean includeBio
+  ) {
+    if (includeUsername) {
+      add(getTxtUsername());
       setupPlaceholder(txtUsername, "Username");
-  }
-  return txtUsername;
-}
-
-public JTextField getTxtPassword() {
-  if (txtPassword.getText().equals("Password")) {
+    }
+    if (includePassword) {
+      add(getTxtPassword());
       setupPlaceholder(txtPassword, "Password");
-  }
-  return txtPassword;
-}
-
-public JTextField getTxtBio() {
-  if (txtBio.getText().equals("Bio")) {
+    }
+    if (includeBio) {
+      add(getTxtBio());
       setupPlaceholder(txtBio, "Bio");
+    }
   }
-  return txtBio;
-}
 
+  public JTextField getTxtUsername() {
+    if (txtUsername.getText().equals("Username")) {
+      setupPlaceholder(txtUsername, "Username");
+    }
+    return txtUsername;
+  }
+
+  public JTextField getTxtPassword() {
+    if (txtPassword.getText().equals("Password")) {
+      setupPlaceholder(txtPassword, "Password");
+    }
+    return txtPassword;
+  }
+
+  public JTextField getTxtBio() {
+    if (txtBio.getText().equals("Bio")) {
+      setupPlaceholder(txtBio, "Bio");
+    }
+    return txtBio;
+  }
 
   private void setupPlaceholder(JTextField textField, String placeholder) {
     textField.setForeground(Color.GRAY);
-    textField.addFocusListener(new FocusAdapter() {
+    textField.addFocusListener(
+      new FocusAdapter() {
         @Override
         public void focusGained(FocusEvent e) {
-            if (textField.getText().equals(placeholder)) {
-                textField.setText("");
-                textField.setForeground(Color.BLACK);
-            }
+          if (textField.getText().equals(placeholder)) {
+            textField.setText("");
+            textField.setForeground(Color.BLACK);
+          }
         }
 
         @Override
         public void focusLost(FocusEvent e) {
-            if (textField.getText().isEmpty()) {
-                textField.setForeground(Color.GRAY);
-                textField.setText(placeholder);
-            }
+          if (textField.getText().isEmpty()) {
+            textField.setForeground(Color.GRAY);
+            textField.setText(placeholder);
+          }
         }
-    });
-}
+      }
+    );
+  }
 
   public void setTxtUsername(JTextField txtUsername) {
     this.txtUsername = txtUsername;
@@ -168,48 +170,16 @@ public JTextField getTxtBio() {
     this.newUser = newUser;
   }
 
-  // private final String[] iconPaths = {
-  //   AppPaths.ICONS + "home.png",
-  //   AppPaths.ICONS + "search.png",
-  //   AppPaths.ICONS + "add.png",
-  //   AppPaths.ICONS + "heart.png",
-  //   AppPaths.ICONS + "profile.png",
-  // };
-
-  // private final String[] buttonTypes = {
-  //   "home",
-  //   "explore",
-  //   "add",
-  //   "notification",
-  //   "profile",
-  // };
-
-  public JPanel createHeaderPanel(String label) {
-    JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
-    JLabel lblRegister = new JLabel(label);
-    lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
-    lblRegister.setForeground(Color.WHITE); // Set the text color to white
-    headerPanel.add(lblRegister);
-    headerPanel.setPreferredSize(new Dimension(App.WIDTH, HEADER_HEIGHT)); // Give the header a fixed height
-    return headerPanel;
-  }
-
-  public JPanel createNavigationPanel() {
-    // Create and return the navigation panel
-    // Navigation Bar
-    JPanel navigationPanel = new JPanel();
-    navigationPanel.setBackground(new Color(249, 249, 249));
-    navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.X_AXIS));
-    navigationPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    for (int i = 0; i < iconPaths.length; i++) {
-      navigationPanel.add(createIconButton(iconPaths[i], buttonTypes[i]));
-      navigationPanel.add(Box.createHorizontalGlue());
-    }
-
-    return navigationPanel;
-  }
+  // public JPanel createHeaderPanel(String label) {
+  //   JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+  //   headerPanel.setBackground(new Color(51, 51, 51)); // Set a darker background for the header
+  //   JLabel lblRegister = new JLabel(label);
+  //   lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
+  //   lblRegister.setForeground(Color.WHITE); // Set the text color to white
+  //   headerPanel.add(lblRegister);
+  //   headerPanel.setPreferredSize(new Dimension(App.WIDTH, HEADER_HEIGHT)); // Give the header a fixed height
+  //   return headerPanel;
+  // }
 
   public JButton createIconButton(String iconPath, String buttonType) {
     ImageIcon iconOriginal = new ImageIcon(iconPath);
@@ -282,9 +252,7 @@ public JTextField getTxtBio() {
     String loggedInUsername = "";
 
     // Read the logged-in user's username from users.txt
-    try (
-      BufferedReader reader = Files.newBufferedReader(Paths.get(users))
-    ) {
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(users))) {
       String line = reader.readLine();
 
       if (line != null) {

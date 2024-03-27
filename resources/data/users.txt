@@ -1,4 +1,5 @@
 Xylo:Fierce warrior, not solo
+Mystar:Brightest star in the sky
 JohnDoe:Software Developer from New York
 JaneSmith:Graphic Designer based in London
 AliceJohnson:Data Scientist from San Francisco

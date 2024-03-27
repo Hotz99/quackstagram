@@ -31,6 +31,7 @@ public class ImageViewer {
 
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
+  private final UserManager userManager = UserManager.getInstance();
 
   /**
    * Displays the image with the given image path.
@@ -86,7 +87,7 @@ public class ImageViewer {
             System.out.println("Liked image");
             imageDetails.toggleLike(
               imageId,
-              UserManager.getCurrentUser().getUsername()
+              userManager.getCurrentUser().getUsername()
             );
             // Update the likes label
             int likes = imageDetails.getLikes();

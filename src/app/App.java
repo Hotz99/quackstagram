@@ -26,7 +26,7 @@ public class App extends JFrame {
   private static CardLayout cardLayout = new CardLayout();
   private static JPanel cards = new JPanel(cardLayout);
 
-  public static UserManager userManager = new UserManager();
+  public static UserManager userManager = UserManager.getInstance();
   public static ImageViewer imageViewer = new ImageViewer();
   public static BasePanel imageView = new BasePanel(true, true, true);
 

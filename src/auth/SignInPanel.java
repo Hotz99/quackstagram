@@ -1,5 +1,6 @@
 package auth;
 
+import app.App;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -9,17 +10,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import javax.swing.*;
-
-import app.App;
 import user.ProfilePanel;
 import user.User;
 import utils.BasePanel;
 
 public class SignInPanel extends BasePanel {
+
   public SignInPanel() {
-    super(true,true,false);
+    super(true, true, false);
     JPanel headerPanel = createHeaderPanel(SIGNIN_LABEL);
     JPanel photoPanel = getPhotoPanel(lblPhoto);
     JPanel fieldsPanel = getFieldsPanel();
@@ -79,9 +78,15 @@ public class SignInPanel extends BasePanel {
     createInstagramProfile(enteredUsername, enteredPassword);
   }
 
-  private void createInstagramProfile(String enteredUsername, String enteredPassword) {
+  private void createInstagramProfile(
+    String enteredUsername,
+    String enteredPassword
+  ) {
     try {
-      User user = App.userManager.verifyCredentials(enteredUsername, enteredPassword);
+      User user = App.userManager.verifyCredentials(
+        enteredUsername,
+        enteredPassword
+      );
 
       if (user != null) {
         newUser = user;
@@ -89,13 +94,22 @@ public class SignInPanel extends BasePanel {
         openProfileUser();
       } else {
         System.out.println("It Didn't");
-        JOptionPane.showMessageDialog(null, "Did not work", "Alert", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(
+          null,
+          "Did not work",
+          "Alert",
+          JOptionPane.WARNING_MESSAGE
+        );
       }
     } catch (Exception e) {
       System.out.println("Error - You need to enter a username and password.");
       e.printStackTrace();
-      JOptionPane.showMessageDialog(null, "You need to enter a username and password.", "Alert",
-          JOptionPane.WARNING_MESSAGE);
+      JOptionPane.showMessageDialog(
+        null,
+        "You need to enter a username and password.",
+        "Alert",
+        JOptionPane.WARNING_MESSAGE
+      );
     }
   }
 

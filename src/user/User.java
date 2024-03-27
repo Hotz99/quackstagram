@@ -1,7 +1,6 @@
 package user;
 
 import image.Picture;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,13 +31,12 @@ public class User {
   private int followersCount;
   private int followingCount;
 
-
-    //Singleton pattern
-    private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-    private final String credentials = appPathsSingleton.CREDENTIALS;
-    private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
-    private final String followingPath = appPathsSingleton.FOLLOWING;
-
+  //Singleton pattern
+  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final String credentials = appPathsSingleton.CREDENTIALS;
+  private final String users = appPathsSingleton.USERS;
+  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
+  private final String followingPath = appPathsSingleton.FOLLOWING;
 
   /**
    * Constructs a new User with the specified username, bio, and password.
@@ -104,11 +102,12 @@ public class User {
   public void loadPostsCount() {
     int postsCount = 0;
 
-    Path imageDetailsFilePath = Paths.get(
-        imageDetails);
+    Path imageDetailsFilePath = Paths.get(imageDetails);
     try (
-        BufferedReader imageDetailsReader = Files.newBufferedReader(
-            imageDetailsFilePath)) {
+      BufferedReader imageDetailsReader = Files.newBufferedReader(
+        imageDetailsFilePath
+      )
+    ) {
       String line;
       while ((line = imageDetailsReader.readLine()) != null) {
         if (line.contains("Username: " + this.getUsername())) {
@@ -126,11 +125,12 @@ public class User {
     int followersCount = 0;
     int followingCount = 0;
 
-    Path followingFilePath = Paths.get(
-        followingPath);
+    Path followingFilePath = Paths.get(followingPath);
     try (
-        BufferedReader followingReader = Files.newBufferedReader(
-            followingFilePath)) {
+      BufferedReader followingReader = Files.newBufferedReader(
+        followingFilePath
+      )
+    ) {
       String line;
       while ((line = followingReader.readLine()) != null) {
         String[] parts = line.split(":");
@@ -159,16 +159,17 @@ public class User {
   public void loadBio() {
     String bio = "";
 
-    Path bioDetailsFilePath = Paths.get(
-        credentials);
+    Path bioDetailsFilePath = Paths.get(users);
     try (
-        BufferedReader bioDetailsReader = Files.newBufferedReader(
-            bioDetailsFilePath)) {
+      BufferedReader bioDetailsReader = Files.newBufferedReader(
+        bioDetailsFilePath
+      )
+    ) {
       String line;
       while ((line = bioDetailsReader.readLine()) != null) {
         String[] parts = line.split(":");
-        if (parts[0].equals(this.getUsername()) && parts.length >= 3) {
-          bio = parts[2];
+        if (parts[0].equals(this.getUsername()) && parts.length >= 2) {
+          bio = parts[1];
           break; // Exit the loop once the matching bio is found
         }
       }
@@ -219,10 +220,8 @@ public class User {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
     User user = (User) o;
     return username.equals(user.username);
   }

@@ -17,26 +17,28 @@ import utils.AppPathsSingleton;
 
 public class UserManager {
 
-  private static User currentUser;
+  private User currentUser;
+  private static UserManager instance = null;
 
   //Singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String credentials = appPathsSingleton.CREDENTIALS;
-  private final String profileImagesStorage = appPathsSingleton.PROFILE_IMAGES_STORAGE;
+  private final String profileImagesStorage =
+    appPathsSingleton.PROFILE_IMAGES_STORAGE;
   private final String users = appPathsSingleton.USERS;
 
-  public static User getCurrentUser() {
-    return currentUser;
+  public User getCurrentUser() {
+    return this.currentUser;
   }
 
-  public static void setCurrentUser(User user) {
-    currentUser = user;
+  public void setCurrentUser(User user) {
+    this.currentUser = user;
   }
 
   public boolean doesUsernameExist(String username) {
     try (
-        BufferedReader reader = new BufferedReader(
-            new FileReader(credentials))) {
+      BufferedReader reader = new BufferedReader(new FileReader(credentials))
+    ) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.startsWith(username + ":")) {
@@ -52,8 +54,7 @@ public class UserManager {
   public void saveProfilePicture(File file, String username) {
     try {
       BufferedImage image = ImageIO.read(file);
-      File outputFile = new File(
-          profileImagesStorage + username + ".png");
+      File outputFile = new File(profileImagesStorage + username + ".png");
       ImageIO.write(image, "png", outputFile);
     } catch (IOException e) {
       e.printStackTrace();
@@ -62,8 +63,10 @@ public class UserManager {
 
   public void saveCredentials(String username, String password, String bio) {
     try (
-        BufferedWriter writer = new BufferedWriter(
-            new FileWriter(credentials, true))) {
+      BufferedWriter writer = new BufferedWriter(
+        new FileWriter(credentials, true)
+      )
+    ) {
       writer.write(username + ":" + password + ":" + bio);
       writer.newLine();
     } catch (IOException e) {
@@ -71,16 +74,21 @@ public class UserManager {
     }
   }
 
-  public User verifyCredentials(String enteredUsername,String enteredPassword) {
+  public User verifyCredentials(
+    String enteredUsername,
+    String enteredPassword
+  ) {
     try (
-        BufferedReader reader = new BufferedReader(
-            new FileReader(credentials))) {
+      BufferedReader reader = new BufferedReader(new FileReader(credentials))
+    ) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(":");
         String username = parts[0];
         String password = parts[1];
-        if (username.equals(enteredUsername) && password.equals(enteredPassword)) {
+        if (
+          username.equals(enteredUsername) && password.equals(enteredPassword)
+        ) {
           currentUser = new User(username, password);
           App.createPanels();
           System.out.println("User verified: " + currentUser);
@@ -98,11 +106,22 @@ public class UserManager {
     System.out.println("Saving user information: " + NewUser);
 
     try (
-        BufferedWriter writer = new BufferedWriter(
-            new FileWriter(users, false))) {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(users, false))
+    ) {
       writer.write(NewUser.toString());
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  // Private constructor
+  private UserManager() {}
+
+  // Public static method to get the single instance of UserManager
+  public static UserManager getInstance() {
+    if (instance == null) {
+      instance = new UserManager();
+    }
+    return instance;
   }
 }

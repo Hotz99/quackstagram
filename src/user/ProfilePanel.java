@@ -22,7 +22,8 @@ public class ProfilePanel extends BasePanel {
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
   private static final int GRID_IMAGE_SIZE = App.WIDTH / 3; // Static size for grid images
   private JPanel contentPanel = new JPanel(); // Panel to display the image grid or the clicked image
-  String currentUsername = UserManager.getCurrentUser().getUsername();
+  private final UserManager userManager = UserManager.getInstance();
+  String currentUsername = userManager.getCurrentUser().getUsername();
   private JPanel headerPanel = new JPanel(); // Panel for the header
 
   //Singleton pattern
@@ -36,24 +37,24 @@ public class ProfilePanel extends BasePanel {
   public ProfilePanel(User user) {
     super(false, false, false);
     currentUsername = user.getUsername();
-    UserManager.setCurrentUser(user);
+    userManager.setCurrentUser(user);
 
-    UserManager.getCurrentUser().loadPostsCount();
+    userManager.getCurrentUser().loadPostsCount();
 
-    UserManager.getCurrentUser().loadFollowsCount();
+    userManager.getCurrentUser().loadFollowsCount();
 
-    UserManager.getCurrentUser().loadBio();
+    userManager.getCurrentUser().loadBio();
 
     // Is the first issue, after that line 194 comes up, if we dont deal with the
     // getPostsCOunt method
-    System.out.println(UserManager.getCurrentUser().getPostsCount());
+    System.out.println(userManager.getCurrentUser().getPostsCount());
 
     initializeUI();
   }
 
   public ProfilePanel() {
     super(false, false, false);
-    if (UserManager.getCurrentUser() == null) {
+    if (userManager.getCurrentUser() == null) {
       // If no user is logged in, show the sign-in panel
       System.out.println("No user is logged in");
       App.showPanel("SignIn");
@@ -106,7 +107,7 @@ public class ProfilePanel extends BasePanel {
     profileNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
     profileNameLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10)); // Padding on the sides
 
-    JTextArea profileBio = new JTextArea(UserManager.getCurrentUser().getBio());
+    JTextArea profileBio = new JTextArea(userManager.getCurrentUser().getBio());
     System.out.println("This is the bio " + currentUsername);
     profileBio.setEditable(false);
     profileBio.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -197,23 +198,23 @@ public class ProfilePanel extends BasePanel {
     statsPanel.setBackground(new Color(249, 249, 249));
     System.out.println(
       "Number of posts for this user" +
-      UserManager.getCurrentUser().getPostsCount()
+      userManager.getCurrentUser().getPostsCount()
     );
     statsPanel.add(
       createStatLabel(
-        Integer.toString(UserManager.getCurrentUser().getPostsCount()),
+        Integer.toString(userManager.getCurrentUser().getPostsCount()),
         "Posts"
       )
     );
     statsPanel.add(
       createStatLabel(
-        Integer.toString(UserManager.getCurrentUser().getFollowersCount()),
+        Integer.toString(userManager.getCurrentUser().getFollowersCount()),
         "Followers"
       )
     );
     statsPanel.add(
       createStatLabel(
-        Integer.toString(UserManager.getCurrentUser().getFollowingCount()),
+        Integer.toString(userManager.getCurrentUser().getFollowingCount()),
         "Following"
       )
     );
