@@ -43,6 +43,7 @@ public class ExplorePanel extends BasePanel {
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String uploaded = appPathsSingleton.UPLOADED;
   private static ExplorePanel instance = null;
+  private SearchResult searchResult; // Instance variable for SearchResult
 
   /**
    * The ExplorePanel class represents a panel that displays the explore
@@ -127,14 +128,14 @@ public class ExplorePanel extends BasePanel {
     return mainContentPanel;
   }
 
-  /**
-   * Creates a JPanel for the search functionality.
-   *
-   * @return The created JPanel.
-   */
   private JPanel createSearchPanel() {
     JPanel searchPanel = new JPanel(new BorderLayout());
     JTextField searchField = new JTextField(" Search");
+    searchResult = new SearchResult();
+
+    searchPanel.add(searchField, BorderLayout.CENTER);
+    searchPanel.add(searchResult.getListComponent(), BorderLayout.SOUTH);
+
     searchField.addFocusListener(
       new FocusListener() {
         public void focusGained(FocusEvent e) {
@@ -169,22 +170,12 @@ public class ExplorePanel extends BasePanel {
 
           private void runSearch() {
             String query = searchField.getText();
-            if (query.trim().isEmpty()) {
-              System.out.println("Search field is empty, not running search");
-              return;
+            if (!query.trim().isEmpty()) {
+              Search.search(query); // Assumes Search class notifies SearchResult
             }
-            List<String> results = Search.search(query);
-            System.out.println("found this after searching: " + results);
-
-            SearchResult.createSearchResultList(results);
           }
         }
       );
-
-    searchPanel.add(searchField, BorderLayout.CENTER);
-    searchPanel.setMaximumSize(
-      new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height)
-    );
 
     return searchPanel;
   }

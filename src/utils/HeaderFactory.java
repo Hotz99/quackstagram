@@ -2,7 +2,6 @@ package utils;
 
 import app.App;
 import java.awt.*;
-import javax.swing.*;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 

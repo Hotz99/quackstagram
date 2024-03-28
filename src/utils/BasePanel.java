@@ -90,25 +90,7 @@ public class BasePanel extends JPanel {
 
   private void setupPlaceholder(JTextField textField, String placeholder) {
     textField.setForeground(Color.GRAY);
-    textField.addFocusListener(
-      new FocusAdapter() {
-        @Override
-        public void focusGained(FocusEvent e) {
-          if (textField.getText().equals(placeholder)) {
-            textField.setText("");
-            textField.setForeground(Color.BLACK);
-          }
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-          if (textField.getText().isEmpty()) {
-            textField.setForeground(Color.GRAY);
-            textField.setText(placeholder);
-          }
-        }
-      }
-    );
+    textField.addFocusListener(new PlaceholderObserver(placeholder));
   }
 
   public void setTxtUsername(JTextField txtUsername) {
