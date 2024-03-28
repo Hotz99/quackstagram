@@ -2,6 +2,6 @@ package explore;
 
 import java.util.List;
 
-public interface SearchListener {
+public interface SearchObserver {
   void onSearchResults(List<String> results);
 }

@@ -4,7 +4,7 @@ import app.App;
 import java.util.List;
 import javax.swing.*;
 
-public class SearchResult implements SearchListener {
+public class SearchResult implements SearchObserver {
 
   private JList<String> list;
   private JScrollPane scrollPane;
@@ -15,7 +15,7 @@ public class SearchResult implements SearchListener {
     list.setLayoutOrientation(JList.VERTICAL);
     list.setVisibleRowCount(-1);
 
-    Search.addSearchListener(this);
+    Search.addSearchObserver(this);
 
     list.addListSelectionListener(evt -> {
       if (!evt.getValueIsAdjusting()) {
