@@ -1,26 +1,21 @@
 package utils;
 
-import app.App;
+import auth.UserManager;
+import database.users.UserRepository;
 import explore.ExplorePanel;
 import home.HomePanel;
-import image.ImageUploadPanel;
+
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.*;
 import javax.swing.*;
 import notifications.NotificationsPanel;
+import post.PostUploadPanel;
 import user.ProfilePanel;
 import user.User;
-import utils.AppPathsSingleton;
 import utils.BasePanel;
 
 public class BasePanel extends JPanel {
 
-  private final int NAV_ICON_SIZE = 20; // Corrected size for bottom icons
-  private static final int HEADER_HEIGHT = 40;
+  private final int NAV_ICON_SIZE = 20;
   public static final Color COLOR_WHITE = Color.WHITE;
   public static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
   public static final Color BUTTON_TEXT_COLOR = Color.BLACK;
@@ -37,28 +32,21 @@ public class BasePanel extends JPanel {
   public JLabel lblPhoto = new JLabel();
   public JButton btnUploadPhoto = new JButton("Upload Photo");
   public JButton button, btnRegisterNow = new JButton(
-    "No Account? Register Now"
-  );
-  public User newUser;
+      "No Account? Register Now");
 
-  //Singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String users = appPathsSingleton.USERS;
   private final String dacsLogo = appPathsSingleton.DACS_LOGO;
-  private final String[] iconPaths = appPathsSingleton.ICON_PATHS;
-  private final String[] buttonTypes = appPathsSingleton.BUTTON_TYPES;
 
   public BasePanel(
-    boolean includeUsername,
-    boolean includePassword,
-    boolean includeBio
-  ) {
+      boolean includeUsername,
+      boolean includePassword,
+      boolean includeBio) {
     if (includeUsername) {
-      add(getTxtUsername());
+      add(getUsernameInputField());
       setupPlaceholder(txtUsername, "Username");
     }
     if (includePassword) {
-      add(getTxtPassword());
+      add(getPasswordInputField());
       setupPlaceholder(txtPassword, "Password");
     }
     if (includeBio) {
@@ -67,14 +55,14 @@ public class BasePanel extends JPanel {
     }
   }
 
-  public JTextField getTxtUsername() {
+  public JTextField getUsernameInputField() {
     if (txtUsername.getText().equals("Username")) {
       setupPlaceholder(txtUsername, "Username");
     }
     return txtUsername;
   }
 
-  public JTextField getTxtPassword() {
+  public JTextField getPasswordInputField() {
     if (txtPassword.getText().equals("Password")) {
       setupPlaceholder(txtPassword, "Password");
     }
@@ -145,111 +133,16 @@ public class BasePanel extends JPanel {
     this.btnRegisterNow = btnRegisterNow;
   }
 
-  public User getNewUser() {
-    return newUser;
-  }
-
-  public void setNewUser(User newUser) {
-    this.newUser = newUser;
-  }
-
-  public JButton createIconButton(String iconPath, String buttonType) {
-    ImageIcon iconOriginal = new ImageIcon(iconPath);
-
-    Image iconScaled = iconOriginal
-      .getImage()
-      .getScaledInstance(NAV_ICON_SIZE, NAV_ICON_SIZE, Image.SCALE_SMOOTH);
-
-    JButton button = new JButton(new ImageIcon(iconScaled));
-    button.setBorder(BorderFactory.createEmptyBorder());
-    button.setContentAreaFilled(false);
-
-    switch (buttonType) {
-      case "home":
-        button.addActionListener(e -> {
-          openHomeUI();
-        });
-        break;
-      case "explore":
-        button.addActionListener(e -> {
-          openExploreUI();
-        });
-        break;
-      case "add":
-        button.addActionListener(e -> {
-          openImageUploadUI();
-        });
-        break;
-      case "notification":
-        button.addActionListener(e -> {
-          openNotificationsUI();
-        });
-        break;
-      case "profile":
-        button.addActionListener(e -> {
-          openProfileUI();
-        });
-        break;
-    }
-
-    return button;
-  }
-
-  // Open QuackstagramHomeUI frame
-  private void openHomeUI() {
-    HomePanel homeUI = new HomePanel();
-    homeUI.setVisible(true);
-  }
-
-  // Open ExploreUI frame
-  private void openExploreUI() {
-    ExplorePanel explore = ExplorePanel.getInstance();
-    explore.setVisible(true);
-  }
-
-  // Open ImageUploadUI frame
-  private void openImageUploadUI() {
-    ImageUploadPanel imageUploadUI = new ImageUploadPanel();
-    imageUploadUI.setVisible(true);
-  }
-
-  // Open NotificationsUI frame
-  private void openNotificationsUI() {
-    NotificationsPanel notificationsUI = new NotificationsPanel();
-    notificationsUI.setVisible(true);
-  }
-
-  // Open InstagramProfileUI frame
-  private void openProfileUI() {
-    String loggedInUsername = "";
-
-    // Read the logged-in user's username from users.txt
-    try (BufferedReader reader = Files.newBufferedReader(Paths.get(users))) {
-      String line = reader.readLine();
-
-      if (line != null) {
-        loggedInUsername = line.split(":")[0].trim();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    ProfilePanel profileUI = new ProfilePanel(new User(loggedInUsername));
-    profileUI.setVisible(true);
-  }
-
   public JPanel getPhotoPanel(JLabel lblPhoto) {
     lblPhoto = new JLabel();
     lblPhoto.setPreferredSize(new Dimension(80, 80));
     lblPhoto.setHorizontalAlignment(JLabel.CENTER);
     lblPhoto.setVerticalAlignment(JLabel.CENTER);
     lblPhoto.setIcon(
-      new ImageIcon(
-        new ImageIcon(dacsLogo)
-          .getImage()
-          .getScaledInstance(80, 80, Image.SCALE_SMOOTH)
-      )
-    );
+        new ImageIcon(
+            new ImageIcon(dacsLogo)
+                .getImage()
+                .getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
     JPanel photoPanel = new JPanel();
     photoPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
     photoPanel.add(lblPhoto);
@@ -257,10 +150,9 @@ public class BasePanel extends JPanel {
   }
 
   public void addStruct(
-    JPanel photoPanel,
-    JPanel fieldsPanel,
-    boolean isSignUp
-  ) {
+      JPanel photoPanel,
+      JPanel fieldsPanel,
+      boolean isSignUp) {
     fieldsPanel.add(Box.createVerticalStrut(10));
     fieldsPanel.add(photoPanel);
     fieldsPanel.add(Box.createVerticalStrut(10));
@@ -275,11 +167,11 @@ public class BasePanel extends JPanel {
     }
   }
 
-  public void getPassword() {
+  public void setupPasswordInput() {
     txtPassword.setForeground(Color.GRAY);
   }
 
-  public void getUsername() {
+  public void setupUsernameInput() {
     txtUsername.setForeground(Color.GRAY);
   }
 
@@ -295,10 +187,9 @@ public class BasePanel extends JPanel {
   }
 
   public void addComponents(
-    JPanel headerPanel,
-    JPanel fieldsPanel,
-    JPanel registerPanel
-  ) {
+      JPanel headerPanel,
+      JPanel fieldsPanel,
+      JPanel registerPanel) {
     add(headerPanel, BorderLayout.NORTH);
     add(fieldsPanel, BorderLayout.CENTER);
     add(registerPanel, BorderLayout.SOUTH);

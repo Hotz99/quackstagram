@@ -1,6 +1,11 @@
 package auth;
 
 import app.App;
+import explore.ExplorePanel;
+import home.HomePanel;
+import notifications.NotificationsPanel;
+import post.PostUploadPanel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -26,18 +31,18 @@ public class SignInPanel extends BasePanel {
 
     addStruct(photoPanel, fieldsPanel, false);
 
-    getUsername();
-    getPassword();
+    setupUsernameInput();
+    setupPasswordInput();
     setupButton(SIGNIN_LABEL);
 
     JPanel registerPanel = getRegisterPanel();
     addComponents(headerPanel, fieldsPanel, registerPanel);
 
     setupNavSignUpBtn();
-    getButtonPanel2();
+    getButtonPanel();
   }
 
-  private void getButtonPanel2() {
+  private void getButtonPanel() {
     JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
     buttonPanel.setBackground(Color.white);
     buttonPanel.add(button);
@@ -47,7 +52,7 @@ public class SignInPanel extends BasePanel {
 
   private void setupNavSignUpBtn() {
     btnRegisterNow = new JButton("No Account? Register Now");
-    btnRegisterNow.addActionListener(this::onRegisterNowClicked);
+    btnRegisterNow.addActionListener(this::onSignUpClicked);
     btnRegisterNow.setBackground(Color.WHITE);
     btnRegisterNow.setForeground(Color.BLACK);
     btnRegisterNow.setFocusPainted(false);
@@ -72,56 +77,36 @@ public class SignInPanel extends BasePanel {
   }
 
   private void onSignInClicked(ActionEvent event) {
-    String enteredUsername = getTxtUsername().getText();
-    String enteredPassword = getTxtPassword().getText();
-    System.out.println(enteredUsername + " <-> " + enteredPassword);
-
-    createInstagramProfile(enteredUsername, enteredPassword);
-  }
-
-  private void createInstagramProfile(
-    String enteredUsername,
-    String enteredPassword
-  ) {
     try {
       User user = App.userManager.verifyCredentials(
-        enteredUsername,
-        enteredPassword
-      );
+          getUsernameInputField().getText(),
+          getPasswordInputField().getText());
 
       if (user != null) {
-        newUser = user;
-        System.out.println("It worked" + newUser);
-        openProfileUser();
+        UserManager.getInstance().setCurrentUser(user);
+
+        System.out.println("HERE");
+        System.out.println(UserManager.getInstance().getCurrentUser());
+
+        SwingUtilities.invokeLater(() -> {
+          // ProfilePanel profileUI = new ProfilePanel(user);
+          // profileUI.setVisible(true);
+          App.addRemainingPanels();
+          App.showProfileByUsername(user.getUsername());
+        });
       } else {
-        System.out.println("It Didn't");
         JOptionPane.showMessageDialog(
-          null,
-          "Did not work",
-          "Alert",
-          JOptionPane.WARNING_MESSAGE
-        );
+            null,
+            "Invalid username or password.",
+            "FAILED TO SIGN IN",
+            JOptionPane.WARNING_MESSAGE);
       }
     } catch (Exception e) {
-      System.out.println("Error - You need to enter a username and password.");
       e.printStackTrace();
-      JOptionPane.showMessageDialog(
-        null,
-        "You need to enter a username and password.",
-        "Alert",
-        JOptionPane.WARNING_MESSAGE
-      );
     }
   }
 
-  private void openProfileUser() {
-    SwingUtilities.invokeLater(() -> {
-      ProfilePanel profileUI = new ProfilePanel(newUser);
-      profileUI.setVisible(true);
-    });
-  }
-
-  private void onRegisterNowClicked(ActionEvent event) {
+  private void onSignUpClicked(ActionEvent event) {
     App.showPanel("SignUp");
   }
 }

@@ -1,4 +1,4 @@
-package image;
+package post;
 
 import app.App;
 import auth.UserManager;
@@ -25,7 +25,7 @@ import user.ProfilePanel;
 import user.User;
 import utils.*;
 
-public class ImageViewer {
+public class PostImageViewer {
 
   private boolean goHome = false;
 
@@ -52,23 +52,19 @@ public class ImageViewer {
     App.imageView.removeAll();
     App.imageView.setLayout(new BorderLayout());
     App.imageView.add(
-      HeaderFactory.createHeader(headerLabel),
-      BorderLayout.NORTH
-    );
+        HeaderFactory.createHeader(headerLabel),
+        BorderLayout.NORTH);
 
     String timeSincePosting = calculateTimeSincePosting(
-      imageDetails.getTimestampString()
-    );
+        imageDetails.getTimestampString());
     JPanel topPanel = createTopPanel(
-      imageDetails.getUsername(),
-      timeSincePosting
-    );
+        imageDetails.getUsername(),
+        timeSincePosting);
     JLabel imageLabel = prepareImageLabel(imagePath);
 
     JPanel bottomPanel = createBottomPanel(
-      imageDetails.getBio(),
-      imageDetails.getLikes()
-    );
+        imageDetails.getBio(),
+        imageDetails.getLikes());
 
     JPanel containerPanel = new JPanel(new BorderLayout());
     containerPanel.add(topPanel, BorderLayout.NORTH);
@@ -80,22 +76,20 @@ public class ImageViewer {
 
     // make the image likeable
     imageLabel.addMouseListener(
-      new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          if (e.getClickCount() == 2) {
-            System.out.println("Liked image");
-            imageDetails.toggleLike(
-              imageId,
-              userManager.getCurrentUser().getUsername()
-            );
-            // Update the likes label
-            int likes = imageDetails.getLikes();
-            ((JLabel) bottomPanel.getComponent(1)).setText("Likes: " + likes);
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+              System.out.println("Liked image");
+              imageDetails.toggleLike(
+                  imageId,
+                  userManager.getCurrentUser().getUsername());
+              // Update the likes label
+              int likes = imageDetails.getLikes();
+              ((JLabel) bottomPanel.getComponent(1)).setText("Likes: " + likes);
+            }
           }
-        }
-      }
-    );
+        });
 
     App.imageView.revalidate();
     App.imageView.repaint();
@@ -120,9 +114,9 @@ public class ImageViewer {
     Path detailsPath = Paths.get(imageDetails);
     try (Stream<String> lines = Files.lines(detailsPath)) {
       String details = lines
-        .filter(line -> line.contains("ImageID: " + imageId))
-        .findFirst()
-        .orElse("");
+          .filter(line -> line.contains("ImageID: " + imageId))
+          .findFirst()
+          .orElse("");
 
       if (details.isEmpty()) {
         return null;
@@ -148,9 +142,8 @@ public class ImageViewer {
       return "Unknown";
     }
     LocalDateTime timestamp = LocalDateTime.parse(
-      timestampString,
-      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    );
+        timestampString,
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     LocalDateTime now = LocalDateTime.now();
     long days = ChronoUnit.DAYS.between(timestamp, now);
     return days + " day" + (days != 1 ? "s" : "") + " ago";
@@ -173,7 +166,7 @@ public class ImageViewer {
 
     usernameLabel.addActionListener(e -> {
       System.out.println("Clicked on username: " + username);
-      App.showPanelWithUsername(username);
+      App.showProfileByUsername(username);
     });
 
     return topPanel;
@@ -227,8 +220,7 @@ public class ImageViewer {
     JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     JButton backButton = new JButton("Back");
     backButton.setPreferredSize(
-      new Dimension(App.WIDTH - 20, backButton.getPreferredSize().height)
-    );
+        new Dimension(App.WIDTH - 20, backButton.getPreferredSize().height));
     backButtonPanel.add(backButton);
 
     if (goHome) {
@@ -308,15 +300,12 @@ public class ImageViewer {
           if (line.contains("ImageID: " + imageId)) {
             String[] parts = line.split(", (?![^\\[]*\\])");
             String likes = parts[4].split(": ")[1];
-            likes =
-              likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
+            likes = likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
             // Check if the current user's username is already in the likes string
             if (likes.contains(username)) {
               System.out.println(
-                "User has already liked this image, unliking it"
-              );
-              likes =
-                likes
+                  "User has already liked this image, unliking it");
+              likes = likes
                   .replace(username + ", ", "")
                   .replace(", " + username, "")
                   .replace(username, "");

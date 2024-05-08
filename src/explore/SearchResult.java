@@ -21,7 +21,7 @@ public class SearchResult implements SearchObserver {
       if (!evt.getValueIsAdjusting()) {
         String selectedUsername = list.getSelectedValue();
         System.out.println("Selected username: " + selectedUsername);
-        App.showPanelWithUsername(selectedUsername);
+        App.showProfileByUsername(selectedUsername);
 
         ExplorePanel explorePanel = ExplorePanel.getInstance(); // Assuming getInstance() gets the current instance
         if (explorePanel != null) {

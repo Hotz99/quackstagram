@@ -8,6 +8,8 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import auth.UserManager;
 import utils.AppPathsSingleton;
 
 public class Navbar extends JPanel {
@@ -19,11 +21,10 @@ public class Navbar extends JPanel {
   protected static final String FONT_NAME = "Arial";
   protected static final String LABEL = "Quackstagram 🐥";
 
-  //Singleton instance
+  // Singleton instance
   private final static AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private static final String[] iconPaths = appPathsSingleton.ICON_PATHS;
   private static final String[] buttonTypes = appPathsSingleton.BUTTON_TYPES;
-  
 
   public Navbar() {
     setBackground(new Color(249, 249, 249));
@@ -78,7 +79,7 @@ public class Navbar extends JPanel {
       case "profile":
         button.addActionListener(e -> {
           System.out.println("Profile panel clicked");
-          App.showPanel("Profile");
+          App.showProfileByUsername(UserManager.getInstance().getCurrentUser().getUsername());
         });
         break;
     }

@@ -11,12 +11,12 @@ public class AppPathsSingleton {
     public final String USERS;
     public final String LIKES;
     public final String NOTIFICATIONS;
-    public final String IMG;
+    public final String IMAGES;
     public final String UPLOADED;
     public final String LOGOS;
     public final String DACS_LOGO;
     public final String IMAGE_DETAILS;
-    public final String PROFILE_IMAGES_STORAGE;
+    public final String PROFILE_IMAGES;
     public final String ICONS;
     public final String DEFAULT_PROFILE_ICON;
     public final String[] SEARCH_PATHS;
@@ -32,24 +32,24 @@ public class AppPathsSingleton {
         USERS = "resources/data/users.txt";
         LIKES = "resources/data/likes.txt";
         NOTIFICATIONS = "resources/data/notifications.txt";
-        IMG = "resources/img/";
-        UPLOADED = "resources/img/uploaded/";
-        LOGOS = "resources/img/logos/";
-        DACS_LOGO = "resources/img/logos/DACS.png";
-        IMAGE_DETAILS = "resources/img/image_details.txt";
-        PROFILE_IMAGES_STORAGE = "resources/img/storage/profile/";
-        ICONS = "resources/img/icons/";
-        DEFAULT_PROFILE_ICON = "resources/img/icons/default_profile.png";
+        IMAGES = "resources/images/";
+        UPLOADED = "resources/images/uploaded/";
+        LOGOS = "resources/images/logos/";
+        DACS_LOGO = "resources/images/logos/DACS.png";
+        IMAGE_DETAILS = "resources/images/image_details.txt";
+        PROFILE_IMAGES = "resources/images/profile/";
+        ICONS = "resources/images/icons/";
+        DEFAULT_PROFILE_ICON = "resources/images/icons/default_profile.png";
         SEARCH_PATHS = new String[] {
                 "resources/data/users.txt",
-                "resources/img/image_details.txt",
+                "resources/images/image_details.txt",
         };
         ICON_PATHS = new String[] {
-                "resources/img/icons/home.png",
-                "resources/img/icons/search.png",
-                "resources/img/icons/add.png",
-                "resources/img/icons/heart.png",
-                "resources/img/icons/profile.png"
+                "resources/images/icons/home.png",
+                "resources/images/icons/search.png",
+                "resources/images/icons/add.png",
+                "resources/images/icons/heart.png",
+                "resources/images/icons/profile.png"
         };
         BUTTON_TYPES = new String[] {
                 "home",

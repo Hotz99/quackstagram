@@ -1,6 +1,8 @@
 package auth;
 
 import app.App;
+import database.users.UserRepository;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,11 +22,10 @@ public class UserManager {
   private User currentUser;
   private static UserManager instance = null;
 
-  //Singleton pattern
+  // Singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String credentials = appPathsSingleton.CREDENTIALS;
-  private final String profileImagesStorage =
-    appPathsSingleton.PROFILE_IMAGES_STORAGE;
+  private final String profileImagesStorage = appPathsSingleton.PROFILE_IMAGES;
   private final String users = appPathsSingleton.USERS;
 
   public User getCurrentUser() {
@@ -37,8 +38,7 @@ public class UserManager {
 
   public boolean doesUsernameExist(String username) {
     try (
-      BufferedReader reader = new BufferedReader(new FileReader(credentials))
-    ) {
+        BufferedReader reader = new BufferedReader(new FileReader(credentials))) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.startsWith(username + ":")) {
@@ -63,10 +63,8 @@ public class UserManager {
 
   public void saveCredentials(String username, String password, String bio) {
     try (
-      BufferedWriter writer = new BufferedWriter(
-        new FileWriter(credentials, true)
-      )
-    ) {
+        BufferedWriter writer = new BufferedWriter(
+            new FileWriter(credentials, true))) {
       writer.write(username + ":" + password + ":" + bio);
       writer.newLine();
     } catch (IOException e) {
@@ -75,39 +73,41 @@ public class UserManager {
   }
 
   public User verifyCredentials(
-    String enteredUsername,
-    String enteredPassword
-  ) {
-    try (
-      BufferedReader reader = new BufferedReader(new FileReader(credentials))
-    ) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        String[] parts = line.split(":");
-        String username = parts[0];
-        String password = parts[1];
-        if (
-          username.equals(enteredUsername) && password.equals(enteredPassword)
-        ) {
-          currentUser = new User(username, password);
-          App.createPanels();
-          System.out.println("User verified: " + currentUser);
-          App.showPanel("Home");
-          return currentUser;
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
+      String inputUsername,
+      String inputPassword) {
+    // try (
+    // BufferedReader reader = new BufferedReader(new FileReader(credentials))) {
+    // String line;
+    // while ((line = reader.readLine()) != null) {
+    // String[] parts = line.split(":");
+    // String username = parts[0];
+    // String password = parts[1];
+    // if (username.equals(inputUsername) && password.equals(inputPassword)) {
+    // currentUser = new User(username, password);
+    // App.createPanels();
+    // System.out.println("User verified: " + currentUser);
+    // App.showPanel("Home");
+    // return currentUser;
+    // }
+    // }
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+
+    User result = UserRepository.getInstance().getByUsername(inputUsername);
+
+    if (result == null) {
+      return null;
     }
-    return null;
+
+    return result.getPassword().equals(inputPassword) ? result : null;
   }
 
   public void saveUserInformation(User NewUser) {
     System.out.println("Saving user information: " + NewUser);
 
     try (
-      BufferedWriter writer = new BufferedWriter(new FileWriter(users, false))
-    ) {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(users, false))) {
       writer.write(NewUser.toString());
     } catch (IOException e) {
       e.printStackTrace();
@@ -115,7 +115,8 @@ public class UserManager {
   }
 
   // Private constructor
-  private UserManager() {}
+  private UserManager() {
+  }
 
   // Public static method to get the single instance of UserManager
   public static UserManager getInstance() {

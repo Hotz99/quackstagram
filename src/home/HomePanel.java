@@ -62,8 +62,7 @@ public class HomePanel extends BasePanel {
     // Create home panel and add it to the card panel
     JScrollPane homePanel = new JScrollPane(contentPanel);
     homePanel.setHorizontalScrollBarPolicy(
-      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-    );
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     imageViewPanel = new JPanel(new BorderLayout());
     cardPanel = new JPanel(cardLayout = new CardLayout());
     cardPanel.add(homePanel, "Home");
@@ -95,10 +94,9 @@ public class HomePanel extends BasePanel {
   }
 
   private JButton createLikeButton(
-    String imageId,
-    JLabel likesLabel,
-    JPanel itemPanel
-  ) {
+      String imageId,
+      JLabel likesLabel,
+      JPanel itemPanel) {
     JButton likeButton = new JButton("❤");
     likeButton.setAlignmentX(Component.LEFT_ALIGNMENT);
     likeButton.setBackground(LIKE_BUTTON_COLOR);
@@ -114,10 +112,9 @@ public class HomePanel extends BasePanel {
   }
 
   private void populateContentPanel(
-    BasePanel homePanel,
-    JPanel panel,
-    String[][] sampleData
-  ) {
+      BasePanel homePanel,
+      JPanel panel,
+      String[][] sampleData) {
     for (String[] postData : sampleData) {
       JPanel itemPanel = createItemPanel();
       JLabel nameLabel = new JLabel(postData[0]);
@@ -129,8 +126,7 @@ public class HomePanel extends BasePanel {
       JLabel descriptionLabel = new JLabel(postData[1]);
       descriptionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-      int likesCount =
-        postData[2].length() - postData[2].replace(",", "").length() + 1;
+      int likesCount = postData[2].length() - postData[2].replace(",", "").length() + 1;
 
       likesCount = postData[2].equals("[]") ? 0 : likesCount;
 
@@ -138,10 +134,9 @@ public class HomePanel extends BasePanel {
       likesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
       JButton likeButton = createLikeButton(
-        new File(postData[3]).getName().split("\\.")[0],
-        likesLabel,
-        itemPanel
-      );
+          new File(postData[3]).getName().split("\\.")[0],
+          likesLabel,
+          itemPanel);
 
       itemPanel.add(nameLabel);
       itemPanel.add(imageLabel);
@@ -152,13 +147,12 @@ public class HomePanel extends BasePanel {
       panel.add(itemPanel);
 
       imageLabel.addMouseListener(
-        new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            App.imageViewer.displayImage(" Quackstagram Home ", postData[3]);
-          }
-        }
-      );
+          new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              App.imageViewer.displayImage(" Quackstagram Home ", postData[3]);
+            }
+          });
 
       addSpacingPanel(panel);
     }
@@ -190,15 +184,12 @@ public class HomePanel extends BasePanel {
         if (line.contains("ImageID: " + imageId)) {
           String[] parts = line.split(", (?![^\\[]*\\])");
           String likes = parts[4].split(": ")[1];
-          likes =
-            likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
+          likes = likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
           // Check if the current user's username is already in the likes string
           if (likes.contains(username)) {
             System.out.println(
-              "User has already liked this image, unliking it"
-            );
-            likes =
-              likes
+                "User has already liked this image, unliking it");
+            likes = likes
                 .replace(username + ", ", "")
                 .replace(", " + username, "")
                 .replace(username, "");
@@ -209,8 +200,7 @@ public class HomePanel extends BasePanel {
           line = String.join(", ", parts);
           this.likes.put(
               imageId,
-              likes.isEmpty() ? 0 : likes.split(", ").length
-            );
+              likes.isEmpty() ? 0 : likes.split(", ").length);
         }
         updatedLines.add(line);
       }
@@ -222,8 +212,7 @@ public class HomePanel extends BasePanel {
 
   private String readFollowedUsers(String currentUser) {
     try (
-      BufferedReader reader = Files.newBufferedReader(Paths.get(following))
-    ) {
+        BufferedReader reader = Files.newBufferedReader(Paths.get(following))) {
       String line;
       while ((line = reader.readLine()) != null) {
         if (line.startsWith(currentUser + ":")) {
@@ -239,8 +228,7 @@ public class HomePanel extends BasePanel {
   private String[][] readImageDetails(String followedUsers) {
     List<String[]> tempList = new ArrayList<>();
     try (
-      BufferedReader reader = Files.newBufferedReader(Paths.get(imageDetails))
-    ) {
+        BufferedReader reader = Files.newBufferedReader(Paths.get(imageDetails))) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] details = line.split(", ");
@@ -254,8 +242,7 @@ public class HomePanel extends BasePanel {
           String description = details[2].split(": ")[1];
           String likes = "Likes: " + details[4].split(": ")[1];
           tempList.add(
-            new String[] { imagePoster, description, likes, imagePath }
-          );
+              new String[] { imagePoster, description, likes, imagePath });
         }
       }
     } catch (IOException e) {
@@ -274,10 +261,9 @@ public class HomePanel extends BasePanel {
     try {
       BufferedImage originalImage = ImageIO.read(new File(imagePath));
       Image scaledImage = originalImage.getScaledInstance(
-        App.WIDTH - 40,
-        App.HEIGHT - 20,
-        Image.SCALE_SMOOTH
-      );
+          App.WIDTH - 40,
+          App.HEIGHT - 20,
+          Image.SCALE_SMOOTH);
       return new ImageIcon(scaledImage);
     } catch (IOException ex) {
       ex.printStackTrace();
@@ -295,8 +281,7 @@ public class HomePanel extends BasePanel {
           // Extract the likes part
           String[] parts = line.split(", (?![^\\[]*\\])");
           String likes = parts[4].split(": ")[1];
-          likes =
-            likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
+          likes = likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
 
           if (!likes.isEmpty()) {
             // Count the number of likes by splitting the likes string by ", "

@@ -1,4 +1,4 @@
-package image;
+package post;
 
 import java.io.*;
 import java.util.*;
@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 import utils.AppPathsSingleton;
 
-public class ImageLikesManager {
+public class PostLikesManager {
 
-  //singleton pattern
+  // singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String likesFilePath = appPathsSingleton.LIKES;
 
