@@ -18,13 +18,12 @@ public class AppPathsSingleton {
     public final String IMAGE_DETAILS;
     public final String PROFILE_IMAGES;
     public final String ICONS;
-    public final String DEFAULT_PROFILE_ICON;
+    public final String DEFAULT_PROFILE_IMAGE;
     public final String[] SEARCH_PATHS;
     public final String[] ICON_PATHS;
     public final String[] BUTTON_TYPES;
 
     private AppPathsSingleton() {
-
         DATA = "resources/data/";
         CREDENTIALS = "resources/data/credentials.txt";
         FOLLOWING = "resources/data/following.txt";
@@ -39,7 +38,7 @@ public class AppPathsSingleton {
         IMAGE_DETAILS = "resources/images/image_details.txt";
         PROFILE_IMAGES = "resources/images/profile/";
         ICONS = "resources/images/icons/";
-        DEFAULT_PROFILE_ICON = "resources/images/icons/default_profile.png";
+        DEFAULT_PROFILE_IMAGE = "resources/images/profile/default.jpg";
         SEARCH_PATHS = new String[] {
                 "resources/data/users.txt",
                 "resources/images/image_details.txt",

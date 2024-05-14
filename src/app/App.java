@@ -70,8 +70,7 @@ public class App extends JFrame {
   }
 
   public static void showProfileByUsername(String username) {
-    final User user = UserRepository.getInstance().getByUsername(username);
-    final ProfilePanel profilePanel = new ProfilePanel(user);
+    final ProfilePanel profilePanel = new ProfilePanel(UserRepository.getInstance().getByUsername(username));
     // Add the new ProfilePanel
     cards.add(profilePanel, "UserProfile");
     cardLayout.show(cards, "UserProfile");

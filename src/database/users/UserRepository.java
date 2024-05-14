@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import auth.UserManager;
 import database.DatabaseHandler;
 import user.User;
+import utils.AppPathsSingleton;
 
 public class UserRepository {
 
@@ -46,7 +48,26 @@ public class UserRepository {
         this.connection = connection;
     }
 
-    private static User userFromResultSet(ResultSet resultSet) throws SQLException {
+    public List<String> fuzzyFindUsernames(String username) {
+        List<String> usernames = new ArrayList<>();
+
+        try {
+            String query = "SELECT * FROM users WHERE username LIKE ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, "%" + username + "%");
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                usernames.add(userFromResultSet(resultSet).getUsername());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return usernames;
+    }
+
+    private User userFromResultSet(ResultSet resultSet) throws SQLException {
         try {
             int userId = resultSet.getInt("user_id");
             Date createdDate = resultSet.getTimestamp("created_date");
@@ -116,27 +137,34 @@ public class UserRepository {
         return users;
     }
 
-    public void save(User user) {
-        if (getByUsername(user.getUsername()) != null) {
+    public User create(String username, String password, String bio) {
+        if (getByUsername(username) != null) {
             System.out.println("failed to save user to database: username already exists");
-            return;
+            return null;
         }
 
         try {
+            User newUser = new User(0, new Date(), username, password,
+                    AppPathsSingleton.getInstance().DEFAULT_PROFILE_IMAGE, bio, 0, 0, 0);
+
             String query = "INSERT INTO users (created_date, username, password, profile_image_path, bio, posts_count, followers_count, following_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setTimestamp(1, new Timestamp(user.getCreatedDate().getTime()));
-            statement.setString(2, user.getUsername());
-            statement.setString(3, user.getPassword());
-            statement.setString(4, user.getProfileImagePath());
-            statement.setString(5, user.getBio());
-            statement.setInt(6, user.getPostsCount());
-            statement.setInt(7, user.getFollowersCount());
-            statement.setInt(8, user.getFollowingCount());
+            statement.setTimestamp(1, new Timestamp(newUser.getCreatedDate().getTime()));
+            statement.setString(2, newUser.getUsername());
+            statement.setString(3, newUser.getPassword());
+            statement.setString(4, newUser.getProfileImagePath());
+            statement.setString(5, newUser.getBio());
+            statement.setInt(6, newUser.getPostsCount());
+            statement.setInt(7, newUser.getFollowersCount());
+            statement.setInt(8, newUser.getFollowingCount());
             statement.executeUpdate();
+
+            return newUser;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 
     public void update(User user) {

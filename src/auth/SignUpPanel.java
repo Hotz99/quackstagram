@@ -1,6 +1,8 @@
 package auth;
 
 import app.App;
+import database.users.UserRepository;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,8 +24,6 @@ public class SignUpPanel extends BasePanel {
     setupPasswordInput();
     getBio();
     addStruct(photoPanel, fieldsPanel, true);
-    btnUploadImage();
-    photoUploadPanel(fieldsPanel);
     setupBtnRegister(REGISTER_LABEL);
     JPanel registerPanel = registerPanel();
     addComponents(headerPanel, fieldsPanel, registerPanel);
@@ -53,45 +53,22 @@ public class SignUpPanel extends BasePanel {
     btnRegister.setFont(new Font("Arial", Font.BOLD, 14));
   }
 
-  private void btnUploadImage() {
-    btnUploadPhoto = new JButton("Upload Photo");
-    btnUploadPhoto.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            handleProfilePictureUpload();
-          }
-        });
-  }
-
   private void onRegisterClicked(ActionEvent event) {
     String username = getUsernameInputField().getText();
     String password = getPasswordInputField().getText();
     String bio = getTxtBio().getText();
 
-    if (App.userManager.doesUsernameExist(username)) {
+    if (UserRepository.getInstance().getByUsername(username) != null) {
       JOptionPane.showMessageDialog(
           this,
-          "Username already exists. Please choose a different username.",
+          "Username already exists.",
           "Error",
           JOptionPane.ERROR_MESSAGE);
     } else {
-      App.userManager.saveCredentials(username, password, bio);
+
+      UserManager.getInstance().setCurrentUser(UserRepository.getInstance().create(username, password, bio));
       handleProfilePictureUpload();
-
       App.showPanel("SignIn");
-    }
-  }
-
-  private void handleProfilePictureUpload() {
-    JFileChooser fileChooser = new JFileChooser();
-    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-        "Image files",
-        ImageIO.getReaderFileSuffixes());
-    fileChooser.setFileFilter(filter);
-    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      File selectedFile = fileChooser.getSelectedFile();
-      App.userManager.saveProfilePicture(selectedFile, txtUsername.getText());
     }
   }
 }

@@ -85,12 +85,7 @@ public class SignInPanel extends BasePanel {
       if (user != null) {
         UserManager.getInstance().setCurrentUser(user);
 
-        System.out.println("HERE");
-        System.out.println(UserManager.getInstance().getCurrentUser());
-
         SwingUtilities.invokeLater(() -> {
-          // ProfilePanel profileUI = new ProfilePanel(user);
-          // profileUI.setVisible(true);
           App.addRemainingPanels();
           App.showProfileByUsername(user.getUsername());
         });

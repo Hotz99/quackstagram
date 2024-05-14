@@ -23,7 +23,7 @@ public class SearchResult implements SearchObserver {
         System.out.println("Selected username: " + selectedUsername);
         App.showProfileByUsername(selectedUsername);
 
-        ExplorePanel explorePanel = ExplorePanel.getInstance(); // Assuming getInstance() gets the current instance
+        ExplorePanel explorePanel = ExplorePanel.getInstance();
         if (explorePanel != null) {
           explorePanel.closeOverlayComponents();
         } else {

@@ -4,23 +4,13 @@ import app.App;
 import auth.UserManager;
 import database.FollowRepository;
 import database.PostRepository;
-import explore.ExplorePanel;
 import post.Post;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.stream.Stream;
 import javax.swing.*;
-import notifications.NotificationsPanel;
-import post.PostUploadPanel;
-import utils.AppPathsSingleton;
 import utils.BasePanel;
-import utils.HeaderFactory;
 
 public class ProfilePanel extends BasePanel {
 
@@ -32,14 +22,11 @@ public class ProfilePanel extends BasePanel {
 
   // user who's profile is being built here
   private User profileUser;
-  // signed in user
-  private User currentUser;
 
   public ProfilePanel(User user) {
     super(false, false, false);
 
     this.profileUser = user;
-    this.currentUser = UserManager.getInstance().getCurrentUser();
 
     System.out.println("loading profile: " + user.getUsername());
 
@@ -48,7 +35,6 @@ public class ProfilePanel extends BasePanel {
 
   private void initializeUI() {
     removeAll();
-
     createHeaderPanel();
 
     initializeImageGrid();
@@ -76,12 +62,12 @@ public class ProfilePanel extends BasePanel {
     profileNameAndBioPanel.setLayout(new BorderLayout());
     profileNameAndBioPanel.setBackground(new Color(249, 249, 249));
 
-    JLabel profileNameLabel = new JLabel(currentUser.getUsername());
+    JLabel profileNameLabel = new JLabel(profileUser.getUsername());
     profileNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
     profileNameLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10)); // Padding on the sides
 
-    JTextArea profileBio = new JTextArea(userManager.getCurrentUser().getBio());
-    System.out.println("This is the bio for " + currentUser.getUsername());
+    JTextArea profileBio = new JTextArea(profileUser.getBio());
+    System.out.println("This is the bio for " + profileUser.getUsername());
     profileBio.setEditable(false);
     profileBio.setFont(new Font("Arial", Font.PLAIN, 12));
     profileBio.setBackground(new Color(249, 249, 249));
@@ -113,7 +99,7 @@ public class ProfilePanel extends BasePanel {
   }
 
   private JButton createFollowButton() {
-    boolean isCurrentUser = profileUser.getUsername().equals(currentUser.getUsername());
+    boolean isCurrentUser = profileUser.getUsername().equals(userManager.getCurrentUser().getUsername());
 
     JButton followButton;
     if (isCurrentUser) {
@@ -121,14 +107,17 @@ public class ProfilePanel extends BasePanel {
     } else {
       followButton = new JButton("Follow");
 
-      // Check if the current user is already being followed by the logged-in user
-      if (FollowRepository.getInstance().doesUserFollowOtherUser(currentUser.getUserId(), profileUser.getUserId())) {
+      // Check if the profile user is already being followed by the logged-in user
+      if (FollowRepository.getInstance().doesUserFollowOtherUser(userManager.getCurrentUser().getUserId(),
+          profileUser.getUserId())) {
         followButton.setText("Following");
       }
 
       followButton.addActionListener(e -> {
-        FollowRepository.getInstance().toggleFollow(currentUser.getUserId(), profileUser.getUserId());
-        followButton.setText("Following");
+        FollowRepository.getInstance().toggleFollow(userManager.getCurrentUser().getUserId(), profileUser.getUserId());
+
+        // refresh
+        App.showProfileByUsername(profileUser.getUsername());
       });
     }
 
@@ -137,7 +126,7 @@ public class ProfilePanel extends BasePanel {
     followButton.setMaximumSize(
         new Dimension(Integer.MAX_VALUE, followButton.getMinimumSize().height)); // Make the button fill the horizontal
     // space
-    followButton.setBackground(new Color(225, 228, 232)); // A soft, appealing color that complements the UI
+    followButton.setBackground(new Color(225, 228, 232));
     followButton.setForeground(Color.BLACK);
     followButton.setOpaque(true);
     followButton.setBorderPainted(false);
@@ -146,24 +135,26 @@ public class ProfilePanel extends BasePanel {
   }
 
   private JPanel setStatsPanel() {
+    System.out.println("setStatsPanel()");
+
     // Stats Panel
     JPanel statsPanel = new JPanel();
     statsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
     statsPanel.setBackground(new Color(249, 249, 249));
     System.out.println(
         "Number of posts for this user" +
-            userManager.getCurrentUser().getPostsCount());
+            profileUser.getPostsCount());
     statsPanel.add(
         createStatLabel(
-            Integer.toString(userManager.getCurrentUser().getPostsCount()),
+            Integer.toString(profileUser.getPostsCount()),
             "Posts"));
     statsPanel.add(
         createStatLabel(
-            Integer.toString(userManager.getCurrentUser().getFollowersCount()),
+            Integer.toString(profileUser.getFollowersCount()),
             "Followers"));
     statsPanel.add(
         createStatLabel(
-            Integer.toString(userManager.getCurrentUser().getFollowingCount()),
+            Integer.toString(profileUser.getFollowingCount()),
             "Following"));
     statsPanel.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 0)); // Add some vertical padding
     return statsPanel;
@@ -174,10 +165,12 @@ public class ProfilePanel extends BasePanel {
     JPanel topHeaderPanel = new JPanel(new BorderLayout(10, 0));
     topHeaderPanel.setBackground(new Color(249, 249, 249));
 
-    String imagePath = "resources/images/profile/" + currentUser.getProfileImagePath();
+    String imagePath = "resources/images/profile/" + profileUser.getProfileImagePath();
+
+    System.out.println("Profile image path: " + imagePath);
+
     // Profile image
-    ImageIcon originalIcon = new ImageIcon(imagePath);
-    Image originalImage = originalIcon.getImage();
+    Image originalImage = new ImageIcon(imagePath).getImage();
 
     Image scaledImage = originalImage.getScaledInstance(
         PROFILE_IMAGE_SIZE,
@@ -194,58 +187,6 @@ public class ProfilePanel extends BasePanel {
 
     topHeaderPanel.add(profileImage, BorderLayout.WEST);
     return topHeaderPanel;
-  }
-
-  private String readCurrentUser(Path usersFilePath) {
-    try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        String[] parts = line.split(":");
-        if (parts.length > 0) {
-          // Assuming the last line in users.txt is the current user
-          return parts[0];
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return "";
-  }
-
-  private StringBuilder processFollowingFile(
-      Path followingFilePath,
-      String currentUsername,
-      String usernameToFollow) throws IOException {
-    boolean found = false;
-    StringBuilder newContent = new StringBuilder();
-
-    if (Files.exists(followingFilePath)) {
-      try (BufferedReader reader = Files.newBufferedReader(followingFilePath)) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          String[] parts = line.split(":");
-          if (parts[0].trim().equals(currentUsername)) {
-            found = true;
-            if (!line.contains(usernameToFollow)) {
-              line = line
-                  .concat(line.endsWith(":") ? "" : "; ")
-                  .concat(usernameToFollow);
-            }
-          }
-          newContent.append(line).append("\n");
-        }
-      }
-    }
-
-    if (!found) {
-      newContent
-          .append(currentUsername)
-          .append(": ")
-          .append(usernameToFollow)
-          .append("\n");
-    }
-
-    return newContent;
   }
 
   private void setupContentPanel() {

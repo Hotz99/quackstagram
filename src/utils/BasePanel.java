@@ -6,7 +6,12 @@ import explore.ExplorePanel;
 import home.HomePanel;
 
 import java.awt.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import app.App;
 import notifications.NotificationsPanel;
 import post.PostUploadPanel;
 import user.ProfilePanel;
@@ -55,21 +60,32 @@ public class BasePanel extends JPanel {
     }
   }
 
-  public JTextField getUsernameInputField() {
+  protected void handleProfilePictureUpload() {
+    JFileChooser fileChooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+        "Image files",
+        ImageIO.getReaderFileSuffixes());
+    fileChooser.setFileFilter(filter);
+    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+      App.userManager.saveProfilePicture(fileChooser.getSelectedFile());
+    }
+  }
+
+  protected JTextField getUsernameInputField() {
     if (txtUsername.getText().equals("Username")) {
       setupPlaceholder(txtUsername, "Username");
     }
     return txtUsername;
   }
 
-  public JTextField getPasswordInputField() {
+  protected JTextField getPasswordInputField() {
     if (txtPassword.getText().equals("Password")) {
       setupPlaceholder(txtPassword, "Password");
     }
     return txtPassword;
   }
 
-  public JTextField getTxtBio() {
+  protected JTextField getTxtBio() {
     if (txtBio.getText().equals("Bio")) {
       setupPlaceholder(txtBio, "Bio");
     }
@@ -81,59 +97,59 @@ public class BasePanel extends JPanel {
     textField.addFocusListener(new PlaceholderObserver(placeholder));
   }
 
-  public void setTxtUsername(JTextField txtUsername) {
+  protected void setTxtUsername(JTextField txtUsername) {
     this.txtUsername = txtUsername;
   }
 
-  public void setTxtPassword(JTextField txtPassword) {
+  protected void setTxtPassword(JTextField txtPassword) {
     this.txtPassword = txtPassword;
   }
 
-  public void setTxtBio(JTextField txtBio) {
+  protected void setTxtBio(JTextField txtBio) {
     this.txtBio = txtBio;
   }
 
-  public JButton getBtnRegister() {
+  protected JButton getBtnRegister() {
     return btnRegister;
   }
 
-  public void setBtnRegister(JButton btnRegister) {
+  protected void setBtnRegister(JButton btnRegister) {
     this.btnRegister = btnRegister;
   }
 
-  public JLabel getLblPhoto() {
+  protected JLabel getLblPhoto() {
     return lblPhoto;
   }
 
-  public void setLblPhoto(JLabel lblPhoto) {
+  protected void setLblPhoto(JLabel lblPhoto) {
     this.lblPhoto = lblPhoto;
   }
 
-  public JButton getBtnUploadPhoto() {
+  protected JButton getBtnUploadPhoto() {
     return btnUploadPhoto;
   }
 
-  public void setBtnUploadPhoto(JButton btnUploadPhoto) {
+  protected void setBtnUploadPhoto(JButton btnUploadPhoto) {
     this.btnUploadPhoto = btnUploadPhoto;
   }
 
-  public JButton getButton() {
+  protected JButton getButton() {
     return button;
   }
 
-  public void setButton(JButton button) {
+  protected void setButton(JButton button) {
     this.button = button;
   }
 
-  public JButton getBtnRegisterNow() {
+  protected JButton getBtnRegisterNow() {
     return btnRegisterNow;
   }
 
-  public void setBtnRegisterNow(JButton btnRegisterNow) {
+  protected void setBtnRegisterNow(JButton btnRegisterNow) {
     this.btnRegisterNow = btnRegisterNow;
   }
 
-  public JPanel getPhotoPanel(JLabel lblPhoto) {
+  protected JPanel getPhotoPanel(JLabel lblPhoto) {
     lblPhoto = new JLabel();
     lblPhoto.setPreferredSize(new Dimension(80, 80));
     lblPhoto.setHorizontalAlignment(JLabel.CENTER);
@@ -149,7 +165,7 @@ public class BasePanel extends JPanel {
     return photoPanel;
   }
 
-  public void addStruct(
+  protected void addStruct(
       JPanel photoPanel,
       JPanel fieldsPanel,
       boolean isSignUp) {
@@ -167,37 +183,31 @@ public class BasePanel extends JPanel {
     }
   }
 
-  public void setupPasswordInput() {
+  protected void setupPasswordInput() {
     txtPassword.setForeground(Color.GRAY);
   }
 
-  public void setupUsernameInput() {
+  protected void setupUsernameInput() {
     txtUsername.setForeground(Color.GRAY);
   }
 
-  public void getBio() {
+  protected void getBio() {
     txtBio.setForeground(Color.GRAY);
   }
 
-  public JPanel getFieldsPanel() {
+  protected JPanel getFieldsPanel() {
     JPanel fieldsPanel = new JPanel();
     fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
     fieldsPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20));
     return fieldsPanel;
   }
 
-  public void addComponents(
+  protected void addComponents(
       JPanel headerPanel,
       JPanel fieldsPanel,
       JPanel registerPanel) {
     add(headerPanel, BorderLayout.NORTH);
     add(fieldsPanel, BorderLayout.CENTER);
     add(registerPanel, BorderLayout.SOUTH);
-  }
-
-  public void photoUploadPanel(JPanel fieldsPanel) {
-    JPanel photoUploadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    photoUploadPanel.add(btnUploadPhoto);
-    fieldsPanel.add(photoUploadPanel);
   }
 }
