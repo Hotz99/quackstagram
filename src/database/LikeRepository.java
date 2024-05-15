@@ -21,6 +21,18 @@ public class LikeRepository {
         // likeRepository.toggleLike(userId, postId);
     }
 
+    private static LikeRepository instance;
+
+    private LikeRepository() {
+    }
+
+    public static LikeRepository getInstance() {
+        if (instance == null) {
+            instance = new LikeRepository();
+        }
+        return instance;
+    }
+
     public void toggleLike(int userId, int postId) {
         if (hasUserLikedPost(userId, postId)) {
             removeLike(userId, postId);

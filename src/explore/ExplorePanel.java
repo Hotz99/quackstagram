@@ -201,10 +201,11 @@ public class ExplorePanel extends BasePanel {
               new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                  System.out.println(imageFile.getPath());
+
                   App.imageViewer.displayImage(
                       " Explore 🐥 ",
-                      imageFile.getPath()); // Call method to display the
-                  // clicked image
+                      imageFile.getPath());
                 }
               });
           imageGridPanel.add(imageLabel);

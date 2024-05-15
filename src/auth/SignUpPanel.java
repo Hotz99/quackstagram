@@ -5,11 +5,7 @@ import database.users.UserRepository;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.BasePanel;
 import utils.HeaderFactory;
 

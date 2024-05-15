@@ -1,6 +1,10 @@
 package post;
 
 import app.App;
+import auth.UserManager;
+import database.PostRepository;
+import user.User;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -19,15 +23,13 @@ import utils.HeaderFactory;
 public class PostUploadPanel extends BasePanel {
 
   private JLabel imagePreviewLabel;
-  private JTextArea bioTextArea;
+  private JTextArea captionTextArea;
   private JButton uploadButton;
   private JButton saveButton;
 
   // singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final String uploaded = appPathsSingleton.UPLOADED;
-  private final String users = appPathsSingleton.USERS;
-  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
 
   public PostUploadPanel() {
     super(false, false, false);
@@ -52,9 +54,6 @@ public class PostUploadPanel extends BasePanel {
     // Upload button
     contentPanel.add(createUploadButton());
 
-    // Save button (for bio)
-    contentPanel.add(createSaveButton());
-
     // Add panels to frame
     add(headerPanel, BorderLayout.NORTH);
     add(contentPanel, BorderLayout.CENTER);
@@ -69,11 +68,11 @@ public class PostUploadPanel extends BasePanel {
   }
 
   private JScrollPane createBioTextArea() {
-    bioTextArea = new JTextArea("Enter a caption");
-    bioTextArea.setAlignmentX(Component.CENTER_ALIGNMENT);
-    bioTextArea.setLineWrap(true);
-    bioTextArea.setWrapStyleWord(true);
-    JScrollPane bioScrollPane = new JScrollPane(bioTextArea);
+    captionTextArea = new JTextArea("Enter a caption ...");
+    captionTextArea.setAlignmentX(Component.CENTER_ALIGNMENT);
+    captionTextArea.setLineWrap(true);
+    captionTextArea.setWrapStyleWord(true);
+    JScrollPane bioScrollPane = new JScrollPane(captionTextArea);
     bioScrollPane.setPreferredSize(
         new Dimension(App.WIDTH - 50, App.HEIGHT / 6));
     return bioScrollPane;
@@ -84,13 +83,6 @@ public class PostUploadPanel extends BasePanel {
     uploadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
     uploadButton.addActionListener(this::uploadAction);
     return uploadButton;
-  }
-
-  private JButton createSaveButton() {
-    saveButton = new JButton("Save Caption");
-    saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-    saveButton.addActionListener(this::saveBioAction);
-    return saveButton;
   }
 
   private void uploadAction(ActionEvent event) {
@@ -105,25 +97,22 @@ public class PostUploadPanel extends BasePanel {
       File selectedFile = fileChooser.getSelectedFile();
 
       try {
-        String username = getCurrentUsername(); // Read username from users.txt
-        int nextImageId = getNextImageId(username);
-        String fileExtension = getFileExtension(selectedFile);
-        String newFileName = username + "_" + nextImageId + "." + fileExtension;
+        User user = UserManager.getInstance().getCurrentUser();
 
-        Path uploadedImagePath = Paths.get(uploaded + newFileName);
-        Files.copy(
+        // lil sql injection opportunity here wink wink
+        Post newPost = PostRepository.getInstance().savePost(user, this.captionTextArea.getText(),
+            getFileExtension(selectedFile));
+
+        Path uploadedImagePath = Paths.get(uploaded + newPost.getImagePath());
+
+        // move uploaded image to 'uploads' directory
+        Path finalUploadPath = Files.copy(
             selectedFile.toPath(),
             uploadedImagePath,
             StandardCopyOption.REPLACE_EXISTING);
 
-        // Save the bio and image ID to a text file
-        saveImageDetails(
-            username + "_" + nextImageId,
-            username,
-            bioTextArea.getText());
-
         System.out.println(
-            "Image uploaded to: " + uploadedImagePath.toString());
+            "Image uploaded to: " + finalUploadPath.toString());
 
         // Load the image from the saved path
         ImageIcon imageIcon = new ImageIcon(uploadedImagePath.toString());
@@ -174,85 +163,8 @@ public class PostUploadPanel extends BasePanel {
     return scaledImage;
   }
 
-  private int getNextImageId(String username) throws IOException {
-    Path storageDir = Paths.get(uploaded); // Ensure this is the directory where images are saved
-    if (!Files.exists(storageDir)) {
-      Files.createDirectories(storageDir);
-    }
-
-    int maxId = 0;
-
-    try (
-        DirectoryStream<Path> stream = Files.newDirectoryStream(
-            storageDir,
-            username + "_*")) {
-      for (Path path : stream) {
-        String fileName = path.getFileName().toString();
-        int idEndIndex = fileName.lastIndexOf('.');
-        if (idEndIndex != -1) {
-          String idStr = fileName.substring(username.length() + 1, idEndIndex);
-          try {
-            int id = Integer.parseInt(idStr);
-            if (id > maxId) {
-              maxId = id;
-            }
-          } catch (NumberFormatException ex) {
-            // Ignore filenames that do not have a valid numeric ID
-            System.out.println("Invalid image filename: " + fileName);
-          }
-        }
-      }
-    }
-    return maxId + 1; // Return the next available ID
-  }
-
-  private void saveImageDetails(String imageId, String username, String bio)
-      throws IOException {
-    Path imageDetailsPath = Paths.get(imageDetails);
-    if (!Files.exists(imageDetailsPath)) {
-      Files.createFile(imageDetailsPath);
-    }
-
-    String timestamp = LocalDateTime
-        .now()
-        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-    try (
-        BufferedWriter writer = Files.newBufferedWriter(
-            imageDetailsPath,
-            StandardOpenOption.APPEND)) {
-      writer.write(
-          String.format(
-              "ImageID: %s, Username: %s, Bio: %s, Timestamp: %s, Likes: 0",
-              imageId,
-              username,
-              bio,
-              timestamp));
-      writer.newLine();
-    }
-  }
-
   private String getFileExtension(File file) {
     String fileName = file.getName();
     return fileName.substring(fileName.lastIndexOf(".") + 1);
-  }
-
-  private void saveBioAction(ActionEvent event) {
-    // Here you would handle saving the bio text
-    String bioText = bioTextArea.getText();
-    // For example, save the bio text to a file or database
-    JOptionPane.showMessageDialog(this, "Caption saved: " + bioText);
-  }
-
-  private String getCurrentUsername() throws IOException {
-    Path usersFilePath = Paths.get(users);
-    try (BufferedReader reader = Files.newBufferedReader(usersFilePath)) {
-      String line = reader.readLine();
-      if (line != null) {
-        System.out.println("Read username: " + line.split(":")[0]);
-        return line.split(":")[0]; // Extract the username from the first line
-      }
-    }
-    return null; // Return null if no username is found
   }
 }

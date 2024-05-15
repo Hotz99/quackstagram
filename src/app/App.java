@@ -17,7 +17,6 @@ import notifications.NotificationsPanel;
 import post.PostUploadPanel;
 import post.PostImageViewer;
 import user.ProfilePanel;
-import user.User;
 import utils.BasePanel;
 
 public class App extends JFrame {
@@ -56,8 +55,7 @@ public class App extends JFrame {
 
   public static void showPanel(String panelName) {
     cardLayout.show(cards, panelName);
-    // this is fucked
-    // ExplorePanel.getInstance().closeOverlayComponents();
+    ExplorePanel.getInstance().closeOverlayComponents();
   }
 
   // called after signin

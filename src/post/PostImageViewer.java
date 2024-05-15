@@ -2,26 +2,18 @@ package post;
 
 import app.App;
 import auth.UserManager;
+import database.LikeRepository;
+import database.PostRepository;
+import database.users.UserRepository;
+
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import user.ProfilePanel;
 import user.User;
 import utils.*;
 
@@ -30,7 +22,6 @@ public class PostImageViewer {
   private boolean goHome = false;
 
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String imageDetails = appPathsSingleton.IMAGE_DETAILS;
   private final UserManager userManager = UserManager.getInstance();
 
   /**
@@ -41,13 +32,13 @@ public class PostImageViewer {
   public void displayImage(String headerLabel, String imagePath) {
     goHome = headerLabel.toLowerCase().contains("home");
 
-    String imageId = extractImageId(imagePath);
-    ImageDetails imageDetails = readImageDetails(imageId);
+    // imagePath has format
+    // "resources/images/uploaded/[postIdx]_[user_id].[file_extension]"
+    String fileName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.length());
 
-    if (imageDetails == null) {
-      System.out.println("No image details found for ImageID: " + imageId);
-      return;
-    }
+    // fileName = [postIdx]_[user_id].[file_extension] is a unique identifier
+    Post post = PostRepository.getInstance().getByFileName(fileName);
+    User postUser = UserRepository.getInstance().getById(post.getUserId());
 
     App.imageView.removeAll();
     App.imageView.setLayout(new BorderLayout());
@@ -55,16 +46,14 @@ public class PostImageViewer {
         HeaderFactory.createHeader(headerLabel),
         BorderLayout.NORTH);
 
-    String timeSincePosting = calculateTimeSincePosting(
-        imageDetails.getTimestampString());
     JPanel topPanel = createTopPanel(
-        imageDetails.getUsername(),
-        timeSincePosting);
-    JLabel imageLabel = prepareImageLabel(imagePath);
+        postUser.getUsername(),
+        post.getPostedDate().toString());
+    JLabel imageLabel = prepareImageLabel(post.getImagePath());
 
     JPanel bottomPanel = createBottomPanel(
-        imageDetails.getBio(),
-        imageDetails.getLikes());
+        post.getCaption(),
+        post.getLikesCount());
 
     JPanel containerPanel = new JPanel(new BorderLayout());
     containerPanel.add(topPanel, BorderLayout.NORTH);
@@ -81,12 +70,13 @@ public class PostImageViewer {
           public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
               System.out.println("Liked image");
-              imageDetails.toggleLike(
-                  imageId,
-                  userManager.getCurrentUser().getUsername());
-              // Update the likes label
-              int likes = imageDetails.getLikes();
-              ((JLabel) bottomPanel.getComponent(1)).setText("Likes: " + likes);
+
+              LikeRepository.getInstance().toggleLike(post.getPostId(),
+                  userManager.getCurrentUser().getUserId());
+              LikeRepository.getInstance().toggleLike(userManager.getCurrentUser().getUserId(),
+                  post.getPostId());
+
+              ((JLabel) bottomPanel.getComponent(1)).setText("Likes: " + post.getLikesCount());
             }
           }
         });
@@ -95,58 +85,6 @@ public class PostImageViewer {
     App.imageView.repaint();
 
     app.App.showPanel("Image View");
-  }
-
-  /**
-   * Extracts the image ID from the given image path.
-   *
-   * @param imagePath the path of the image
-   * @return the image ID extracted from the image path
-   */
-  private String extractImageId(String imagePath) {
-    return new File(imagePath).getName().split("\\.")[0];
-  }
-
-  /**
-   * Represents the details of an image.
-   */
-  public ImageDetails readImageDetails(String imageId) {
-    Path detailsPath = Paths.get(imageDetails);
-    try (Stream<String> lines = Files.lines(detailsPath)) {
-      String details = lines
-          .filter(line -> line.contains("ImageID: " + imageId))
-          .findFirst()
-          .orElse("");
-
-      if (details.isEmpty()) {
-        return null;
-      }
-
-      return new ImageDetails(details);
-    } catch (IOException ex) {
-      ex.printStackTrace();
-      return null;
-    }
-  }
-
-  /**
-   * Calculates the time since a post was made based on the given timestamp.
-   *
-   * @param timestampString the timestamp of the post in the format "yyyy-MM-dd
-   *                        HH:mm:ss"
-   * @return a string representing the time since the post was made, e.g. "2 days
-   *         ago"
-   */
-  private String calculateTimeSincePosting(String timestampString) {
-    if (timestampString.isEmpty()) {
-      return "Unknown";
-    }
-    LocalDateTime timestamp = LocalDateTime.parse(
-        timestampString,
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    LocalDateTime now = LocalDateTime.now();
-    long days = ChronoUnit.DAYS.between(timestamp, now);
-    return days + " day" + (days != 1 ? "s" : "") + " ago";
   }
 
   /**
@@ -183,7 +121,7 @@ public class PostImageViewer {
     JLabel imageLabel = new JLabel();
     imageLabel.setHorizontalAlignment(JLabel.CENTER);
     try {
-      BufferedImage originalImage = ImageIO.read(new File(imagePath));
+      BufferedImage originalImage = ImageIO.read(new File(appPathsSingleton.UPLOADED + imagePath));
       ImageIcon imageIcon = new ImageIcon(originalImage);
       imageLabel.setIcon(imageIcon);
     } catch (IOException ex) {
@@ -230,98 +168,5 @@ public class PostImageViewer {
     }
 
     return backButtonPanel;
-  }
-
-  // Assuming ImageDetails is a class that encapsulates image details.
-  // Replace this with the actual class or structure you're using.
-  private class ImageDetails {
-
-    private String username;
-    private String bio;
-    private String timestampString;
-    private int likes;
-
-    /**
-     * Constructs an ImageDetails object with the provided details.
-     *
-     * @param details the string containing the image details in the format:
-     *                "id: [imageId], username: [username], bio: [bio], timestamp:
-     *                [timestamp], likes: [likes]"
-     * @throws IllegalArgumentException if the provided details string does not have
-     *                                  the correct format
-     */
-    public ImageDetails(String details) {
-      String[] parts = details.split(", (?![^\\[]*\\])");
-      if (parts.length != 5) {
-        System.out.println("Invalid image details format: " + details);
-      }
-      username = parts[1].split(": ")[1];
-      bio = parts[2].split(": ")[1];
-      timestampString = parts[3].split(": ")[1];
-
-      String likesString = parts[4].split(": ")[1];
-      likesString = likesString.substring(1, likesString.length() - 1); // Remove the brackets
-      likes = likesString.isEmpty() ? 0 : likesString.split(", ").length;
-    }
-
-    // Getters
-    public String getUsername() {
-      return username;
-    }
-
-    public String getBio() {
-      return bio;
-    }
-
-    public String getTimestampString() {
-      return timestampString;
-    }
-
-    public int getLikes() {
-      return likes;
-    }
-
-    /**
-     * Toggles the like status of an image for a given user.
-     * If the user has already liked the image, it removes the like.
-     * If the user has not liked the image, it adds the like.
-     *
-     * @param imageId  The ID of the image to toggle the like for.
-     * @param username The username of the user toggling the like.
-     */
-    public void toggleLike(String imageId, String username) {
-      System.out.println("Liked the picture!");
-      // Update the details file with the new likes count
-      try {
-        Path detailsPath = Paths.get(imageDetails);
-        List<String> lines = Files.readAllLines(detailsPath);
-        List<String> updatedLines = new ArrayList<>();
-        for (String line : lines) {
-          if (line.contains("ImageID: " + imageId)) {
-            String[] parts = line.split(", (?![^\\[]*\\])");
-            String likes = parts[4].split(": ")[1];
-            likes = likes.equals("[]") ? "" : likes.substring(1, likes.length() - 1); // Remove the brackets
-            // Check if the current user's username is already in the likes string
-            if (likes.contains(username)) {
-              System.out.println(
-                  "User has already liked this image, unliking it");
-              likes = likes
-                  .replace(username + ", ", "")
-                  .replace(", " + username, "")
-                  .replace(username, "");
-            } else {
-              likes = likes.isEmpty() ? username : likes + ", " + username; // Add the new username
-            }
-            parts[4] = "Likes: [" + likes + "]";
-            line = String.join(", ", parts);
-            this.likes = likes.isEmpty() ? 0 : likes.split(", ").length;
-          }
-          updatedLines.add(line);
-        }
-        Files.write(detailsPath, updatedLines);
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      }
-    }
   }
 }
