@@ -33,7 +33,7 @@ public class HomePanel extends BasePanel {
 	private static final int IMAGE_HEIGHT = 150; // Height for the image posts
 	private static final Color LIKE_BUTTON_COLOR = new Color(255, 90, 95); // Color for the like button
 
-	private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+	private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
 	private final UserManager userManager = UserManager.getInstance();
 	private final FollowRepository followRepo = FollowRepository.getInstance();
 	private final PostRepository postRepo = PostRepository.getInstance();
@@ -158,7 +158,7 @@ public class HomePanel extends BasePanel {
 
 	private ImageIcon getImageIcon(String fileName) {
 		try {
-			BufferedImage originalImage = ImageIO.read(new File(appPathsSingleton.UPLOADED + fileName));
+			BufferedImage originalImage = ImageIO.read(new File(appPaths.UPLOADED + fileName));
 			Image scaledImage = originalImage.getScaledInstance(
 					App.WIDTH - 40,
 					App.HEIGHT - 20,

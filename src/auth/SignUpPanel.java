@@ -10,6 +10,7 @@ import utils.BasePanel;
 import utils.HeaderFactory;
 
 public class SignUpPanel extends BasePanel {
+  private final UserRepository userRepo = UserRepository.getInstance();
 
   public SignUpPanel() {
     super(true, true, true);
@@ -54,7 +55,7 @@ public class SignUpPanel extends BasePanel {
     String password = getPasswordInputField().getText();
     String bio = getTxtBio().getText();
 
-    if (UserRepository.getInstance().getByUsername(username) != null) {
+    if (userRepo.getByUsername(username) != null) {
       JOptionPane.showMessageDialog(
           this,
           "Username already exists.",
@@ -62,7 +63,7 @@ public class SignUpPanel extends BasePanel {
           JOptionPane.ERROR_MESSAGE);
     } else {
 
-      UserManager.getInstance().setCurrentUser(UserRepository.getInstance().create(username, password, bio));
+      UserManager.getInstance().setCurrentUser(userRepo.create(username, password, bio));
       handleProfilePictureUpload();
       App.showPanel("SignIn");
     }

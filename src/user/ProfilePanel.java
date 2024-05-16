@@ -15,6 +15,9 @@ import utils.AppPathsSingleton;
 import utils.BasePanel;
 
 public class ProfilePanel extends BasePanel {
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
+  private final UserManager userManager = UserManager.getInstance();
+  private final FollowRepository followRepo = FollowRepository.getInstance();
 
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
   private static final int GRID_IMAGE_SIZE = App.WIDTH / 3; // Static size for grid images
@@ -22,11 +25,8 @@ public class ProfilePanel extends BasePanel {
   private JPanel contentPanel;
   private JPanel headerPanel;
 
-  private final UserManager userManager = UserManager.getInstance();
   // user who's profile is being built here
   private User profileUser;
-
-  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
 
   public ProfilePanel(User user) {
     super(false, false, false);
@@ -100,13 +100,13 @@ public class ProfilePanel extends BasePanel {
       followButton = new JButton("Follow");
 
       // Check if the profile user is already being followed by the logged-in user
-      if (FollowRepository.getInstance().doesUserFollowOtherUser(userManager.getCurrentUser().getUserId(),
+      if (followRepo.doesUserFollowOtherUser(userManager.getCurrentUser().getUserId(),
           profileUser.getUserId())) {
         followButton.setText("Following");
       }
 
       followButton.addActionListener(e -> {
-        FollowRepository.getInstance().toggleFollow(userManager.getCurrentUser().getUserId(), profileUser.getUserId());
+        followRepo.toggleFollow(userManager.getCurrentUser().getUserId(), profileUser.getUserId());
 
         // refresh
         App.showProfileByUsername(profileUser.getUsername());

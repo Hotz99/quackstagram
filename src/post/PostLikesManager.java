@@ -9,8 +9,8 @@ import utils.AppPathsSingleton;
 public class PostLikesManager {
 
   // singleton pattern
-  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String likesFilePath = appPathsSingleton.LIKES;
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
+  private final String likesFilePath = appPaths.LIKES;
 
   // Method to like an image
   public void likeImage(String username, String imageID) throws IOException {

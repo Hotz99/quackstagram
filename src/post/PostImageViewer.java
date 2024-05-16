@@ -21,7 +21,7 @@ public class PostImageViewer {
 
   private boolean goHome = false;
 
-  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
   private final UserManager userManager = UserManager.getInstance();
   private final LikeRepository likeRepo = LikeRepository.getInstance();
 
@@ -121,7 +121,7 @@ public class PostImageViewer {
     JLabel imageLabel = new JLabel();
     imageLabel.setHorizontalAlignment(JLabel.CENTER);
     try {
-      BufferedImage originalImage = ImageIO.read(new File(appPathsSingleton.UPLOADED + imagePath));
+      BufferedImage originalImage = ImageIO.read(new File(appPaths.UPLOADED + imagePath));
       ImageIcon imageIcon = new ImageIcon(originalImage);
       imageLabel.setIcon(imageIcon);
     } catch (IOException ex) {

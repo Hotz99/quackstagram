@@ -1,9 +1,6 @@
 package utils;
 
 import auth.UserManager;
-import database.users.UserRepository;
-import explore.ExplorePanel;
-import home.HomePanel;
 
 import java.awt.*;
 
@@ -11,16 +8,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import app.App;
-import notifications.NotificationsPanel;
-import post.PostUploadPanel;
-import user.ProfilePanel;
-import user.User;
 import utils.BasePanel;
 
 public class BasePanel extends JPanel {
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
+  private final UserManager userManager = UserManager.getInstance();
 
-  private final int NAV_ICON_SIZE = 20;
   public static final Color COLOR_WHITE = Color.WHITE;
   public static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
   public static final Color BUTTON_TEXT_COLOR = Color.BLACK;
@@ -38,9 +31,6 @@ public class BasePanel extends JPanel {
   public JButton btnUploadPhoto = new JButton("Upload Photo");
   public JButton button, btnRegisterNow = new JButton(
       "No Account? Register Now");
-
-  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String dacsLogo = appPathsSingleton.DACS_LOGO;
 
   public BasePanel(
       boolean includeUsername,
@@ -67,7 +57,7 @@ public class BasePanel extends JPanel {
         ImageIO.getReaderFileSuffixes());
     fileChooser.setFileFilter(filter);
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      App.userManager.saveProfilePicture(fileChooser.getSelectedFile());
+      userManager.saveProfilePicture(fileChooser.getSelectedFile());
     }
   }
 
@@ -156,7 +146,7 @@ public class BasePanel extends JPanel {
     lblPhoto.setVerticalAlignment(JLabel.CENTER);
     lblPhoto.setIcon(
         new ImageIcon(
-            new ImageIcon(dacsLogo)
+            new ImageIcon(appPaths.DACS_LOGO)
                 .getImage()
                 .getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
     JPanel photoPanel = new JPanel();

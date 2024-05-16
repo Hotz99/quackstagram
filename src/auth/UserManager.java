@@ -18,6 +18,8 @@ import user.User;
 import utils.AppPathsSingleton;
 
 public class UserManager {
+  private final UserRepository userRepo = UserRepository.getInstance();
+
   private User currentUser;
   private static UserManager instance = null;
 
@@ -46,7 +48,7 @@ public class UserManager {
       Path destination = Paths.get(profileImagePath);
       Files.copy(file.toPath(), destination);
       currentUser.setProfileImagePath(currentUser.getUsername() + ".jpg");
-      UserRepository.getInstance().update(currentUser);
+      userRepo.update(currentUser);
     } catch (IOException e) {
       System.out.println("error saving profile picture: " + e.getMessage());
     }
@@ -56,7 +58,7 @@ public class UserManager {
       String inputUsername,
       String inputPassword) {
 
-    User result = UserRepository.getInstance().getByUsername(inputUsername);
+    User result = userRepo.getByUsername(inputUsername);
 
     if (result == null) {
       return null;

@@ -26,10 +26,18 @@ public class ExplorePanel extends BasePanel {
 
   private final int IMAGE_SIZE = App.WIDTH / 3; // Size for each image in the grid
 
-  // singleton pattern
-  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private static ExplorePanel instance = null;
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
   private SearchResult searchResult; // Instance variable for SearchResult
+
+  private static ExplorePanel instance;
+
+  public static ExplorePanel getInstance() {
+    if (instance == null) {
+      System.out.println("ITS NULL");
+      instance = new ExplorePanel();
+    }
+    return instance;
+  }
 
   /**
    * The ExplorePanel class represents a panel that displays the explore
@@ -42,7 +50,7 @@ public class ExplorePanel extends BasePanel {
     setLayout(new BorderLayout()); // Reset the layout manager
 
     JPanel headerPanel = HeaderFactory.createHeader("Explore 🐥");
-    JPanel mainContentPanel = createMainContentPanel(this);
+    JPanel mainContentPanel = createMainContentPanel();
 
     // Add panels to the frame
     add(headerPanel, BorderLayout.NORTH);
@@ -50,14 +58,6 @@ public class ExplorePanel extends BasePanel {
 
     revalidate();
     repaint();
-  }
-
-  // Public static method to get the single instance of ExplorePanel
-  public static ExplorePanel getInstance() {
-    if (instance == null) {
-      instance = new ExplorePanel();
-    }
-    return instance;
   }
 
   public void overlayComponent(Component component) {
@@ -97,7 +97,7 @@ public class ExplorePanel extends BasePanel {
    *
    * @return The main content panel.
    */
-  private JPanel createMainContentPanel(BasePanel panel) {
+  private JPanel createMainContentPanel() {
     JPanel searchPanel = createSearchPanel();
     JPanel imageGridPanel = createImageGridPanel();
     JScrollPane scrollPane = new JScrollPane(imageGridPanel);
@@ -171,7 +171,7 @@ public class ExplorePanel extends BasePanel {
    */
   private JPanel createImageGridPanel() {
     JPanel imageGridPanel = new JPanel(new GridLayout(0, 3, 2, 2)); // 3 columns, auto rows
-    File imageDir = new File(appPathsSingleton.UPLOADED);
+    File imageDir = new File(appPaths.UPLOADED);
 
     if (imageDir.exists() && imageDir.isDirectory()) {
       File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));

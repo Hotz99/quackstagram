@@ -15,10 +15,10 @@ import utils.HeaderFactory;
 
 public class NotificationsPanel extends BasePanel {
 
-  //Singleton pattern
-  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String users = appPathsSingleton.USERS;
-  private final String notifications = appPathsSingleton.NOTIFICATIONS;
+  // Singleton pattern
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
+  private final String users = appPaths.USERS;
+  private final String notifications = appPaths.NOTIFICATIONS;
 
   public NotificationsPanel() {
     super(false, false, false);
@@ -26,11 +26,9 @@ public class NotificationsPanel extends BasePanel {
 
     JScrollPane scrollPane = new JScrollPane(createContentPanel());
     scrollPane.setHorizontalScrollBarPolicy(
-      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-    );
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     scrollPane.setVerticalScrollBarPolicy(
-      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-    );
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
     // Add panels to frame
     add(headerPanel, BorderLayout.NORTH);
@@ -55,27 +53,25 @@ public class NotificationsPanel extends BasePanel {
     }
 
     try (
-      BufferedReader reader = Files.newBufferedReader(Paths.get(notifications))
-    ) {
+        BufferedReader reader = Files.newBufferedReader(Paths.get(notifications))) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(";");
-        if (!parts[0].trim().equals(currentUsername)) continue;
+        if (!parts[0].trim().equals(currentUsername))
+          continue;
 
         // Format the notification message
         String userWhoLiked = parts[1].trim();
         String timestamp = parts[3].trim();
-        String notificationMessage =
-          userWhoLiked +
-          " liked your picture - " +
-          getElapsedTime(timestamp) +
-          " ago";
+        String notificationMessage = userWhoLiked +
+            " liked your picture - " +
+            getElapsedTime(timestamp) +
+            " ago";
 
         // Add the notification to the panel
         JPanel notificationPanel = new JPanel(new BorderLayout());
         notificationPanel.setBorder(
-          BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        );
+            BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         JLabel notificationLabel = new JLabel(notificationMessage);
         notificationPanel.add(notificationLabel, BorderLayout.CENTER);
@@ -91,33 +87,30 @@ public class NotificationsPanel extends BasePanel {
 
   private String getElapsedTime(String timestamp) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-      "yyyy-MM-dd HH:mm:ss"
-    );
+        "yyyy-MM-dd HH:mm:ss");
     LocalDateTime timeOfNotification = LocalDateTime.parse(
-      timestamp,
-      formatter
-    );
+        timestamp,
+        formatter);
     LocalDateTime currentTime = LocalDateTime.now();
 
     long daysBetween = ChronoUnit.DAYS.between(timeOfNotification, currentTime);
-    long minutesBetween =
-      ChronoUnit.MINUTES.between(timeOfNotification, currentTime) % 60;
+    long minutesBetween = ChronoUnit.MINUTES.between(timeOfNotification, currentTime) % 60;
 
     StringBuilder timeElapsed = new StringBuilder();
     if (daysBetween > 0) {
       timeElapsed
-        .append(daysBetween)
-        .append(" day")
-        .append(daysBetween > 1 ? "s" : "");
+          .append(daysBetween)
+          .append(" day")
+          .append(daysBetween > 1 ? "s" : "");
     }
     if (minutesBetween > 0) {
       if (daysBetween > 0) {
         timeElapsed.append(" and ");
       }
       timeElapsed
-        .append(minutesBetween)
-        .append(" minute")
-        .append(minutesBetween > 1 ? "s" : "");
+          .append(minutesBetween)
+          .append(" minute")
+          .append(minutesBetween > 1 ? "s" : "");
     }
     return timeElapsed.toString();
   }

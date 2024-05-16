@@ -28,8 +28,8 @@ public class PostUploadPanel extends BasePanel {
   private JButton saveButton;
 
   // singleton pattern
-  private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String uploaded = appPathsSingleton.UPLOADED;
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
+  private final String uploaded = appPaths.UPLOADED;
 
   public PostUploadPanel() {
     super(false, false, false);
