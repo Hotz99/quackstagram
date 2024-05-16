@@ -45,19 +45,15 @@ public class ProfilePanel extends BasePanel {
     this.headerPanel.setLayout(new BoxLayout(this.headerPanel, BoxLayout.Y_AXIS));
     this.headerPanel.setBackground(Color.GRAY);
 
-    JPanel topHeaderPanel = setTopHeaderPanel();
-    JPanel statsPanel = setStatsPanel();
-    JButton followButton = createFollowButton();
-
-    getStatsFollowPanel(this.headerPanel, topHeaderPanel, statsPanel, followButton);
-    getProfileBioName(this.headerPanel);
+    addFollowsPanel(this.headerPanel, createTopHeaderPanel(), createFollowsPanel(), createFollowButton());
+    addUsernameAndBioPanel(this.headerPanel);
   }
 
-  private void getProfileBioName(JPanel headerPanel) {
+  private void addUsernameAndBioPanel(JPanel headerPanel) {
     // Profile Name and Bio Panel
-    JPanel profileNameAndBioPanel = new JPanel();
-    profileNameAndBioPanel.setLayout(new BorderLayout());
-    profileNameAndBioPanel.setBackground(new Color(249, 249, 249));
+    JPanel usernameAndBioPanel = new JPanel();
+    usernameAndBioPanel.setLayout(new BorderLayout());
+    usernameAndBioPanel.setBackground(new Color(249, 249, 249));
 
     JLabel profileNameLabel = new JLabel(profileUser.getUsername());
     profileNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
@@ -69,16 +65,16 @@ public class ProfilePanel extends BasePanel {
     profileBio.setBackground(new Color(249, 249, 249));
     profileBio.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10)); // Padding on the sides
 
-    profileNameAndBioPanel.add(profileNameLabel, BorderLayout.NORTH);
-    profileNameAndBioPanel.add(profileBio, BorderLayout.CENTER);
+    usernameAndBioPanel.add(profileNameLabel, BorderLayout.NORTH);
+    usernameAndBioPanel.add(profileBio, BorderLayout.CENTER);
 
-    headerPanel.add(profileNameAndBioPanel);
+    headerPanel.add(usernameAndBioPanel);
 
     this.headerPanel = headerPanel;
     add(headerPanel, BorderLayout.NORTH);
   }
 
-  private void getStatsFollowPanel(
+  private void addFollowsPanel(
       JPanel headerPanel,
       JPanel topHeaderPanel,
       JPanel statsPanel,
@@ -130,7 +126,7 @@ public class ProfilePanel extends BasePanel {
     return followButton;
   }
 
-  private JPanel setStatsPanel() {
+  private JPanel createFollowsPanel() {
 
     // Stats Panel
     JPanel statsPanel = new JPanel();
@@ -152,12 +148,14 @@ public class ProfilePanel extends BasePanel {
     return statsPanel;
   }
 
-  private JPanel setTopHeaderPanel() {
+  private JPanel createTopHeaderPanel() {
     // Top Part of the Header (Profile Image, Stats, Follow Button)
     JPanel topHeaderPanel = new JPanel(new BorderLayout(10, 0));
     topHeaderPanel.setBackground(new Color(249, 249, 249));
 
     String imagePath = "resources/images/profile/" + profileUser.getProfileImagePath();
+
+    System.out.println("PFP: " + imagePath);
 
     // Profile image
     Image originalImage = new ImageIcon(imagePath).getImage();

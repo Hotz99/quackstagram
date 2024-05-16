@@ -33,15 +33,29 @@ public class LikeRepository {
         return instance;
     }
 
-    public void toggleLike(int userId, int postId) {
-        if (hasUserLikedPost(userId, postId)) {
-            removeLike(userId, postId);
+    public int getLikesCountByPostId(int postId) {
+        String query = "SELECT COUNT(*) FROM likes WHERE post_id = ?";
+        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+            statement.setInt(1, postId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void toggleLike(int postId, int userId) {
+        if (hasUserLikedPost(postId, userId)) {
+            removeLike(postId, userId);
         } else {
-            addLike(userId, postId);
+            addLike(postId, userId);
         }
     }
 
-    private boolean hasUserLikedPost(int userId, int postId) {
+    private boolean hasUserLikedPost(int postId, int userId) {
         String query = "SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ?";
         try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
 
@@ -60,7 +74,7 @@ public class LikeRepository {
         return false;
     }
 
-    private void removeLike(int userId, int postId) {
+    private void removeLike(int postId, int userId) {
         String query = "DELETE FROM likes WHERE user_id = ? AND post_id = ?";
         try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
             statement.setInt(1, userId);
@@ -71,7 +85,7 @@ public class LikeRepository {
         }
     }
 
-    private void addLike(int userId, int postId) {
+    private void addLike(int postId, int userId) {
         String query = "INSERT INTO likes (user_id, post_id, liked_date) VALUES (?, ?, ?)";
         try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
             statement.setInt(1, userId);

@@ -77,7 +77,7 @@ public class HomePanel extends BasePanel {
 		imageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		imageLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));
 		imageLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		ImageIcon imageIcon = loadImageIcon(imagePath);
+		ImageIcon imageIcon = getImageIcon(imagePath);
 		if (imageIcon != null) {
 			imageLabel.setIcon(imageIcon);
 		} else {
@@ -125,7 +125,7 @@ public class HomePanel extends BasePanel {
 			captionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			postPanel.add(captionLabel);
 
-			JLabel likesLabel = new JLabel(String.valueOf(latestPost.getLikesCount()));
+			JLabel likesLabel = new JLabel(String.valueOf(likeRepo.getLikesCountByPostId(latestPost.getPostId())));
 			likesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			postPanel.add(likesLabel);
 
@@ -156,7 +156,7 @@ public class HomePanel extends BasePanel {
 		panel.add(spacingPanel);
 	}
 
-	private ImageIcon loadImageIcon(String fileName) {
+	private ImageIcon getImageIcon(String fileName) {
 		try {
 			BufferedImage originalImage = ImageIO.read(new File(appPathsSingleton.UPLOADED + fileName));
 			Image scaledImage = originalImage.getScaledInstance(

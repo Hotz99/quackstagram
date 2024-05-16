@@ -23,6 +23,7 @@ public class PostImageViewer {
 
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
   private final UserManager userManager = UserManager.getInstance();
+  private final LikeRepository likeRepo = LikeRepository.getInstance();
 
   /**
    * Displays the image with the given image path.
@@ -71,12 +72,11 @@ public class PostImageViewer {
             if (e.getClickCount() == 2) {
               System.out.println("Liked image");
 
-              LikeRepository.getInstance().toggleLike(post.getPostId(),
+              likeRepo.toggleLike(post.getPostId(),
                   userManager.getCurrentUser().getUserId());
-              LikeRepository.getInstance().toggleLike(userManager.getCurrentUser().getUserId(),
-                  post.getPostId());
 
-              ((JLabel) bottomPanel.getComponent(1)).setText("Likes: " + post.getLikesCount());
+              ((JLabel) bottomPanel.getComponent(1))
+                  .setText("Likes: " + likeRepo.getLikesCountByPostId(post.getPostId()));
             }
           }
         });

@@ -145,7 +145,7 @@ public class UserRepository {
 
         try {
             User newUser = new User(0, new Date(), username, password,
-                    AppPathsSingleton.getInstance().DEFAULT_PROFILE_IMAGE, bio, 0, 0, 0);
+                    "default.jpg", bio, 0, 0, 0);
 
             String query = "INSERT INTO users (created_date, username, password, profile_image_path, bio, posts_count, followers_count, following_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
