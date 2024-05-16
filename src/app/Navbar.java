@@ -54,31 +54,26 @@ public class Navbar extends JPanel {
     switch (buttonType) {
       case "home":
         button.addActionListener(e -> {
-          System.out.println("Home panel clicked");
           App.showPanel("Home");
         });
         break;
       case "explore":
         button.addActionListener(e -> {
-          System.out.println("Explore panel clicked");
           App.showPanel("Explore");
         });
         break;
       case "add":
         button.addActionListener(e -> {
-          System.out.println("Image Upload panel clicked");
           App.showPanel("Image Upload");
         });
         break;
       case "notification":
         button.addActionListener(e -> {
-          System.out.println("Notifications panel clicked");
           App.showPanel("Notifications");
         });
         break;
       case "profile":
         button.addActionListener(e -> {
-          System.out.println("Profile panel clicked");
           App.showProfileByUsername(UserManager.getInstance().getCurrentUser().getUsername());
         });
         break;

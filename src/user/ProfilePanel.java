@@ -10,18 +10,23 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
+
+import utils.AppPathsSingleton;
 import utils.BasePanel;
 
 public class ProfilePanel extends BasePanel {
 
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
   private static final int GRID_IMAGE_SIZE = App.WIDTH / 3; // Static size for grid images
-  private JPanel contentPanel = new JPanel(); // Panel to display the image grid or the clicked image
-  private final UserManager userManager = UserManager.getInstance();
-  private JPanel headerPanel = new JPanel(); // Panel for the header
+  // displays the image grid or the clicked image
+  private JPanel contentPanel;
+  private JPanel headerPanel;
 
+  private final UserManager userManager = UserManager.getInstance();
   // user who's profile is being built here
   private User profileUser;
+
+  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
 
   public ProfilePanel(User user) {
     super(false, false, false);
@@ -30,30 +35,22 @@ public class ProfilePanel extends BasePanel {
 
     System.out.println("loading profile: " + user.getUsername());
 
-    initializeUI();
-  }
-
-  private void initializeUI() {
-    removeAll();
     createHeaderPanel();
-
     initializeImageGrid();
-
-    revalidate();
-    repaint();
   }
 
   private void createHeaderPanel() {
+    this.headerPanel = new JPanel();
 
-    headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-    headerPanel.setBackground(Color.GRAY);
+    this.headerPanel.setLayout(new BoxLayout(this.headerPanel, BoxLayout.Y_AXIS));
+    this.headerPanel.setBackground(Color.GRAY);
 
     JPanel topHeaderPanel = setTopHeaderPanel();
     JPanel statsPanel = setStatsPanel();
     JButton followButton = createFollowButton();
 
-    getStatsFollowPanel(headerPanel, topHeaderPanel, statsPanel, followButton);
-    getProfileBioName(headerPanel);
+    getStatsFollowPanel(this.headerPanel, topHeaderPanel, statsPanel, followButton);
+    getProfileBioName(this.headerPanel);
   }
 
   private void getProfileBioName(JPanel headerPanel) {
@@ -67,7 +64,6 @@ public class ProfilePanel extends BasePanel {
     profileNameLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10)); // Padding on the sides
 
     JTextArea profileBio = new JTextArea(profileUser.getBio());
-    System.out.println("This is the bio for " + profileUser.getUsername());
     profileBio.setEditable(false);
     profileBio.setFont(new Font("Arial", Font.PLAIN, 12));
     profileBio.setBackground(new Color(249, 249, 249));
@@ -135,15 +131,11 @@ public class ProfilePanel extends BasePanel {
   }
 
   private JPanel setStatsPanel() {
-    System.out.println("setStatsPanel()");
 
     // Stats Panel
     JPanel statsPanel = new JPanel();
     statsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
     statsPanel.setBackground(new Color(249, 249, 249));
-    System.out.println(
-        "Number of posts for this user" +
-            profileUser.getPostsCount());
     statsPanel.add(
         createStatLabel(
             Integer.toString(profileUser.getPostsCount()),
@@ -167,8 +159,6 @@ public class ProfilePanel extends BasePanel {
 
     String imagePath = "resources/images/profile/" + profileUser.getProfileImagePath();
 
-    System.out.println("Profile image path: " + imagePath);
-
     // Profile image
     Image originalImage = new ImageIcon(imagePath).getImage();
 
@@ -189,15 +179,10 @@ public class ProfilePanel extends BasePanel {
     return topHeaderPanel;
   }
 
-  private void setupContentPanel() {
-    contentPanel.removeAll();
-    contentPanel.setLayout(new GridLayout(0, 3, 5, 5));
-  }
-
   private void loadAndDisplayImages() {
     for (Post post : PostRepository.getInstance().getAllByUserId(profileUser.getUserId())) {
-      addImageToPanel(post.getImagePath());
-      System.out.println("loaded post with image " + post.getImagePath());
+      addImageToPanel(appPaths.UPLOADED + post.getImagePath());
+      System.out.println("displayed post with image " + post.getImagePath());
     }
   }
 
@@ -214,11 +199,11 @@ public class ProfilePanel extends BasePanel {
             displayImage(imageIcon);
           }
         });
-    contentPanel.add(imageLabel);
+    this.contentPanel.add(imageLabel);
   }
 
   private JScrollPane createScrollPane() {
-    JScrollPane scrollPane = new JScrollPane(contentPanel);
+    JScrollPane scrollPane = new JScrollPane(this.contentPanel);
     scrollPane.setHorizontalScrollBarPolicy(
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     scrollPane.setVerticalScrollBarPolicy(
@@ -227,12 +212,14 @@ public class ProfilePanel extends BasePanel {
   }
 
   private void initializeImageGrid() {
-    setupContentPanel();
+    this.contentPanel = new JPanel();
+    this.contentPanel.setLayout(new GridLayout(0, 3, 5, 5));
     loadAndDisplayImages();
     JScrollPane scrollPane = createScrollPane();
     add(scrollPane, BorderLayout.CENTER);
-    revalidate();
+
     repaint();
+    revalidate();
   }
 
   private void displayImage(ImageIcon imageIcon) {
@@ -245,13 +232,13 @@ public class ProfilePanel extends BasePanel {
 
     JButton backButton = new JButton("Back");
     backButton.addActionListener(e -> {
-      removeAll();
-      initializeUI();
+      this.contentPanel.removeAll();
+      initializeImageGrid();
     });
     contentPanel.add(backButton, BorderLayout.SOUTH);
 
-    revalidate();
     repaint();
+    revalidate();
   }
 
   private JLabel createStatLabel(String number, String text) {

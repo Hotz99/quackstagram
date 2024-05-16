@@ -10,17 +10,20 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-import auth.UserManager;
+import database.users.UserRepository;
 
 public class PostRepository {
     public static void main(String[] args) {
         PostRepository postRepo = new PostRepository();
 
-        System.out.println(postRepo.getByFileName("3_11.png"));
+        // System.out.println(postRepo.getByFileName("3_11.png"));
 
-        // for (Post post : postRepo.getAllByUserId(9)) {
-        // System.out.println(post);
-        // }
+        System.out.println(postRepo.getAllByUserId(1).size());
+
+        // postRepo.savePost(UserRepository.getInstance().getById(1), "testubg", "jpg");
+        // postRepo.deletePost(1, "19_1.jpg");
+
+        System.out.println(postRepo.getAllByUserId(1).size());
     }
 
     private static PostRepository instance;
@@ -59,7 +62,7 @@ public class PostRepository {
 
             if (rowsAffected > 0) {
                 // very inefficient to have another query but more correct perchance
-                return lastPostByUserId(userId);
+                return getLatestPostByUserId(userId);
             }
 
         } catch (SQLException e) {
@@ -68,7 +71,22 @@ public class PostRepository {
         return null;
     }
 
-    private Post lastPostByUserId(int userId) {
+    public boolean deletePost(int userId, String fileName) {
+        try {
+            String query = "DELETE FROM posts WHERE user_id = ? AND image_path = ?";
+            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            statement.setInt(1, userId);
+            statement.setString(2, fileName);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public Post getLatestPostByUserId(int userId) {
         try {
             String query = "SELECT * FROM posts WHERE user_id = ? ORDER BY posted_date DESC LIMIT 1";
             PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);

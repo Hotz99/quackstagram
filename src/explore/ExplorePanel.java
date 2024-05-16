@@ -9,24 +9,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import user.ProfilePanel;
-import user.User;
 import utils.*;
 
 /**
@@ -42,7 +28,6 @@ public class ExplorePanel extends BasePanel {
 
   // singleton pattern
   private final AppPathsSingleton appPathsSingleton = AppPathsSingleton.getInstance();
-  private final String uploaded = appPathsSingleton.UPLOADED;
   private static ExplorePanel instance = null;
   private SearchResult searchResult; // Instance variable for SearchResult
 
@@ -186,7 +171,7 @@ public class ExplorePanel extends BasePanel {
    */
   private JPanel createImageGridPanel() {
     JPanel imageGridPanel = new JPanel(new GridLayout(0, 3, 2, 2)); // 3 columns, auto rows
-    File imageDir = new File(uploaded);
+    File imageDir = new File(appPathsSingleton.UPLOADED);
 
     if (imageDir.exists() && imageDir.isDirectory()) {
       File[] imageFiles = imageDir.listFiles((dir, name) -> name.matches(".*\\.(png|jpg|jpeg)"));

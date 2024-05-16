@@ -4,22 +4,28 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FollowRepository {
     public static void main(String[] args) {
-        FollowRepository FollowRepository = new FollowRepository();
+        FollowRepository followRepo = new FollowRepository();
 
-        int userId = 1;
-        int otherUserId = 2;
+        for (int id : followRepo.getFollowedByUserId(1)) {
+            System.out.println("userId: " + id);
+        }
 
-        System.out.println(FollowRepository.doesUserFollowOtherUser(userId, otherUserId));
+        // int userId = 1;
+        // int otherUserId = 2;
 
-        FollowRepository.toggleFollow(userId, otherUserId);
+        // System.out.println(followRepo.doesUserFollowOtherUser(userId, otherUserId));
 
-        System.out.println(FollowRepository.doesUserFollowOtherUser(userId,
-                otherUserId));
+        // followRepo.toggleFollow(userId, otherUserId);
 
-        FollowRepository.toggleFollow(userId, otherUserId);
+        // System.out.println(followRepo.doesUserFollowOtherUser(userId,
+        // otherUserId));
+
+        // followRepo.toggleFollow(userId, otherUserId);
     }
 
     private static FollowRepository instance;
@@ -33,6 +39,23 @@ public class FollowRepository {
         }
 
         return instance;
+    }
+
+    public List<Integer> getFollowedByUserId(int userId) {
+        String query = "SELECT followed_id FROM follows WHERE follower_id = ?";
+        List<Integer> followedIds = new ArrayList<>();
+
+        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                followedIds.add(resultSet.getInt("followed_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return followedIds;
     }
 
     public void toggleFollow(int userId, int otherUserId) {

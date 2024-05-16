@@ -1,0 +1,3 @@
+- fix image liking
+- replace singleton.getInstance() calls into single class field
+- fix displaying posts in profile
