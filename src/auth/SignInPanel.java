@@ -1,6 +1,7 @@
 package auth;
 
 import app.App;
+import database.models.User;
 import explore.ExplorePanel;
 import home.HomePanel;
 import notifications.NotificationsPanel;
@@ -17,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import javax.swing.*;
 import user.ProfilePanel;
-import user.User;
 import utils.BasePanel;
 import utils.HeaderFactory;
 

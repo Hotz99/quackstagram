@@ -1,4 +1,4 @@
-package database.users;
+package database.repositories;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import auth.UserManager;
 import database.DatabaseHandler;
-import user.User;
+import database.models.User;
 import utils.AppPathsSingleton;
 
 public class UserRepository {

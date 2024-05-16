@@ -2,10 +2,10 @@ package home;
 
 import app.App;
 import auth.UserManager;
-import database.FollowRepository;
-import database.LikeRepository;
-import database.PostRepository;
-import post.Post;
+import database.models.Post;
+import database.repositories.FollowRepository;
+import database.repositories.LikeRepository;
+import database.repositories.PostRepository;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

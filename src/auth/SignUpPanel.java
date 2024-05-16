@@ -1,7 +1,7 @@
 package auth;
 
 import app.App;
-import database.users.UserRepository;
+import database.repositories.UserRepository;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

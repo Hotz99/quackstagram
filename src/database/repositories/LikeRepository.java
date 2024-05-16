@@ -1,9 +1,11 @@
-package database;
+package database.repositories;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import database.DatabaseHandler;
 
 public class LikeRepository {
     public static void main(String[] args) {

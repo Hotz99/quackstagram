@@ -2,9 +2,11 @@ package post;
 
 import app.App;
 import auth.UserManager;
-import database.LikeRepository;
-import database.PostRepository;
-import database.users.UserRepository;
+import database.models.Post;
+import database.models.User;
+import database.repositories.LikeRepository;
+import database.repositories.PostRepository;
+import database.repositories.UserRepository;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -14,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import user.User;
+
 import utils.*;
 
 public class PostImageViewer {

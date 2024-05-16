@@ -13,15 +13,20 @@ public class AppPathsSingleton {
     public final String NOTIFICATIONS;
     public final String IMAGES;
     public final String UPLOADED;
-    public final String LOGOS;
     public final String DACS_LOGO;
     public final String IMAGE_DETAILS;
     public final String PROFILE_IMAGES;
     public final String ICONS;
     public final String DEFAULT_PROFILE_IMAGE;
-    public final String[] SEARCH_PATHS;
     public final String[] ICON_PATHS;
     public final String[] BUTTON_TYPES;
+
+    public static AppPathsSingleton getInstance() {
+        if (instance == null) {
+            instance = new AppPathsSingleton();
+        }
+        return instance;
+    }
 
     private AppPathsSingleton() {
         DATA = "resources/data/";
@@ -33,16 +38,10 @@ public class AppPathsSingleton {
         NOTIFICATIONS = "resources/data/notifications.txt";
         IMAGES = "resources/images/";
         UPLOADED = "resources/images/uploaded/";
-        LOGOS = "resources/images/logos/";
-        DACS_LOGO = "resources/images/logos/DACS.png";
         IMAGE_DETAILS = "resources/images/image_details.txt";
         PROFILE_IMAGES = "resources/images/profile/";
-        ICONS = "resources/images/icons/";
         DEFAULT_PROFILE_IMAGE = "resources/images/profile/default.jpg";
-        SEARCH_PATHS = new String[] {
-                "resources/data/users.txt",
-                "resources/images/image_details.txt",
-        };
+        ICONS = "resources/images/icons/";
         ICON_PATHS = new String[] {
                 "resources/images/icons/home.png",
                 "resources/images/icons/search.png",
@@ -50,6 +49,7 @@ public class AppPathsSingleton {
                 "resources/images/icons/heart.png",
                 "resources/images/icons/profile.png"
         };
+        DACS_LOGO = "resources/images/icons/DACS.png";
         BUTTON_TYPES = new String[] {
                 "home",
                 "explore",
@@ -58,12 +58,4 @@ public class AppPathsSingleton {
                 "profile",
         };
     }
-
-    public static AppPathsSingleton getInstance() {
-        if (instance == null) {
-            instance = new AppPathsSingleton();
-        }
-        return instance;
-    }
-
 }

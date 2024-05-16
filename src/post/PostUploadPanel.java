@@ -2,8 +2,9 @@ package post;
 
 import app.App;
 import auth.UserManager;
-import database.PostRepository;
-import user.User;
+import database.models.Post;
+import database.models.User;
+import database.repositories.PostRepository;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

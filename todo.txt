@@ -1,1 +1,0 @@
-- replace singleton.getInstance() calls into single class field

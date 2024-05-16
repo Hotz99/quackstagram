@@ -2,7 +2,7 @@ package explore;
 
 import java.util.*;
 
-import database.users.UserRepository;
+import database.repositories.UserRepository;
 
 public abstract class Search {
   private static final List<SearchObserver> observers = new ArrayList<>();

@@ -1,4 +1,4 @@
-package database;
+package database.repositories;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import database.DatabaseHandler;
 
 public class FollowRepository {
     public static void main(String[] args) {

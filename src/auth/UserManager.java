@@ -1,7 +1,8 @@
 package auth;
 
 import app.App;
-import database.users.UserRepository;
+import database.models.User;
+import database.repositories.UserRepository;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -14,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.imageio.ImageIO;
-import user.User;
+
 import utils.AppPathsSingleton;
 
 public class UserManager {

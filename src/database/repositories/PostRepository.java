@@ -1,7 +1,4 @@
-package database;
-
-import post.Post;
-import user.User;
+package database.repositories;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,7 +7,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-import database.users.UserRepository;
+import database.DatabaseHandler;
+import database.models.Post;
+import database.models.User;
 
 public class PostRepository {
     public static void main(String[] args) {

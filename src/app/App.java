@@ -3,7 +3,7 @@ package app;
 import auth.SignInPanel;
 import auth.SignUpPanel;
 import auth.UserManager;
-import database.users.UserRepository;
+import database.repositories.UserRepository;
 import explore.ExplorePanel;
 import home.HomePanel;
 
