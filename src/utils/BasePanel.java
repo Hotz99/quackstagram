@@ -63,7 +63,6 @@ public class BasePanel extends JPanel {
   }
 
   protected void refresh() {
-    System.out.println(this.getClass().getName() + " refresh called");
     this.repaint();
     this.revalidate();
   }

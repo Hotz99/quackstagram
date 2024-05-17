@@ -157,8 +157,6 @@ public class ProfilePanel extends BasePanel {
 
     String imagePath = "resources/images/profile/" + profileUser.getProfileImagePath();
 
-    System.out.println("PFP: " + imagePath);
-
     // Profile image
     Image originalImage = new ImageIcon(imagePath).getImage();
 
@@ -182,7 +180,6 @@ public class ProfilePanel extends BasePanel {
   private void loadAndDisplayImages() {
     for (Post post : postRepo.getAllByUserId(profileUser.getUserId())) {
       addImageToPanel(appPaths.UPLOADED + post.getImagePath());
-      System.out.println("displayed post with image " + post.getImagePath());
     }
   }
 
@@ -218,8 +215,6 @@ public class ProfilePanel extends BasePanel {
     loadAndDisplayImages();
     JScrollPane scrollPane = createScrollPane();
     add(scrollPane, BorderLayout.CENTER);
-
-    // refresh();
   }
 
   private JLabel createStatLabel(String number, String text) {

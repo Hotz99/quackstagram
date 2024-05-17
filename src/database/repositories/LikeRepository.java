@@ -1,5 +1,6 @@
 package database.repositories;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,6 +24,8 @@ public class LikeRepository {
         // likeRepository.toggleLike(userId, postId);
     }
 
+    private static Connection db;
+
     private static LikeRepository instance;
 
     private LikeRepository() {
@@ -31,8 +34,24 @@ public class LikeRepository {
     public static LikeRepository getInstance() {
         if (instance == null) {
             instance = new LikeRepository();
+            db = DatabaseHandler.getConnection();
         }
         return instance;
+    }
+
+    public int getLikesCountByPostId(int postId) {
+        String query = "SELECT COUNT(*) FROM likes WHERE post_id = ?";
+        try (PreparedStatement statement = db.prepareStatement(query)) {
+            statement.setInt(1, postId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public boolean toggleLike(int postId, int userId) {
@@ -48,7 +67,7 @@ public class LikeRepository {
 
     private boolean hasUserLikedPost(int postId, int userId) {
         String query = "SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ?";
-        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = db.prepareStatement(query)) {
 
             statement.setInt(1, userId);
             statement.setInt(2, postId);
@@ -67,7 +86,7 @@ public class LikeRepository {
 
     private void removeLike(int postId, int userId) {
         String query = "DELETE FROM likes WHERE user_id = ? AND post_id = ?";
-        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, userId);
             statement.setInt(2, postId);
             statement.executeUpdate();
@@ -82,7 +101,7 @@ public class LikeRepository {
     private void addLike(int postId, int userId) {
 
         String query = "INSERT INTO likes (user_id, post_id, liked_date) VALUES (?, ?, ?)";
-        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, userId);
             statement.setInt(2, postId);
             statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));

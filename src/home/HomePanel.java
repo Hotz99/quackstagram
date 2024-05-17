@@ -38,6 +38,9 @@ public class HomePanel extends BasePanel {
 
 		add(HeaderFactory.createHeader("Quackstagram Home"), BorderLayout.NORTH);
 
+		contentPanel = new JPanel();
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
 		populateContentPanel();
 
 		JScrollPane scrollPane = new JScrollPane(contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -49,7 +52,6 @@ public class HomePanel extends BasePanel {
 			@Override
 			public void componentShown(ComponentEvent e) {
 				populateContentPanel();
-				refresh();
 			}
 		});
 	}
@@ -87,16 +89,18 @@ public class HomePanel extends BasePanel {
 		likeButton.addActionListener(e -> {
 			Post post = postRepo.getByPostId(postId);
 
-			System.out.println(post);
-
 			if (likeRepo.toggleLike(postId, userManager.getCurrentUser().getUserId())) {
+
+				likesLabel.setText(String.valueOf(post.getLikesCount() + 1));
+
 				notificationRepo.saveNotification(
 						new Notification(new Date(),
 								post.getUserId(),
 								userManager.getCurrentUser().getUsername() + " liked your post"));
-			}
+			} else {
+				likesLabel.setText(String.valueOf(Math.max(0, post.getLikesCount() - 1)));
 
-			likesLabel.setText(String.valueOf(post.getLikesCount()));
+			}
 
 			postPanel.revalidate();
 			postPanel.repaint();
@@ -105,10 +109,10 @@ public class HomePanel extends BasePanel {
 	}
 
 	private void populateContentPanel() {
-		this.contentPanel = new JPanel();
-		this.contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+		contentPanel.removeAll();
 
 		for (int followedUserId : followRepo.getFollowedByUserId(userManager.getCurrentUser().getUserId())) {
+
 			Post latestPost = postRepo.getLatestPostByUserId(followedUserId);
 
 			if (latestPost == null) {
@@ -139,14 +143,17 @@ public class HomePanel extends BasePanel {
 					postPanel);
 			postPanel.add(likeButton);
 
-			this.contentPanel.add(postPanel);
+			contentPanel.add(postPanel);
 
 			imageLabel.addMouseListener(
 					new MouseAdapter() {
 						@Override
 						public void mouseClicked(MouseEvent e) {
-							App.getImageViewer().displayImage(" Quackstagram Home ", latestPost.getImagePath(),
+							App.getImageViewer().displayImage(" Quackstagram Home ",
+									latestPost.getImagePath(),
 									PostImageViewer.ImageType.HOME);
+
+							System.out.println(likesLabel.getText());
 						}
 					});
 
@@ -154,8 +161,11 @@ public class HomePanel extends BasePanel {
 			spacingPanel.setPreferredSize(new Dimension(App.getAppWidth() - 10, 5));
 			spacingPanel.setBackground(new Color(230, 230, 230));
 
-			this.contentPanel.add(spacingPanel);
+			contentPanel.add(spacingPanel);
 		}
+
+		contentPanel.revalidate();
+		contentPanel.repaint();
 	}
 
 	private ImageIcon getImageIcon(String fileName) {

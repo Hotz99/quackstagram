@@ -32,20 +32,17 @@ public class UserRepository {
         // }
     }
 
+    private static Connection db;
+
     private static UserRepository instance;
 
     public static UserRepository getInstance() {
         if (instance == null) {
-            instance = new UserRepository(DatabaseHandler.getConnection());
+            instance = new UserRepository();
+            db = DatabaseHandler.getConnection();
         }
 
         return instance;
-    }
-
-    private Connection connection;
-
-    private UserRepository(Connection connection) {
-        this.connection = connection;
     }
 
     public User create(String username, String password, String bio) {
@@ -59,7 +56,7 @@ public class UserRepository {
                     "default.jpg", bio, 0, 0, 0);
 
             String query = "INSERT INTO users (created_date, username, password, profile_image_path, bio, posts_count, followers_count, following_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setTimestamp(1, new Timestamp(newUser.getCreatedDate().getTime()));
             statement.setString(2, newUser.getUsername());
             statement.setString(3, newUser.getPassword());
@@ -83,7 +80,7 @@ public class UserRepository {
 
         try {
             String query = "SELECT * FROM users WHERE username LIKE ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setString(1, "%" + username + "%");
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -100,7 +97,7 @@ public class UserRepository {
     public User getByUserId(int userId) {
         try {
             String query = "SELECT * FROM users WHERE user_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
 
@@ -117,7 +114,7 @@ public class UserRepository {
     public User getByUsername(String username) {
         try {
             String query = "SELECT * FROM users WHERE username = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
 
@@ -135,7 +132,7 @@ public class UserRepository {
         List<User> users = new ArrayList<>();
         try {
             String query = "SELECT * FROM users";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 users.add(extractUserFromResultSet(resultSet));
@@ -153,7 +150,7 @@ public class UserRepository {
     public void delete(int userId) {
         try {
             String query = "DELETE FROM users WHERE user_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setInt(1, userId);
             statement.executeUpdate();
         } catch (SQLException e) {

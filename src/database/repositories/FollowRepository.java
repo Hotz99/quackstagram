@@ -1,5 +1,6 @@
 package database.repositories;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,6 +31,8 @@ public class FollowRepository {
         // followRepo.toggleFollow(userId, otherUserId);
     }
 
+    private static Connection db;
+
     private static FollowRepository instance;
 
     private FollowRepository() {
@@ -38,6 +41,7 @@ public class FollowRepository {
     public static FollowRepository getInstance() {
         if (instance == null) {
             instance = new FollowRepository();
+            db = DatabaseHandler.getConnection();
         }
 
         return instance;
@@ -47,7 +51,7 @@ public class FollowRepository {
         String query = "SELECT followed_id FROM follows WHERE follower_id = ?";
         List<Integer> followedIds = new ArrayList<>();
 
-        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -72,7 +76,7 @@ public class FollowRepository {
 
     public boolean doesUserFollowOtherUser(int userId, int otherUserId) {
         String query = "SELECT COUNT(*) FROM follows WHERE follower_id = ? AND followed_id = ?";
-        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = db.prepareStatement(query)) {
 
             statement.setInt(1, userId);
             statement.setInt(2, otherUserId);
@@ -91,7 +95,7 @@ public class FollowRepository {
 
     private void removeFollow(int followerId, int followedId) {
         String query = "DELETE FROM follows WHERE follower_id = ? AND followed_id = ?";
-        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, followerId);
             statement.setInt(2, followedId);
             statement.executeUpdate();
@@ -102,7 +106,7 @@ public class FollowRepository {
 
     private void addFollow(int followerId, int followedId) {
         String query = "INSERT INTO follows (follower_id, followed_id, followed_date) VALUES (?, ?, ?)";
-        try (PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, followerId);
             statement.setInt(2, followedId);
             statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));

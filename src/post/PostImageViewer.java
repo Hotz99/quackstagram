@@ -50,7 +50,6 @@ public class PostImageViewer {
 
     // fileName = [postIdx]_[user_id].[file_extension] is a unique identifier
     Post post = PostRepository.getInstance().getByFileName(fileName);
-    System.out.println("fetched post");
     User postUser = UserRepository.getInstance().getByUserId(post.getUserId());
 
     JPanel imageViewPanel = App.getImageViewPanel();
@@ -94,7 +93,7 @@ public class PostImageViewer {
               }
 
               ((JLabel) bottomPanel.getComponent(1))
-                  .setText("Likes: " + post.getLikesCount());
+                  .setText("Likes: " + likeRepo.getLikesCountByPostId(post.getPostId()));
 
               imageViewPanel.revalidate();
               imageViewPanel.repaint();
@@ -153,18 +152,18 @@ public class PostImageViewer {
   }
 
   /**
-   * Creates a JPanel with a bio text area and a likes label.
+   * Creates a JPanel with a caption text area and a likes label.
    *
-   * @param bio   the bio text to display in the text area
-   * @param likes the number of likes to display in the likes label
+   * @param caption the caption text to display in the text area
+   * @param likes   the number of likes to display in the likes label
    * @return the created JPanel
    */
-  private JPanel createBottomPanel(String bio, int likes) {
+  private JPanel createBottomPanel(String caption, int likes) {
     JPanel bottomPanel = new JPanel(new BorderLayout());
-    JTextArea bioTextArea = new JTextArea(bio);
-    bioTextArea.setEditable(false);
+    JTextArea captionTextArea = new JTextArea(caption);
+    captionTextArea.setEditable(false);
     JLabel likesLabel = new JLabel("Likes: " + likes);
-    bottomPanel.add(bioTextArea, BorderLayout.CENTER);
+    bottomPanel.add(captionTextArea, BorderLayout.CENTER);
     bottomPanel.add(likesLabel, BorderLayout.SOUTH);
 
     return bottomPanel;

@@ -1,5 +1,6 @@
 package database.repositories;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +26,8 @@ public class PostRepository {
         System.out.println(postRepo.getAllByUserId(1).size());
     }
 
+    private static Connection db;
+
     private static PostRepository instance;
 
     private PostRepository() {
@@ -33,6 +36,7 @@ public class PostRepository {
     public static PostRepository getInstance() {
         if (instance == null) {
             instance = new PostRepository();
+            db = DatabaseHandler.getConnection();
         }
 
         return instance;
@@ -43,7 +47,7 @@ public class PostRepository {
             int userId = user.getUserId();
             int postId = getPostsCountByUserId(user.getUserId()) + 1;
             String query = "INSERT INTO posts (posted_date, user_id, caption, image_path, likes_count, comments_count) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             statement.setInt(2, userId);
             statement.setString(3, caption);
@@ -68,7 +72,7 @@ public class PostRepository {
     private int getPostsCountByUserId(int userId) {
         try {
             String query = "SELECT COUNT(*) FROM posts WHERE user_id = ?";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -83,7 +87,7 @@ public class PostRepository {
     public boolean deletePost(int userId, String fileName) {
         try {
             String query = "DELETE FROM posts WHERE user_id = ? AND image_path = ?";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setInt(1, userId);
             statement.setString(2, fileName);
             int rowsAffected = statement.executeUpdate();
@@ -98,7 +102,7 @@ public class PostRepository {
     public Post getLatestPostByUserId(int userId) {
         try {
             String query = "SELECT * FROM posts WHERE user_id = ? ORDER BY posted_date DESC LIMIT 1";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
 
@@ -115,7 +119,7 @@ public class PostRepository {
     public Post getByFileName(String fileName) {
         try {
             String query = "SELECT * FROM posts WHERE image_path = ?";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setString(1, fileName);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -148,7 +152,7 @@ public class PostRepository {
     public Post getByPostId(int postId) {
         try {
             String query = "SELECT * FROM posts WHERE post_id = ?";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setInt(1, postId);
             ResultSet resultSet = statement.executeQuery();
 
@@ -166,7 +170,7 @@ public class PostRepository {
         ArrayList<Post> posts = new ArrayList<>();
         try {
             String query = "SELECT * FROM posts WHERE user_id = ?";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -182,7 +186,7 @@ public class PostRepository {
         ArrayList<Post> posts = new ArrayList<>();
         try {
             String query = "SELECT * FROM posts";
-            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            PreparedStatement statement = db.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 posts.add(postFromResultSet(resultSet));
