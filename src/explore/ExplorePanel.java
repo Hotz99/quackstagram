@@ -24,16 +24,14 @@ import utils.*;
  */
 public class ExplorePanel extends BasePanel {
 
-  private final int IMAGE_SIZE = App.WIDTH / 3; // Size for each image in the grid
+  private final int IMAGE_SIZE = App.getAppWidth() / 3; // Size for each image in the grid
 
-  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
   private SearchResult searchResult; // Instance variable for SearchResult
 
   private static ExplorePanel instance;
 
   public static ExplorePanel getInstance() {
     if (instance == null) {
-      System.out.println("ITS NULL");
       instance = new ExplorePanel();
     }
     return instance;
@@ -55,9 +53,6 @@ public class ExplorePanel extends BasePanel {
     // Add panels to the frame
     add(headerPanel, BorderLayout.NORTH);
     add(mainContentPanel, BorderLayout.CENTER);
-
-    revalidate();
-    repaint();
   }
 
   public void overlayComponent(Component component) {
@@ -98,18 +93,13 @@ public class ExplorePanel extends BasePanel {
    * @return The main content panel.
    */
   private JPanel createMainContentPanel() {
-    JPanel searchPanel = createSearchPanel();
-    JPanel imageGridPanel = createImageGridPanel();
-    JScrollPane scrollPane = new JScrollPane(imageGridPanel);
-    scrollPane.setHorizontalScrollBarPolicy(
+    JScrollPane scrollPane = new JScrollPane(createImageGridPanel(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.setVerticalScrollBarPolicy(
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
     JPanel mainContentPanel = new JPanel();
     mainContentPanel.setLayout(
         new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
-    mainContentPanel.add(searchPanel);
+    mainContentPanel.add(createSearchPanel());
     mainContentPanel.add(scrollPane); // This will stretch to take up remaining space
     return mainContentPanel;
   }
@@ -188,9 +178,10 @@ public class ExplorePanel extends BasePanel {
                 public void mouseClicked(MouseEvent e) {
                   System.out.println(imageFile.getPath());
 
-                  App.imageViewer.displayImage(
+                  App.getImageViewer().displayImage(
                       " Explore 🐥 ",
-                      imageFile.getPath());
+                      imageFile.getPath(),
+                      PostImageViewer.ImageType.EXPLORE);
                 }
               });
           imageGridPanel.add(imageLabel);

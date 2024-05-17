@@ -2,9 +2,11 @@ package post;
 
 import app.App;
 import auth.UserManager;
+import database.models.Notification;
 import database.models.Post;
 import database.models.User;
 import database.repositories.LikeRepository;
+import database.repositories.NotificationRepository;
 import database.repositories.PostRepository;
 import database.repositories.UserRepository;
 
@@ -14,26 +16,33 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import utils.*;
 
 public class PostImageViewer {
-
-  private boolean goHome = false;
-
   private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
   private final UserManager userManager = UserManager.getInstance();
   private final LikeRepository likeRepo = LikeRepository.getInstance();
+  private final NotificationRepository notificationRepo = NotificationRepository.getInstance();
+  private ImageType imageType;
+
+  public enum ImageType {
+    HOME,
+    EXPLORE,
+    PROFILE
+  }
 
   /**
    * Displays the image with the given image path.
    *
    * @param imagePath the path of the image to be displayed
    */
-  public void displayImage(String headerLabel, String imagePath) {
-    goHome = headerLabel.toLowerCase().contains("home");
+  public void displayImage(String headerLabel, String imagePath, ImageType imageType) {
+    this.imageType = imageType;
 
     // imagePath has format
     // "resources/images/uploaded/[postIdx]_[user_id].[file_extension]"
@@ -41,11 +50,14 @@ public class PostImageViewer {
 
     // fileName = [postIdx]_[user_id].[file_extension] is a unique identifier
     Post post = PostRepository.getInstance().getByFileName(fileName);
-    User postUser = UserRepository.getInstance().getById(post.getUserId());
+    System.out.println("fetched post");
+    User postUser = UserRepository.getInstance().getByUserId(post.getUserId());
 
-    App.imageView.removeAll();
-    App.imageView.setLayout(new BorderLayout());
-    App.imageView.add(
+    JPanel imageViewPanel = App.getImageViewPanel();
+
+    imageViewPanel.removeAll();
+    imageViewPanel.setLayout(new BorderLayout());
+    imageViewPanel.add(
         HeaderFactory.createHeader(headerLabel),
         BorderLayout.NORTH);
 
@@ -63,8 +75,8 @@ public class PostImageViewer {
     containerPanel.add(imageLabel, BorderLayout.CENTER);
     containerPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-    App.imageView.add(containerPanel, BorderLayout.CENTER);
-    App.imageView.add(createBackButtonPanel(), BorderLayout.SOUTH);
+    imageViewPanel.add(containerPanel, BorderLayout.CENTER);
+    imageViewPanel.add(createBackButtonPanel(), BorderLayout.SOUTH);
 
     // make the image likeable
     imageLabel.addMouseListener(
@@ -72,19 +84,26 @@ public class PostImageViewer {
           @Override
           public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
-              System.out.println("Liked image");
 
-              likeRepo.toggleLike(post.getPostId(),
-                  userManager.getCurrentUser().getUserId());
+              if (likeRepo.toggleLike(post.getPostId(),
+                  userManager.getCurrentUser().getUserId())) {
+                notificationRepo.saveNotification(
+                    new Notification(new Date(),
+                        postUser.getUserId(),
+                        userManager.getCurrentUser().getUsername() + " liked your post"));
+              }
 
               ((JLabel) bottomPanel.getComponent(1))
-                  .setText("Likes: " + likeRepo.getLikesCountByPostId(post.getPostId()));
+                  .setText("Likes: " + post.getLikesCount());
+
+              imageViewPanel.revalidate();
+              imageViewPanel.repaint();
             }
           }
         });
 
-    App.imageView.revalidate();
-    App.imageView.repaint();
+    imageViewPanel.revalidate();
+    imageViewPanel.repaint();
 
     app.App.showPanel("Image View");
   }
@@ -160,13 +179,15 @@ public class PostImageViewer {
     JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     JButton backButton = new JButton("Back");
     backButton.setPreferredSize(
-        new Dimension(App.WIDTH - 20, backButton.getPreferredSize().height));
+        new Dimension(App.getAppWidth() - 20, backButton.getPreferredSize().height));
     backButtonPanel.add(backButton);
 
-    if (goHome) {
+    if (imageType == ImageType.HOME) {
       backButton.addActionListener(e -> App.showPanel("Home"));
-    } else {
+    } else if (imageType == ImageType.EXPLORE) {
       backButton.addActionListener(e -> App.showPanel("Explore"));
+    } else if (imageType == ImageType.PROFILE) {
+      backButton.addActionListener(e -> App.showPanel("UserProfile"));
     }
 
     return backButtonPanel;

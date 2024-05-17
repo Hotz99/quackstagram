@@ -1,27 +1,23 @@
 package user;
 
 import app.App;
-import auth.UserManager;
+import database.models.Notification;
 import database.models.Post;
 import database.models.User;
-import database.repositories.FollowRepository;
-import database.repositories.PostRepository;
+import post.PostImageViewer.ImageType;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Date;
+
 import javax.swing.*;
 
-import utils.AppPathsSingleton;
 import utils.BasePanel;
 
 public class ProfilePanel extends BasePanel {
-  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
-  private final UserManager userManager = UserManager.getInstance();
-  private final FollowRepository followRepo = FollowRepository.getInstance();
-
   private static final int PROFILE_IMAGE_SIZE = 80; // Adjusted size for the profile image to match UI
-  private static final int GRID_IMAGE_SIZE = App.WIDTH / 3; // Static size for grid images
+  private static final int GRID_IMAGE_SIZE = App.getAppWidth() / 3; // Static size for grid images
   // displays the image grid or the clicked image
   private JPanel contentPanel;
   private JPanel headerPanel;
@@ -107,7 +103,12 @@ public class ProfilePanel extends BasePanel {
       }
 
       followButton.addActionListener(e -> {
-        followRepo.toggleFollow(userManager.getCurrentUser().getUserId(), profileUser.getUserId());
+        if (followRepo.toggleFollow(userManager.getCurrentUser().getUserId(), profileUser.getUserId())) {
+          notificationRepo.saveNotification(
+              new Notification(new Date(),
+                  profileUser.getUserId(),
+                  userManager.getCurrentUser().getUsername() + " followed you"));
+        }
 
         // refresh
         App.showProfileByUsername(profileUser.getUsername());
@@ -135,15 +136,15 @@ public class ProfilePanel extends BasePanel {
     statsPanel.setBackground(new Color(249, 249, 249));
     statsPanel.add(
         createStatLabel(
-            Integer.toString(profileUser.getPostsCount()),
+            String.valueOf(profileUser.getPostsCount()),
             "Posts"));
     statsPanel.add(
         createStatLabel(
-            Integer.toString(profileUser.getFollowersCount()),
+            String.valueOf(profileUser.getFollowersCount()),
             "Followers"));
     statsPanel.add(
         createStatLabel(
-            Integer.toString(profileUser.getFollowingCount()),
+            String.valueOf(profileUser.getFollowingCount()),
             "Following"));
     statsPanel.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 0)); // Add some vertical padding
     return statsPanel;
@@ -179,7 +180,7 @@ public class ProfilePanel extends BasePanel {
   }
 
   private void loadAndDisplayImages() {
-    for (Post post : PostRepository.getInstance().getAllByUserId(profileUser.getUserId())) {
+    for (Post post : postRepo.getAllByUserId(profileUser.getUserId())) {
       addImageToPanel(appPaths.UPLOADED + post.getImagePath());
       System.out.println("displayed post with image " + post.getImagePath());
     }
@@ -195,7 +196,8 @@ public class ProfilePanel extends BasePanel {
         new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            displayImage(imageIcon);
+            // displayImage(imageIcon);
+            App.getImageViewer().displayImage(profileUser.getUsername(), imagePath, ImageType.PROFILE);
           }
         });
     this.contentPanel.add(imageLabel);
@@ -217,27 +219,7 @@ public class ProfilePanel extends BasePanel {
     JScrollPane scrollPane = createScrollPane();
     add(scrollPane, BorderLayout.CENTER);
 
-    repaint();
-    revalidate();
-  }
-
-  private void displayImage(ImageIcon imageIcon) {
-    contentPanel.removeAll();
-    contentPanel.setLayout(new BorderLayout());
-
-    JLabel fullSizeImageLabel = new JLabel(imageIcon);
-    fullSizeImageLabel.setHorizontalAlignment(JLabel.CENTER);
-    contentPanel.add(fullSizeImageLabel, BorderLayout.CENTER);
-
-    JButton backButton = new JButton("Back");
-    backButton.addActionListener(e -> {
-      this.contentPanel.removeAll();
-      initializeImageGrid();
-    });
-    contentPanel.add(backButton, BorderLayout.SOUTH);
-
-    repaint();
-    revalidate();
+    // refresh();
   }
 
   private JLabel createStatLabel(String number, String text) {

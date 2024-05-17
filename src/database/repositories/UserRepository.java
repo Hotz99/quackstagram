@@ -48,95 +48,6 @@ public class UserRepository {
         this.connection = connection;
     }
 
-    public List<String> fuzzyFindUsernames(String username) {
-        List<String> usernames = new ArrayList<>();
-
-        try {
-            String query = "SELECT * FROM users WHERE username LIKE ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, "%" + username + "%");
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                usernames.add(userFromResultSet(resultSet).getUsername());
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return usernames;
-    }
-
-    private User userFromResultSet(ResultSet resultSet) throws SQLException {
-        try {
-            int userId = resultSet.getInt("user_id");
-            Date createdDate = resultSet.getTimestamp("created_date");
-            String username = resultSet.getString("username");
-            String password = resultSet.getString("password");
-            String profileImagePath = resultSet.getString("profile_image_path");
-            String bio = resultSet.getString("bio");
-            int postsCount = resultSet.getInt("posts_count");
-            int followersCount = resultSet.getInt("followers_count");
-            int followingCount = resultSet.getInt("following_count");
-
-            return new User(userId, createdDate, username, password, profileImagePath, bio, postsCount,
-                    followersCount, followingCount);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public User getById(int userId) {
-        try {
-            String query = "SELECT * FROM users WHERE user_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                return userFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public User getByUsername(String username) {
-        try {
-            String query = "SELECT * FROM users WHERE username = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                return userFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public List<User> getAll() {
-        List<User> users = new ArrayList<>();
-        try {
-            String query = "SELECT * FROM users";
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                users.add(userFromResultSet(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return users;
-    }
-
     public User create(String username, String password, String bio) {
         if (getByUsername(username) != null) {
             System.out.println("failed to save user to database: username already exists");
@@ -167,11 +78,107 @@ public class UserRepository {
         return null;
     }
 
+    public List<String> fuzzyFindUsernames(String username) {
+        List<String> usernames = new ArrayList<>();
+
+        try {
+            String query = "SELECT * FROM users WHERE username LIKE ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, "%" + username + "%");
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                usernames.add(extractUserFromResultSet(resultSet).getUsername());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return usernames;
+    }
+
+    public User getByUserId(int userId) {
+        try {
+            String query = "SELECT * FROM users WHERE user_id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return extractUserFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public User getByUsername(String username) {
+        try {
+            String query = "SELECT * FROM users WHERE username = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return extractUserFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<User> getAll() {
+        List<User> users = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM users";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                users.add(extractUserFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
     public void update(User user) {
         // Implementation using JDBC
     }
 
-    public void delete(int id) {
-        // Implementation using JDBC
+    public void delete(int userId) {
+        try {
+            String query = "DELETE FROM users WHERE user_id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private User extractUserFromResultSet(ResultSet resultSet) throws SQLException {
+        try {
+            int userId = resultSet.getInt("user_id");
+            Date createdDate = resultSet.getTimestamp("created_date");
+            String username = resultSet.getString("username");
+            String password = resultSet.getString("password");
+            String profileImagePath = resultSet.getString("profile_image_path");
+            String bio = resultSet.getString("bio");
+            int postsCount = resultSet.getInt("posts_count");
+            int followersCount = resultSet.getInt("followers_count");
+            int followingCount = resultSet.getInt("following_count");
+
+            return new User(userId, createdDate, username, password, profileImagePath, bio, postsCount,
+                    followersCount, followingCount);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

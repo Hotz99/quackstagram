@@ -60,12 +60,14 @@ public class FollowRepository {
         return followedIds;
     }
 
-    public void toggleFollow(int userId, int otherUserId) {
+    public boolean toggleFollow(int userId, int otherUserId) {
         if (doesUserFollowOtherUser(userId, otherUserId)) {
             removeFollow(userId, otherUserId);
         } else {
             addFollow(userId, otherUserId);
+            return true;
         }
+        return false;
     }
 
     public boolean doesUserFollowOtherUser(int userId, int otherUserId) {

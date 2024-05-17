@@ -10,8 +10,6 @@ import utils.BasePanel;
 import utils.HeaderFactory;
 
 public class SignUpPanel extends BasePanel {
-  private final UserRepository userRepo = UserRepository.getInstance();
-
   public SignUpPanel() {
     super(true, true, true);
     JPanel headerPanel = HeaderFactory.createHeader(LABEL);
@@ -63,7 +61,7 @@ public class SignUpPanel extends BasePanel {
           JOptionPane.ERROR_MESSAGE);
     } else {
 
-      UserManager.getInstance().setCurrentUser(userRepo.create(username, password, bio));
+      userManager.setCurrentUser(userRepo.create(username, password, bio));
       handleProfilePictureUpload();
       App.showPanel("SignIn");
     }

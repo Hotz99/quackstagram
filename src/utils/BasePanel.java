@@ -1,6 +1,13 @@
 package utils;
 
 import auth.UserManager;
+import database.models.Like;
+import database.models.Post;
+import database.repositories.FollowRepository;
+import database.repositories.LikeRepository;
+import database.repositories.NotificationRepository;
+import database.repositories.PostRepository;
+import database.repositories.UserRepository;
 
 import java.awt.*;
 
@@ -11,8 +18,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.BasePanel;
 
 public class BasePanel extends JPanel {
-  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
-  private final UserManager userManager = UserManager.getInstance();
+  protected final FollowRepository followRepo = FollowRepository.getInstance();
+  protected final LikeRepository likeRepo = LikeRepository.getInstance();
+  protected final NotificationRepository notificationRepo = NotificationRepository.getInstance();
+  protected final PostRepository postRepo = PostRepository.getInstance();
+  protected final UserRepository userRepo = UserRepository.getInstance();
+  protected final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
+  protected final UserManager userManager = UserManager.getInstance();
 
   public static final Color COLOR_WHITE = Color.WHITE;
   public static final Color BUTTON_BACKGROUND_COLOR = new Color(255, 90, 95);
@@ -48,6 +60,12 @@ public class BasePanel extends JPanel {
       add(getTxtBio());
       setupPlaceholder(txtBio, "Bio");
     }
+  }
+
+  protected void refresh() {
+    System.out.println(this.getClass().getName() + " refresh called");
+    this.repaint();
+    this.revalidate();
   }
 
   protected void handleProfilePictureUpload() {

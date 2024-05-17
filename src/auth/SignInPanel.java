@@ -2,28 +2,14 @@ package auth;
 
 import app.App;
 import database.models.User;
-import explore.ExplorePanel;
-import home.HomePanel;
-import notifications.NotificationsPanel;
-import post.PostUploadPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.swing.*;
-import user.ProfilePanel;
 import utils.BasePanel;
 import utils.HeaderFactory;
 
 public class SignInPanel extends BasePanel {
-	private final UserManager userManager = UserManager.getInstance();
-
 	public SignInPanel() {
 		super(true, true, false);
 		JPanel headerPanel = HeaderFactory.createHeader(SIGNIN_LABEL);

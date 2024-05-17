@@ -41,19 +41,14 @@ public class PostRepository {
     public Post savePost(User user, String caption, String fileExtension) {
         try {
             int userId = user.getUserId();
-            // int userId = 1;
-            int postId = user.getPostsCount() + 1;
-            // int postId = 2 + 1;
+            int postId = getPostsCountByUserId(user.getUserId()) + 1;
             String query = "INSERT INTO posts (posted_date, user_id, caption, image_path, likes_count, comments_count) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
             statement.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             statement.setInt(2, userId);
-            // statement.setInt(2, 1);
             statement.setString(3, caption);
-            statement.setString(4, "" + postId + "_" + userId
+            statement.setString(4, postId + "_" + userId
                     + "." + fileExtension);
-            // statement.setString(4, "" + postId + "_" + userId
-            // + ".jpg");
             statement.setInt(5, 0);
             statement.setInt(6, 0);
 
@@ -68,6 +63,21 @@ public class PostRepository {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private int getPostsCountByUserId(int userId) {
+        try {
+            String query = "SELECT COUNT(*) FROM posts WHERE user_id = ?";
+            PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public boolean deletePost(int userId, String fileName) {
@@ -96,6 +106,7 @@ public class PostRepository {
                 return postFromResultSet(resultSet);
             }
         } catch (SQLException e) {
+
             e.printStackTrace();
         }
         return null;
@@ -134,11 +145,11 @@ public class PostRepository {
         return null;
     }
 
-    public Post getById(int id) {
+    public Post getByPostId(int postId) {
         try {
             String query = "SELECT * FROM posts WHERE post_id = ?";
             PreparedStatement statement = DatabaseHandler.getConnection().prepareStatement(query);
-            statement.setInt(1, id);
+            statement.setInt(1, postId);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {

@@ -26,15 +26,12 @@ public class PostUploadPanel extends BasePanel {
   private JLabel imagePreviewLabel;
   private JTextArea captionTextArea;
   private JButton uploadButton;
-  private JButton saveButton;
 
-  // singleton pattern
-  private final AppPathsSingleton appPaths = AppPathsSingleton.getInstance();
   private final String uploaded = appPaths.UPLOADED;
 
   public PostUploadPanel() {
     super(false, false, false);
-    JPanel headerPanel = HeaderFactory.createHeader(" Upload Image 🐥"); // Reuse the HeaderFactory.createHeader method
+    JPanel headerPanel = HeaderFactory.createHeader(" Upload Image 🐥");
 
     // Main content panel
     JPanel contentPanel = new JPanel();
@@ -64,7 +61,7 @@ public class PostUploadPanel extends BasePanel {
     JLabel imagePreviewLabel = new JLabel();
     imagePreviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     imagePreviewLabel.setPreferredSize(
-        new Dimension(App.WIDTH, App.HEIGHT / 3));
+        new Dimension(App.getAppWidth(), App.getAppHeight() / 3));
     return imagePreviewLabel;
   }
 
@@ -75,7 +72,7 @@ public class PostUploadPanel extends BasePanel {
     captionTextArea.setWrapStyleWord(true);
     JScrollPane bioScrollPane = new JScrollPane(captionTextArea);
     bioScrollPane.setPreferredSize(
-        new Dimension(App.WIDTH - 50, App.HEIGHT / 6));
+        new Dimension(App.getAppWidth() - 50, App.getAppHeight() / 6));
     return bioScrollPane;
   }
 
@@ -98,10 +95,10 @@ public class PostUploadPanel extends BasePanel {
       File selectedFile = fileChooser.getSelectedFile();
 
       try {
-        User user = UserManager.getInstance().getCurrentUser();
+        User user = userManager.getCurrentUser();
 
         // lil sql injection opportunity here wink wink
-        Post newPost = PostRepository.getInstance().savePost(user, this.captionTextArea.getText(),
+        Post newPost = postRepo.savePost(user, this.captionTextArea.getText(),
             getFileExtension(selectedFile));
 
         Path uploadedImagePath = Paths.get(uploaded + newPost.getImagePath());

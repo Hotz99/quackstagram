@@ -16,7 +16,7 @@ public class HeaderFactory {
     lblRegister.setFont(new Font("Arial", Font.BOLD, 16));
     lblRegister.setForeground(Color.WHITE); // Set the text color to white
     headerPanel.add(lblRegister);
-    headerPanel.setPreferredSize(new Dimension(App.WIDTH, HEADER_HEIGHT)); // Give the header a fixed height
+    headerPanel.setPreferredSize(new Dimension(App.getAppWidth(), HEADER_HEIGHT)); // Give the header a fixed height
     return headerPanel;
   }
 

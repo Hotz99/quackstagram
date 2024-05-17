@@ -5,7 +5,8 @@ import java.util.*;
 import database.repositories.UserRepository;
 
 public abstract class Search {
-  private static final List<SearchObserver> observers = new ArrayList<>();
+  private final static UserRepository userRepo = UserRepository.getInstance();
+  private final static List<SearchObserver> observers = new ArrayList<>();
 
   public static void addSearchObserver(SearchObserver observer) {
     observers.add(observer);
@@ -30,7 +31,7 @@ public abstract class Search {
       return results;
     }
 
-    results.addAll(UserRepository.getInstance().fuzzyFindUsernames(query));
+    results.addAll(userRepo.fuzzyFindUsernames(query));
     notifyObservers(results);
     return results;
   }
