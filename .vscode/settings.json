@@ -1,6 +1,5 @@
 {
     "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "src/database/mariadb-java-client-3.3.3.jar"
+        "lib/**/*.jar"
     ]
 }
