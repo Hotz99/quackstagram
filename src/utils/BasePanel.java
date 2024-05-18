@@ -1,21 +1,29 @@
 package utils;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Image;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import auth.UserManager;
-import database.models.Like;
-import database.models.Post;
 import database.repositories.FollowRepository;
 import database.repositories.LikeRepository;
 import database.repositories.NotificationRepository;
 import database.repositories.PostRepository;
 import database.repositories.UserRepository;
-
-import java.awt.*;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import utils.BasePanel;
 
 public class BasePanel extends JPanel {
   protected final FollowRepository followRepo = FollowRepository.getInstance();

@@ -43,7 +43,7 @@ public class App extends JFrame {
     return HEIGHT;
   }
 
-  public static PostImageViewer getImageViewer() {
+  public static PostImageViewer getPostViewer() {
     return imageViewer;
   }
 

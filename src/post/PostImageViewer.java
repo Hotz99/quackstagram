@@ -41,7 +41,7 @@ public class PostImageViewer {
    *
    * @param imagePath the path of the image to be displayed
    */
-  public void displayImage(String headerLabel, String imagePath, ImageType imageType) {
+  public void displayImage(String imagePath, ImageType imageType) {
     this.imageType = imageType;
 
     // imagePath has format
@@ -57,7 +57,7 @@ public class PostImageViewer {
     imageViewPanel.removeAll();
     imageViewPanel.setLayout(new BorderLayout());
     imageViewPanel.add(
-        HeaderFactory.createHeader(headerLabel),
+        HeaderFactory.createHeader(post.getCaption()),
         BorderLayout.NORTH);
 
     JPanel topPanel = createTopPanel(
@@ -66,7 +66,6 @@ public class PostImageViewer {
     JLabel imageLabel = prepareImageLabel(post.getImagePath());
 
     JPanel bottomPanel = createBottomPanel(
-        post.getCaption(),
         post.getLikesCount());
 
     JPanel containerPanel = new JPanel(new BorderLayout());
@@ -158,13 +157,10 @@ public class PostImageViewer {
    * @param likes   the number of likes to display in the likes label
    * @return the created JPanel
    */
-  private JPanel createBottomPanel(String caption, int likes) {
+  private JPanel createBottomPanel(int likes) {
     JPanel bottomPanel = new JPanel(new BorderLayout());
-    JTextArea captionTextArea = new JTextArea(caption);
-    captionTextArea.setEditable(false);
     JLabel likesLabel = new JLabel("Likes: " + likes);
-    bottomPanel.add(captionTextArea, BorderLayout.CENTER);
-    bottomPanel.add(likesLabel, BorderLayout.SOUTH);
+    bottomPanel.add(likesLabel, BorderLayout.CENTER);
 
     return bottomPanel;
   }

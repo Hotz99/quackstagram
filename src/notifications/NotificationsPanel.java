@@ -1,21 +1,22 @@
 package notifications;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-import org.w3c.dom.events.MouseEvent;
-
-import app.App;
-import auth.UserManager;
 import database.models.Notification;
-import database.repositories.NotificationRepository;
-import database.repositories.UserRepository;
 import utils.BasePanel;
 import utils.HeaderFactory;
 

@@ -11,25 +11,6 @@ import java.util.List;
 import database.DatabaseHandler;
 
 public class FollowRepository {
-    public static void main(String[] args) {
-        FollowRepository followRepo = new FollowRepository();
-
-        for (int id : followRepo.getFollowedByUserId(1)) {
-            System.out.println("userId: " + id);
-        }
-
-        // int userId = 1;
-        // int otherUserId = 2;
-
-        // System.out.println(followRepo.doesUserFollowOtherUser(userId, otherUserId));
-
-        // followRepo.toggleFollow(userId, otherUserId);
-
-        // System.out.println(followRepo.doesUserFollowOtherUser(userId,
-        // otherUserId));
-
-        // followRepo.toggleFollow(userId, otherUserId);
-    }
 
     private static Connection db;
 

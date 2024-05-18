@@ -1,19 +1,29 @@
 package explore;
 
-import app.App;
-import auth.UserManager;
-import post.PostImageViewer;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import utils.*;
+
+import app.App;
+import post.PostImageViewer;
+import utils.BasePanel;
+import utils.HeaderFactory;
 
 /**
  * The ExplorePanel class represents a panel that displays the explore
@@ -106,7 +116,7 @@ public class ExplorePanel extends BasePanel {
 
   private JPanel createSearchPanel() {
     JPanel searchPanel = new JPanel(new BorderLayout());
-    JTextField searchField = new JTextField(" Search");
+    JTextField searchField = new JTextField(" Search ...");
     searchResult = new SearchResult();
 
     searchPanel.add(searchField, BorderLayout.CENTER);
@@ -178,8 +188,7 @@ public class ExplorePanel extends BasePanel {
                 public void mouseClicked(MouseEvent e) {
                   System.out.println(imageFile.getPath());
 
-                  App.getImageViewer().displayImage(
-                      " Explore 🐥 ",
+                  App.getPostViewer().displayImage(
                       imageFile.getPath(),
                       PostImageViewer.ImageType.EXPLORE);
                 }

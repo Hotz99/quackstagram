@@ -1,5 +1,0 @@
-implement caching for all repos
-
-fix scrollbar in home and notifications panels
-
-refresh panel when showPanel()

@@ -1,29 +1,33 @@
 package post;
 
-import app.App;
-import auth.UserManager;
-import database.models.Post;
-import database.models.User;
-import database.repositories.PostRepository;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import javax.swing.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import utils.AppPathsSingleton;
+
+import app.App;
+import database.models.Post;
 import utils.BasePanel;
 import utils.HeaderFactory;
 
 public class PostUploadPanel extends BasePanel {
-
-  private JLabel imagePreviewLabel;
   private JTextArea captionTextArea;
   private JButton uploadButton;
 
@@ -33,21 +37,10 @@ public class PostUploadPanel extends BasePanel {
     super(false, false, false);
     JPanel headerPanel = HeaderFactory.createHeader(" Upload Image 🐥");
 
-    // Main content panel
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-    // Image preview
-    imagePreviewLabel = createImagePreviewLabel();
-
-    // Set an initial empty icon to the imagePreviewLabel
-    ImageIcon emptyImageIcon = new ImageIcon();
-    imagePreviewLabel.setIcon(emptyImageIcon);
-
-    contentPanel.add(imagePreviewLabel);
-
-    // Bio text area
-    contentPanel.add(createBioTextArea());
+    contentPanel.add(createCaptionTextArea());
 
     // Upload button
     contentPanel.add(createUploadButton());
@@ -57,19 +50,29 @@ public class PostUploadPanel extends BasePanel {
     add(contentPanel, BorderLayout.CENTER);
   }
 
-  private JLabel createImagePreviewLabel() {
-    JLabel imagePreviewLabel = new JLabel();
-    imagePreviewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    imagePreviewLabel.setPreferredSize(
-        new Dimension(App.getAppWidth(), App.getAppHeight() / 3));
-    return imagePreviewLabel;
-  }
-
-  private JScrollPane createBioTextArea() {
-    captionTextArea = new JTextArea("Enter a caption ...");
+  private JScrollPane createCaptionTextArea() {
+    captionTextArea = new JTextArea();
     captionTextArea.setAlignmentX(Component.CENTER_ALIGNMENT);
     captionTextArea.setLineWrap(true);
     captionTextArea.setWrapStyleWord(true);
+
+    captionTextArea.setText("Enter a caption for your post...");
+    captionTextArea.addFocusListener(new FocusAdapter() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        if (captionTextArea.getText().equals("Enter a caption for your post...")) {
+          captionTextArea.setText("");
+        }
+      }
+
+      @Override
+      public void focusLost(FocusEvent e) {
+        if (captionTextArea.getText().isEmpty()) {
+          captionTextArea.setText("Enter a caption for your post...");
+        }
+      }
+    });
+
     JScrollPane bioScrollPane = new JScrollPane(captionTextArea);
     bioScrollPane.setPreferredSize(
         new Dimension(App.getAppWidth() - 50, App.getAppHeight() / 6));
@@ -95,10 +98,8 @@ public class PostUploadPanel extends BasePanel {
       File selectedFile = fileChooser.getSelectedFile();
 
       try {
-        User user = userManager.getCurrentUser();
-
-        // lil sql injection opportunity here wink wink
-        Post newPost = postRepo.savePost(user, this.captionTextArea.getText(),
+        // lil sql injection opportunity here
+        Post newPost = postRepo.savePost(userManager.getCurrentUser(), this.captionTextArea.getText(),
             getFileExtension(selectedFile));
 
         Path uploadedImagePath = Paths.get(uploaded + newPost.getImagePath());
@@ -110,28 +111,13 @@ public class PostUploadPanel extends BasePanel {
             StandardCopyOption.REPLACE_EXISTING);
 
         System.out.println(
-            "Image uploaded to: " + finalUploadPath.toString());
+            "image uploaded to: " + finalUploadPath.toString());
 
-        // Load the image from the saved path
-        ImageIcon imageIcon = new ImageIcon(uploadedImagePath.toString());
-
-        // Check if imagePreviewLabel has a valid size
-        if (imagePreviewLabel.getWidth() <= 0 ||
-            imagePreviewLabel.getHeight() <= 0)
-          return;
-
-        // Set the image icon with the scaled image
-        imageIcon.setImage(
-            getScaledImage(imageIcon.getImage(), imagePreviewLabel));
-
-        imagePreviewLabel.setIcon(imageIcon);
-
-        // Change the text of the upload button
         uploadButton.setText("Upload Another Image");
 
         JOptionPane.showMessageDialog(
             this,
-            "Image uploaded and preview updated!");
+            "Image uploaded successfully.");
       } catch (IOException ex) {
         JOptionPane.showMessageDialog(
             this,
@@ -140,25 +126,6 @@ public class PostUploadPanel extends BasePanel {
             JOptionPane.ERROR_MESSAGE);
       }
     }
-  }
-
-  private Image getScaledImage(Image image, JLabel imagePreviewLabel) {
-    int previewWidth = imagePreviewLabel.getWidth();
-    int previewHeight = imagePreviewLabel.getHeight();
-    int imageWidth = image.getWidth(null);
-    int imageHeight = image.getHeight(null);
-    double widthRatio = (double) previewWidth / imageWidth;
-    double heightRatio = (double) previewHeight / imageHeight;
-    double scale = Math.min(widthRatio, heightRatio);
-    int scaledWidth = (int) (scale * imageWidth);
-    int scaledHeight = (int) (scale * imageHeight);
-
-    Image scaledImage = image.getScaledInstance(
-        scaledWidth,
-        scaledHeight,
-        Image.SCALE_SMOOTH);
-
-    return scaledImage;
   }
 
   private String getFileExtension(File file) {

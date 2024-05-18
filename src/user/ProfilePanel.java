@@ -194,7 +194,7 @@ public class ProfilePanel extends BasePanel {
           @Override
           public void mouseClicked(MouseEvent e) {
             // displayImage(imageIcon);
-            App.getImageViewer().displayImage(profileUser.getUsername(), imagePath, ImageType.PROFILE);
+            App.getPostViewer().displayImage(imagePath, ImageType.PROFILE);
           }
         });
     this.contentPanel.add(imageLabel);

@@ -9,28 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import auth.UserManager;
 import database.DatabaseHandler;
 import database.models.User;
-import utils.AppPathsSingleton;
 
 public class UserRepository {
-
-    public static void main(String[] args) {
-        UserRepository userRepo = UserRepository.getInstance();
-
-        // System.out.println(userRepo.getByUsername("user1"));
-
-        User fakeUser = new User(0, new Date(), "fakeuser", "password123", "/path/to/profile/image.jpg",
-                "This is a fake user", 0, 0, 0);
-        // UserRepository.getInstance().save(fakeUser);
-
-        System.out.println(userRepo.getByUsername("fakeuser"));
-
-        // for (User user : userRepo.getAll()) {
-        // System.out.println(user.getUsername());
-        // }
-    }
 
     private static Connection db;
 

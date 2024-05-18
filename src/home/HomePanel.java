@@ -1,16 +1,10 @@
 package home;
 
-import app.App;
-import auth.UserManager;
-import database.models.Notification;
-import database.models.Post;
-import database.repositories.FollowRepository;
-import database.repositories.LikeRepository;
-import database.repositories.NotificationRepository;
-import database.repositories.PostRepository;
-import post.PostImageViewer;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -19,8 +13,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import app.App;
+import database.models.Notification;
+import database.models.Post;
+import post.PostImageViewer;
 import utils.BasePanel;
 import utils.HeaderFactory;
 
@@ -149,7 +155,7 @@ public class HomePanel extends BasePanel {
 					new MouseAdapter() {
 						@Override
 						public void mouseClicked(MouseEvent e) {
-							App.getImageViewer().displayImage(" Quackstagram Home ",
+							App.getPostViewer().displayImage(
 									latestPost.getImagePath(),
 									PostImageViewer.ImageType.HOME);
 

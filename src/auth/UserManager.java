@@ -1,22 +1,13 @@
 package auth;
 
-import app.App;
-import database.models.User;
-import database.repositories.UserRepository;
-
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javax.imageio.ImageIO;
 
-import utils.AppPathsSingleton;
+import database.models.User;
+import database.repositories.UserRepository;
 
 public class UserManager {
   private final UserRepository userRepo = UserRepository.getInstance();
