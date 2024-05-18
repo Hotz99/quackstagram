@@ -8,27 +8,19 @@ import java.sql.Timestamp;
 
 import database.DatabaseHandler;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class LikeRepository {
-    public static void main(String[] args) {
-        LikeRepository likeRepository = new LikeRepository();
-
-        int userId = 1;
-        int postId = 1;
-
-        System.out.println(likeRepository.hasUserLikedPost(userId, postId));
-
-        likeRepository.toggleLike(userId, postId);
-
-        System.out.println(likeRepository.hasUserLikedPost(userId, postId));
-
-        // likeRepository.toggleLike(userId, postId);
-    }
-
-    private static Connection db;
-
     private static LikeRepository instance;
+    private static Connection db;
+    // postId -> userIds
+    private static Map<Integer, List<Integer>> likesCache;
 
     private LikeRepository() {
+        likesCache = new HashMap<>();
     }
 
     public static LikeRepository getInstance() {
@@ -40,6 +32,10 @@ public class LikeRepository {
     }
 
     public int getLikesCountByPostId(int postId) {
+        if (likesCache.containsKey(postId)) {
+            return likesCache.get(postId).size();
+        }
+
         String query = "SELECT COUNT(*) FROM likes WHERE post_id = ?";
         try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, postId);
@@ -66,9 +62,12 @@ public class LikeRepository {
     }
 
     private boolean hasUserLikedPost(int postId, int userId) {
+        if (likesCache.containsKey(postId)) {
+            return likesCache.get(postId).contains(userId);
+        }
+
         String query = "SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ?";
         try (PreparedStatement statement = db.prepareStatement(query)) {
-
             statement.setInt(1, userId);
             statement.setInt(2, postId);
 
@@ -85,6 +84,12 @@ public class LikeRepository {
     }
 
     private void removeLike(int postId, int userId) {
+        if (likesCache.containsKey(postId)) {
+            List<Integer> updatedUserIds = likesCache.get(postId);
+            updatedUserIds.remove(Integer.valueOf(userId));
+            likesCache.put(postId, updatedUserIds);
+        }
+
         String query = "DELETE FROM likes WHERE user_id = ? AND post_id = ?";
         try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, userId);
@@ -92,14 +97,12 @@ public class LikeRepository {
             statement.executeUpdate();
 
             System.out.println("removed like");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private void addLike(int postId, int userId) {
-
         String query = "INSERT INTO likes (user_id, post_id, liked_date) VALUES (?, ?, ?)";
         try (PreparedStatement statement = db.prepareStatement(query)) {
             statement.setInt(1, userId);
@@ -108,8 +111,35 @@ public class LikeRepository {
             statement.executeUpdate();
 
             System.out.println("added like");
+
+            if (likesCache.containsKey(postId)) {
+                List<Integer> updatedUserIds = likesCache.get(postId);
+                updatedUserIds.add(userId);
+                likesCache.put(postId, updatedUserIds);
+            } else {
+                likesCache.put(postId, getLikesUserIds(postId));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private List<Integer> getLikesUserIds(int postId) {
+        List<Integer> userIds = new ArrayList<>();
+
+        String query = "SELECT user_id FROM likes WHERE post_id = ?";
+        try (PreparedStatement statement = db.prepareStatement(query)) {
+            statement.setInt(1, postId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                userIds.add(resultSet.getInt(1));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userIds;
     }
 }

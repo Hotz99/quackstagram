@@ -12,17 +12,6 @@ import database.DatabaseHandler;
 import database.models.Notification;
 
 public class NotificationRepository {
-    public static void main(String[] args) {
-        NotificationRepository notificationRepo = NotificationRepository.getInstance();
-
-        System.out.println("All notifications for user 1:");
-
-        for (Notification notification : notificationRepo.getAllByUserId(1)) {
-            System.out.println(notification);
-        }
-
-    }
-
     private static Connection db;
 
     private static NotificationRepository instance;
