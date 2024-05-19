@@ -45,6 +45,7 @@ public class LikeRepository {
                 return resultSet.getInt(1);
             }
         } catch (SQLException e) {
+            System.out.println("failed to get likes count by post id: " + postId);
             e.printStackTrace();
         }
         return 0;
@@ -78,6 +79,7 @@ public class LikeRepository {
                 return count > 0;
             }
         } catch (SQLException e) {
+            System.out.println("failed to check if user has liked post with id: " + postId);
             e.printStackTrace();
         }
         return false;
@@ -96,8 +98,8 @@ public class LikeRepository {
             statement.setInt(2, postId);
             statement.executeUpdate();
 
-            System.out.println("removed like");
         } catch (SQLException e) {
+            System.out.println("failed to remove like");
             e.printStackTrace();
         }
     }
@@ -110,8 +112,6 @@ public class LikeRepository {
             statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
             statement.executeUpdate();
 
-            System.out.println("added like");
-
             if (likesCache.containsKey(postId)) {
                 List<Integer> updatedUserIds = likesCache.get(postId);
                 updatedUserIds.add(userId);
@@ -120,6 +120,7 @@ public class LikeRepository {
                 likesCache.put(postId, getLikesUserIds(postId));
             }
         } catch (SQLException e) {
+            System.out.println("failed to add like");
             e.printStackTrace();
         }
     }
@@ -137,6 +138,7 @@ public class LikeRepository {
             }
 
         } catch (SQLException e) {
+            System.out.println("failed to get likes user ids by post id: " + postId);
             e.printStackTrace();
         }
 

@@ -51,6 +51,7 @@ public class UserRepository {
 
             return newUser;
         } catch (SQLException e) {
+            System.out.println("failed to save user to database");
             e.printStackTrace();
         }
 
@@ -70,6 +71,7 @@ public class UserRepository {
             }
 
         } catch (SQLException e) {
+            System.out.println("failed to fuzzy find username: " + username);
             e.printStackTrace();
         }
 
@@ -87,12 +89,14 @@ public class UserRepository {
                 return extractUserFromResultSet(resultSet);
             }
         } catch (SQLException e) {
+            System.out.println("failed to get user by id: " + userId);
             e.printStackTrace();
         }
 
         return null;
     }
 
+    // usernames are unique
     public User getByUsername(String username) {
         try {
             String query = "SELECT * FROM users WHERE username = ?";
@@ -104,6 +108,7 @@ public class UserRepository {
                 return extractUserFromResultSet(resultSet);
             }
         } catch (SQLException e) {
+            System.out.println("failed to get user by username: " + username);
             e.printStackTrace();
         }
 
@@ -120,13 +125,29 @@ public class UserRepository {
                 users.add(extractUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
+            System.out.println("failed to get all users");
             e.printStackTrace();
         }
         return users;
     }
 
     public void update(User user) {
-        // Implementation using JDBC
+        try {
+            String query = "UPDATE users SET username = ?, password = ?, profile_image_path = ?, bio = ?, posts_count = ?, followers_count = ?, following_count = ? WHERE user_id = ?";
+            PreparedStatement statement = db.prepareStatement(query);
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getProfileImagePath());
+            statement.setString(4, user.getBio());
+            statement.setInt(5, user.getPostsCount());
+            statement.setInt(6, user.getFollowersCount());
+            statement.setInt(7, user.getFollowingCount());
+            statement.setInt(8, user.getUserId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("failed to update user with id: " + user.getUserId());
+            e.printStackTrace();
+        }
     }
 
     public void delete(int userId) {
@@ -136,6 +157,7 @@ public class UserRepository {
             statement.setInt(1, userId);
             statement.executeUpdate();
         } catch (SQLException e) {
+            System.out.println("failed to delete user with id: " + userId);
             e.printStackTrace();
         }
     }
@@ -155,6 +177,7 @@ public class UserRepository {
             return new User(userId, createdDate, username, password, profileImagePath, bio, postsCount,
                     followersCount, followingCount);
         } catch (SQLException e) {
+            System.out.println("failed to extract user from result set");
             e.printStackTrace();
         }
 

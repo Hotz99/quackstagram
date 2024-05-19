@@ -35,7 +35,7 @@ public class NotificationRepository {
             statement.setString(3, notification.getContent());
             statement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("failed to save notification");
+            System.out.println("failed to save notification with id: " + notification.getNotificationId());
             e.printStackTrace();
         }
     }
@@ -52,6 +52,7 @@ public class NotificationRepository {
                         resultSet.getString("content")));
             }
         } catch (SQLException e) {
+            System.out.println("failed to get notifications by user id: " + userId);
             e.printStackTrace();
         }
 

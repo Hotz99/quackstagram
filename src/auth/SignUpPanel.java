@@ -1,11 +1,15 @@
 package auth;
 
-import app.App;
-import database.repositories.UserRepository;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import app.App;
 import utils.BasePanel;
 import utils.HeaderFactory;
 

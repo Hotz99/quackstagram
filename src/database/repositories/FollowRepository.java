@@ -39,6 +39,7 @@ public class FollowRepository {
                 followedIds.add(resultSet.getInt("followed_id"));
             }
         } catch (SQLException e) {
+            System.out.println("failed to get followed users by user id");
             e.printStackTrace();
         }
 
@@ -69,6 +70,7 @@ public class FollowRepository {
                 return count > 0;
             }
         } catch (SQLException e) {
+            System.out.println("failed to check if user follows other user");
             e.printStackTrace();
         }
         return false;
@@ -81,6 +83,7 @@ public class FollowRepository {
             statement.setInt(2, followedId);
             statement.executeUpdate();
         } catch (SQLException e) {
+            System.out.println("failed to remove follow");
             e.printStackTrace();
         }
     }
@@ -93,6 +96,7 @@ public class FollowRepository {
             statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
             statement.executeUpdate();
         } catch (SQLException e) {
+            System.out.println("failed to add follow");
             e.printStackTrace();
         }
     }

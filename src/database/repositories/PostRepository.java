@@ -35,11 +35,12 @@ public class PostRepository {
     }
 
     public Post savePost(User user, String caption, String fileExtension) {
-        try {
-            int userId = user.getUserId();
+        int userId = user.getUserId();
+        // this function call ensures the postId will be up to date
+        int postId = getPostsCountByUserId(userId) + 1;
 
-            // this function call ensures the postId will be up to date
-            int postId = getPostsCountByUserId(userId) + 1;
+        try {
+
             String query = "INSERT INTO posts (posted_date, user_id, caption, image_path, likes_count, comments_count) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = db.prepareStatement(query);
 
@@ -66,6 +67,7 @@ public class PostRepository {
             }
 
         } catch (SQLException e) {
+            System.out.println("failed to save post with id: " + postId);
             e.printStackTrace();
         }
         return null;
@@ -73,7 +75,6 @@ public class PostRepository {
 
     public Post getByPostId(int postId) {
         if (postCache.containsKey(postId)) {
-            System.out.println("Post found in cache");
             return postCache.get(postId);
         }
 
@@ -89,6 +90,7 @@ public class PostRepository {
                 return post;
             }
         } catch (SQLException e) {
+            System.out.println("failed to get post with id: " + postId);
             e.printStackTrace();
         }
 
@@ -106,6 +108,7 @@ public class PostRepository {
                 posts.add(postFromResultSet(resultSet));
             }
         } catch (SQLException e) {
+            System.out.println("failed to get posts by user id: " + userId);
             e.printStackTrace();
         }
         return posts;
@@ -121,6 +124,7 @@ public class PostRepository {
                 return resultSet.getInt(1);
             }
         } catch (SQLException e) {
+            System.out.println("failed to get posts count by user id: " + userId);
             e.printStackTrace();
         }
         return 0;
@@ -140,6 +144,7 @@ public class PostRepository {
                 return true;
             }
         } catch (SQLException e) {
+            System.out.println("failed to delete post with id: " + postId);
             e.printStackTrace();
         }
 
@@ -160,6 +165,7 @@ public class PostRepository {
                 return post;
             }
         } catch (SQLException e) {
+            System.out.println("failed to get latest post by user id: " + userId);
             e.printStackTrace();
         }
         return null;
@@ -175,6 +181,7 @@ public class PostRepository {
                 return postFromResultSet(resultSet);
             }
         } catch (SQLException e) {
+            System.out.println("failed to get post by file name: " + fileName);
             e.printStackTrace();
         }
         return null;
@@ -192,6 +199,7 @@ public class PostRepository {
 
             return new Post(postId, postedDate, userId, caption, imagePath, likesCount, commentsCount);
         } catch (SQLException e) {
+            System.out.println("failed to create post from result set");
             e.printStackTrace();
         }
 
