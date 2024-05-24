@@ -2,7 +2,9 @@
 
 **Introduction**
 
-Quackstagram is a minimalist version of Instagram designed for effortless image sharing and social interaction. Introduced as a project of the Computer Science bachelor programme at Maastricht University. Built using Java, it focuses on providing users with a straightforward and engaging platform to share snapshots of their lives, connect with others, and explore new content. 
+Quackstagram is a minimalist version of Instagram designed for effortless image sharing and social interaction. Introduced as a project of the Computer Science bachelor programme at Maastricht University. Built using Java, it focuses on providing users with a straightforward and engaging platform to share snapshots of their lives, connect with others, and explore new content.
+
+**Getting started**
 
 The entry point for this program is App.java, located at "src/app/App.java". The database connection credentials are located at "src/database/DatabaseHandler.java".
 
