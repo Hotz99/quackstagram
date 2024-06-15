@@ -1,4 +1,4 @@
-# **Quackstagram:** 
+# **Quackstagram** 
 
 **Introduction**
 
